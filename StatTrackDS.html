@@ -1,0 +1,2540 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="StatTrack">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StatTrack — Трекер прогресса и дисциплины</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Forum&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ==========================================================================
+   DARK SOULS THEME: "BLACK KNIGHT OF ASH" (DARK) & "WHITE KNIGHT OF MIST" (LIGHT)
+   ========================================================================== */
+:root,
+[data-theme="dark"] {
+  --bg: #070606;
+  --bg-alt: #0d0b0a;
+  --card: #12100e;
+  --card2: #1a1613;
+  --surface: #0b0908;
+  --ink: #e2d9cc;
+  --ink-strong: #f7f0e6;
+  --mut: #a39686;
+  --line: #382f25;
+  --line-gold: #82673c;
+  --red: #cc2b32;
+  --cy: #dfa655;
+  --gr: #52a86f;
+  --vi: #9b62c7;
+  --ye: #eba43d;
+  --or: #e06d2b;
+  --ember: #ff551a;
+  --accent: #d49b4b;
+  --shadow-card: 0 14px 36px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(212, 155, 75, 0.14);
+  --glow-ambient: radial-gradient(650px 420px at 50% 0%, rgba(230, 92, 25, 0.14), transparent 70%),
+                  radial-gradient(550px 400px at 90% 85%, rgba(184, 41, 47, 0.09), transparent 70%);
+  color-scheme: dark;
+}
+
+/* HIGH-CONTRAST READABLE LIGHT THEME ("WHITE KNIGHT OF MIST") */
+[data-theme="light"] {
+  --bg: #e6e2da;
+  --bg-alt: #dcd7cd;
+  --card: #ffffff;
+  --card2: #f7f4ee;
+  --surface: #ede9e0;
+  --ink: #1e1b18;
+  --ink-strong: #0a0908;
+  --mut: #4a4238;
+  --line: #b5ac9e;
+  --line-gold: #80602a;
+  --red: #9e1b20;
+  --cy: #875512;
+  --gr: #1b6938;
+  --vi: #56267d;
+  --ye: #8f5106;
+  --or: #9e3d12;
+  --ember: #2d3748;
+  --accent: #4a433b;
+  --shadow-card: 0 10px 28px rgba(25, 20, 15, 0.1), inset 0 1px 0 #ffffff;
+  --glow-ambient: radial-gradient(650px 420px at 50% 0%, rgba(255, 255, 255, 0.8), transparent 70%),
+                  radial-gradient(550px 400px at 90% 85%, rgba(140, 130, 115, 0.15), transparent 70%);
+  color-scheme: light;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*, *:before, *:after { box-sizing: inherit; margin: 0; }
+body {
+  min-height: 100vh;
+  color: var(--ink);
+  font: 400 15.5px/1.55 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+#bg, #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: var(--glow-ambient);
+}
+.wrap { max-width: 980px; margin: auto; padding: 18px 14px 75px; position: relative; z-index: 1; }
+
+/* SOULS SERIF TYPOGRAPHY */
+h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, .logo-txt, .prof-nick, .ach-ttl {
+  font-family: 'Cormorant Garamond', 'Forum', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.cut { border-radius: 3px; position: relative; }
+.cut-sm { border-radius: 2px; }
+
+/* HEADER & LOGO */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  color: inherit;
+}
+.brand-ic {
+  width: 46px;
+  height: 46px;
+  background: radial-gradient(circle, var(--card2), var(--surface));
+  border: 1.5px solid var(--line-gold);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: 0 0 16px rgba(212, 155, 75, 0.25);
+}
+.brand-ic svg { color: var(--cy); }
+.logo-txt {
+  font-size: 30px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-strong);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.logo-txt span { color: var(--cy); }
+.logo-sub {
+  display: block;
+  font: 500 12.5px 'Inter', sans-serif;
+  color: var(--mut);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+.top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.icon-btn {
+  background: linear-gradient(180deg, var(--card2), var(--card));
+  color: var(--ink-strong);
+  border: 1px solid var(--line);
+  padding: 9px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 600 13.5px 'Inter', sans-serif;
+  transition: all 0.2s ease;
+}
+.icon-btn:hover, .icon-btn.on {
+  border-color: var(--cy);
+  color: var(--cy);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cy) 25%, transparent);
+}
+
+/* PROFILE MINI BAR & COVENANT RARITIES */
+.prof-bar {
+  background: linear-gradient(90deg, var(--card2), var(--card));
+  border: 1px solid var(--line-gold);
+  box-shadow: var(--shadow-card);
+  padding: 15px 18px;
+  margin-bottom: 14px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+.prof-bar:hover {
+  border-color: var(--cy);
+  transform: translateY(-1px);
+}
+.ava {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 30%, transparent);
+  flex-shrink: 0;
+}
+.prof-info { min-width: 0; }
+.prof-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.prof-nick { font-size: 23px; color: var(--ink-strong); text-transform: uppercase; letter-spacing: 0.06em; }
+.prof-title {
+  font: 600 12px 'Inter', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cy);
+  background: color-mix(in srgb, var(--cy) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--cy) 45%, transparent);
+  padding: 3px 10px;
+}
+.medals-row { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.medal-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.rk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.rk-cell {
+  position: relative;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, var(--card2), var(--card));
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--rc, #7f8b99);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.rk-cell:hover { transform: translateY(-2px); border-color: var(--rc); }
+.rk-cell .rk-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mut);
+  margin-bottom: 6px;
+}
+.rk-cell .rk-badge {
+  padding: 2px 9px;
+  font-weight: 700;
+  font-size: 11.5px;
+  color: #ffffff;
+  background: var(--rc);
+  border-radius: 2px;
+}
+.rk-cell .rk-name {
+  font-size: 19px;
+  color: var(--rc);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.rk-xp {
+  height: 7px;
+  background: var(--surface);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.rk-xp i {
+  display: block;
+  height: 100%;
+  background: var(--rc);
+  transition: width 0.4s ease;
+}
+.rk-sub {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--mut);
+  margin-top: 6px;
+}
+
+/* RARITY COLORS (DARK & LIGHT MODE OPTIMIZED FOR READABILITY) */
+.rar-0 { --rc: #786e62; }
+.rar-1 { --rc: #3d8c57; }
+.rar-2 { --rc: #2f77a8; }
+.rar-3 { --rc: #8244bd; }
+.rar-4 { --rc: #b8292f; }
+.rar-5 { --rc: #c96218; border-image: linear-gradient(90deg, #b8292f, #d49b4b, #ff6b2b, #8c52b5) 1; }
+.rar-5 .rk-badge, .rar-5 .rk-xp i {
+  background: linear-gradient(90deg, #b8292f, #c96218, #b37d14, #7c3aed);
+  background-size: 200% 100%;
+  animation: shine 2.8s linear infinite;
+  color: #fff;
+}
+.rar-6 { --rc: #c9971c; border-color: #c9971c; }
+.rar-6 .rk-badge, .rar-6 .rk-xp i {
+  background: linear-gradient(100deg, #78540e, #e6b830, #b8860b, #78540e);
+  background-size: 200% 100%;
+  animation: shine 1.8s linear infinite;
+  color: #fff;
+}
+[data-theme="dark"] .rar-6 .rk-name { color: #f5d061; text-shadow: 0 0 12px rgba(212, 175, 55, 0.5); }
+[data-theme="light"] .rar-6 .rk-name { color: #8a5a00; }
+[data-theme="light"] .rar-0 { --rc: #5c5349; }
+[data-theme="light"] .rar-1 { --rc: #1e6b3a; }
+[data-theme="light"] .rar-2 { --rc: #1c5882; }
+[data-theme="light"] .rar-3 { --rc: #5e2594; }
+[data-theme="light"] .rar-4 { --rc: #9c1920; }
+[data-theme="light"] .rar-5 { --rc: #9e4308; }
+@keyframes shine { to { background-position: -200% 0; } }
+
+/* TABS (SOULS MENU BAR) */
+.tabs { display: flex; gap: 6px; margin: 0 0 16px; flex-wrap: wrap; }
+.tab {
+  flex: 1;
+  min-width: 112px;
+  padding: 11px 12px;
+  background: linear-gradient(180deg, var(--card2), var(--card));
+  color: var(--mut);
+  border: 1px solid var(--line);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  text-transform: uppercase;
+}
+.tab.on {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--cy) 22%, var(--card2)), var(--card));
+  color: var(--ink-strong);
+  border-color: var(--cy);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2), inset 0 0 12px color-mix(in srgb, var(--cy) 18%, transparent);
+}
+.tab.on svg { color: var(--cy); }
+.tab:hover:not(.on) {
+  color: var(--ink-strong);
+  border-color: var(--line-gold);
+}
+
+/* CARDS & COMMON UI */
+.card {
+  background: linear-gradient(180deg, var(--card2), var(--card) 75%);
+  padding: 22px;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--line-gold);
+  box-shadow: var(--shadow-card);
+}
+.mut { color: var(--mut); }
+h2 {
+  font-size: 25px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+}
+h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  color: var(--cy);
+}
+.btn {
+  background: linear-gradient(180deg, #8f2327, #591215);
+  color: #ffffff;
+  border: 1px solid #c95156;
+  font-size: 16px;
+  padding: 11px 24px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.btn.cy {
+  background: linear-gradient(180deg, #9c6c25, #694410);
+  color: #ffffff;
+  border-color: #d49b4b;
+}
+.btn.gr {
+  background: linear-gradient(180deg, #2e6f46, #194228);
+  color: #ffffff;
+  border-color: #5ec280;
+}
+.btn.vi {
+  background: linear-gradient(180deg, #5e3280, #381a4f);
+  color: #ffffff;
+  border-color: #9b62c7;
+}
+.btn.ye {
+  background: linear-gradient(180deg, #b06e12, #734405);
+  color: #ffffff;
+  border-color: #eba43d;
+}
+.btn.gh {
+  background: var(--surface);
+  color: var(--ink-strong);
+  border: 1px solid var(--line);
+  font-size: 14.5px;
+  padding: 9px 16px;
+  box-shadow: none;
+}
+.btn.gh:hover { border-color: var(--cy); color: var(--cy); }
+
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.chip {
+  background: var(--surface);
+  color: var(--ink-strong);
+  border: 1px solid var(--line);
+  padding: 9px 16px;
+  font-size: 15.5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.16s ease;
+}
+.chip:hover { border-color: var(--line-gold); }
+.chip.on {
+  border-color: var(--cy);
+  color: var(--cy);
+  background: color-mix(in srgb, var(--cy) 15%, var(--surface));
+  box-shadow: inset 0 0 10px color-mix(in srgb, var(--cy) 22%, transparent);
+}
+
+input[type=number], input[type=text], select {
+  background: var(--surface);
+  border: 1px solid var(--line-gold);
+  color: var(--ink-strong);
+  padding: 9px 12px;
+  font: 500 15px 'Inter', sans-serif;
+  border-radius: 2px;
+}
+input[type=number] { width: 120px; }
+input:focus-visible, button:focus-visible { outline: 2px solid var(--cy); outline-offset: 2px; }
+.kv { margin: 12px 0; color: var(--mut); font-size: 15px; }
+.kv b { color: var(--cy); font-size: 25px; margin-left: 8px; }
+.hud { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.hud b { display: block; font-size: 24px; color: var(--ink-strong); }
+.bar {
+  position: relative;
+  height: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line-gold);
+  margin: 10px 0 18px;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--red), var(--cy));
+  transition: width 0.5s;
+}
+.bar em {
+  position: absolute;
+  right: -6px;
+  top: -13px;
+  font-style: normal;
+  color: var(--cy);
+  line-height: 0;
+}
+
+/* ==========================================================================
+   START HUB SCREEN WITH REALISTIC PAINTERLY CANVAS & ATMOSPHERIC TEXTURE
+   ========================================================================== */
+.hero {
+  text-align: center;
+  padding: 0 0 24px 0;
+  overflow: hidden;
+  border-top: 2px solid var(--cy);
+}
+.souls-scene {
+  position: relative;
+  width: 100%;
+  height: 310px;
+  background: #080605;
+  border-bottom: 1px solid var(--line-gold);
+  overflow: hidden;
+}
+[data-theme="light"] .souls-scene {
+  background: #d8d5ce;
+}
+.souls-scene-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 35%;
+  opacity: 0.38;
+  mix-blend-mode: screen;
+  filter: contrast(1.15) saturate(0.85);
+  pointer-events: none;
+}
+[data-theme="dark"] .souls-scene-photo {
+  background-image: url('https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=1400&q=80');
+}
+[data-theme="light"] .souls-scene-photo {
+  background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=80');
+  mix-blend-mode: multiply;
+  opacity: 0.22;
+  filter: grayscale(1) contrast(1.2);
+}
+#hero-canvas {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.scene-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(180deg, transparent 50%, var(--card2) 100%);
+  pointer-events: none;
+}
+.scene-caption {
+  position: relative;
+  z-index: 3;
+  margin-top: -36px;
+  padding: 0 18px;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+  padding: 0 20px;
+  text-align: left;
+}
+.hub-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--c, var(--cy));
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+.hub-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--c, var(--cy));
+  box-shadow: var(--shadow-card);
+}
+.hub-card h3 { color: var(--c, var(--cy)); margin: 0; font-size: 19px; display: flex; align-items: center; gap: 8px; }
+.hub-card p { font-size: 14px; color: var(--mut); line-height: 1.45; }
+.hub-stat {
+  font: 600 13.5px 'Inter', sans-serif;
+  color: var(--ink-strong);
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+/* ==========================================================================
+   10 DARK SOULS GOTHIC DOORS & FOG GATES
+   ========================================================================== */
+.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.door {
+  --c: var(--cy);
+  --dc: var(--c);
+  background: linear-gradient(180deg, var(--card2), var(--surface));
+  border: 1px solid var(--line);
+  border-bottom: 3px solid var(--dc);
+  padding: 15px;
+  cursor: pointer;
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+  transition: all 0.22s ease;
+  position: relative;
+}
+[data-theme="light"] .door {
+  --dc: color-mix(in srgb, var(--c) 72%, #1a120b);
+}
+.door:hover:not(.open) {
+  transform: translateY(-5px);
+  border-color: var(--dc);
+  box-shadow: var(--shadow-card);
+}
+.door.dim { opacity: 0.35; pointer-events: none; }
+.risk-pill {
+  display: inline-block;
+  font-size: 11.5px;
+  padding: 3px 10px;
+  background: var(--card);
+  color: var(--dc);
+  border: 1px solid color-mix(in srgb, var(--dc) 55%, transparent);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+.nm {
+  font-size: 19px;
+  color: var(--dc);
+  min-height: 25px;
+}
+.frame {
+  height: 152px;
+  background: #040303;
+  position: relative;
+  perspective: 650px;
+  margin: 8px auto 12px;
+  width: 120px;
+  border: 5px solid #2e2925;
+  border-bottom-width: 6px;
+  border-radius: 62px 62px 2px 2px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #594b3b, inset 0 0 22px #000;
+}
+.frame:before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 50%;
+  background: linear-gradient(0deg, var(--c), transparent);
+  opacity: 0.3;
+  animation: fl 2.4s ease-in-out infinite alternate;
+  z-index: 1;
+  pointer-events: none;
+}
+@keyframes fl { to { opacity: 0.7; } }
+.glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 62%, #fff5d6, var(--c) 45%, transparent 76%);
+  opacity: 0;
+  transition: opacity 0.75s;
+}
+.panel {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: inset 0 0 32px #000e, inset -6px 0 14px #000b;
+}
+.panel:before, .panel:after { content: ""; position: absolute; pointer-events: none; }
+.panel:before {
+  inset: 4px;
+  border: 1px solid rgba(255, 235, 190, 0.16);
+  border-radius: 54px 54px 0 0;
+  background: linear-gradient(90deg, transparent 48%, rgba(0,0,0,0.75) 49%, rgba(255,255,255,0.08) 51%, transparent 52%);
+}
+.open .panel { transform: rotateY(-84deg); }
+.open .glow { opacity: 1; }
+
+/* 10 DARK SOULS GOTHIC DOOR DESIGNS (p0..p9) */
+.panel.p0 {
+  background:
+    radial-gradient(circle at 50% 34%, rgba(255, 215, 110, 0.55) 0 18px, transparent 34px),
+    repeating-linear-gradient(90deg, #3b2d1d 0 12px, #261c11 12px 14px),
+    linear-gradient(180deg, #523e27, #24190e);
+}
+.panel.p0:after {
+  left: 50%; top: 34%; width: 40px; height: 40px; margin: -20px;
+  border: 2px solid #e6c165; border-radius: 50%;
+  background: radial-gradient(circle, #ffe89e 0 5px, transparent 6px),
+              repeating-conic-gradient(#e6c165 0 10deg, transparent 10deg 30deg);
+  box-shadow: 0 0 16px #e6c165;
+}
+.panel.p1 {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(79, 209, 176, 0.28), transparent 55%),
+    repeating-linear-gradient(0deg, #1b2822 0 16px, #101814 16px 19px),
+    linear-gradient(180deg, #24382f, #0d1411);
+}
+.panel.p1:after {
+  left: 50%; top: 45%; width: 34px; height: 50px; margin: -25px -17px;
+  border: 2px solid #5ec29e; border-radius: 18px 18px 2px 2px;
+  box-shadow: 0 0 14px #5ec29e, inset 0 0 10px #5ec29e;
+}
+.panel.p2 {
+  background:
+    linear-gradient(0deg, transparent 18%, #1c130c 18% 25%, transparent 25% 72%, #1c130c 72% 79%, transparent 79%),
+    repeating-linear-gradient(90deg, #422916 0 14px, #29180b 14px 16px);
+}
+.panel.p2:after {
+  left: 50%; top: 48%; width: 30px; height: 42px; margin: -21px -15px;
+  border: 2px solid #cfa055;
+  background: radial-gradient(circle at 50% 50%, #cfa055 0 4px, #382210 5px);
+  box-shadow: 0 0 12px rgba(207, 160, 85, 0.5);
+}
+.panel.p3 {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 14px, #14171a 14px 18px),
+    repeating-linear-gradient(0deg, transparent 0 18px, #14171a 18px 22px),
+    linear-gradient(180deg, #32383e, #16191c);
+}
+.panel.p3:after {
+  left: 50%; top: 48%; width: 42px; height: 42px; margin: -21px;
+  border: 4px dashed #d47a35; border-radius: 50%;
+  background: radial-gradient(circle, #ff9947 0 6px, #1a1d20 7px);
+  box-shadow: 0 0 14px rgba(212, 122, 53, 0.7);
+}
+.panel.p4 {
+  background:
+    radial-gradient(ellipse at 50% 55%, rgba(165, 215, 255, 0.45), transparent 65%),
+    repeating-linear-gradient(125deg, #1b2838 0 12px, #24374d 12px 24px);
+}
+.panel.p4:after {
+  left: 50%; top: 46%; width: 36px; height: 56px; margin: -28px -18px;
+  border: 2px solid #99d6ff; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.65), rgba(100,180,255,0.2) 60%, transparent 70%);
+  box-shadow: 0 0 18px #66b8ff;
+}
+.panel.p5 {
+  background:
+    radial-gradient(circle at 50% 65%, rgba(154, 111, 224, 0.35), transparent 55%),
+    repeating-linear-gradient(90deg, #1e162b 0 12px, #120d1a 12px 15px);
+}
+.panel.p5:after {
+  left: 50%; top: 48%; width: 38px; height: 38px; margin: -19px;
+  border-radius: 50%; border: 2px solid #b57cff;
+  background: radial-gradient(circle, #e0c2ff 0 5px, transparent 6px 11px, #b57cff 12px 13px, transparent 14px);
+  box-shadow: 0 0 18px #9a5cff;
+}
+.panel.p6 {
+  background:
+    repeating-linear-gradient(0deg, #09080a 0 2px, transparent 2px 28px),
+    linear-gradient(180deg, #2a2230, #120e16);
+}
+.panel.p6:after {
+  left: 50%; top: 44%; width: 34px; height: 34px; margin: -17px;
+  transform: rotate(45deg); border: 2px solid #d9669f;
+  background: radial-gradient(circle, #ffcce6 0 4px, #b83d7a 5px 10px, transparent 11px);
+  box-shadow: 0 0 18px #d9669f;
+}
+.panel.p7 {
+  background:
+    repeating-linear-gradient(90deg, #1f1b18 0 6px, #2e2622 6px 8px, transparent 8px 18px),
+    radial-gradient(ellipse at 50% 88%, #ff5e1a, #4a1404 58%, #0d0806);
+}
+.panel.p7:after {
+  left: 50%; bottom: 18px; width: 32px; height: 32px; margin-left: -16px;
+  border-radius: 50%; border: 3px solid #ff7b29;
+  background: radial-gradient(circle, #000 0 10px, #ff5500 11px 14px, transparent 15px);
+  box-shadow: 0 0 20px #ff5500;
+}
+.panel.p8 {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(217, 38, 62, 0.45), transparent 55%),
+    repeating-linear-gradient(45deg, #12090b 0 9px, #1f0e13 9px 18px);
+}
+.panel.p8:after {
+  left: 50%; top: 42%; width: 40px; height: 24px; margin: -12px -20px;
+  border-radius: 50%; border: 2px solid #e62e45;
+  background: radial-gradient(circle, #fff 0 3px, #d91c36 4px 9px, #140004 10px);
+  box-shadow: 0 0 22px #e62e45;
+}
+.panel.p9 {
+  background:
+    radial-gradient(circle at 50% 46%, #000 0 16px, #ff3b14 17px 21px, rgba(184, 29, 47, 0.4) 28px, #080508 65%);
+}
+.panel.p9:after {
+  left: 50%; top: 46%; width: 46px; height: 46px; margin: -23px;
+  border-radius: 50%; border: 2px solid #ff551a;
+  box-shadow: 0 0 26px #ff3300, inset 0 0 16px #ff7700;
+}
+
+.od {
+  display: grid;
+  grid-template-columns: 62px 1fr 48px;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 5px;
+  text-align: left;
+  color: var(--ink-strong);
+}
+.od u { display: block; height: 7px; background: var(--card); border: 1px solid var(--line); text-decoration: none; }
+.od u:after { content: ""; display: block; height: 100%; width: var(--w); background: var(--dc); }
+.od b { text-align: right; color: var(--ink-strong); font-weight: 700; }
+.hist { display: flex; align-items: flex-end; gap: 2px; height: 30px; margin: 9px 0 3px; }
+.hist i { flex: 1; background: var(--dc); opacity: 0.85; min-height: 2px; }
+.hs { font-size: 12px; color: var(--mut); text-align: left; }
+
+/* DARKSIGN ECLIPSE TIMER & REVEAL */
+.ring {
+  --p: 0;
+  --c: var(--ember);
+  width: 244px;
+  height: 244px;
+  border-radius: 50%;
+  margin: 14px auto;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(var(--c) calc(var(--p) * 1%), var(--line) 0);
+  box-shadow: 0 0 32px color-mix(in srgb, var(--c) 40%, transparent);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.ring > div {
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--card) 60%, var(--surface) 100%);
+  border: 1px solid var(--line-gold);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+}
+.big { font-size: 56px; line-height: 1; font-weight: 700; color: var(--ink-strong); }
+.center { text-align: center; }
+@keyframes pulse {
+  50% { box-shadow: 0 0 46px color-mix(in srgb, var(--c) 60%, transparent); }
+}
+.pop { text-align: center; animation: pop 0.45s; position: relative; overflow: hidden; }
+.pop > :not(.rays) { position: relative; }
+.rays {
+  position: absolute !important;
+  left: 50%;
+  top: 90px;
+  width: 540px;
+  height: 540px;
+  margin: -270px;
+  background: repeating-conic-gradient(color-mix(in srgb, var(--t) 22%, transparent) 0 8deg, transparent 8deg 20deg);
+  -webkit-mask-image: radial-gradient(circle, #000 5%, transparent 62%);
+  mask-image: radial-gradient(circle, #000 5%, transparent 62%);
+  animation: spin 20s linear infinite;
+  pointer-events: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pop { from { transform: scale(0.86); opacity: 0; } to { transform: none; opacity: 1; } }
+.tag {
+  display: inline-block;
+  padding: 5px 18px;
+  font-size: 13.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: var(--t, var(--cy));
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  margin: 4px 0 10px;
+}
+.tag.gold {
+  background: linear-gradient(100deg, #8a5a10, #d49b4b, #9c6b19);
+  background-size: 200% 100%;
+  animation: shine 2.2s linear infinite;
+  color: #ffffff;
+}
+
+/* STATS, LOGS & GRIDS */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.st {
+  background: var(--surface);
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--cy);
+}
+.st span { display: block; color: var(--mut); font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+.st b { font-size: 24px; color: var(--ink-strong); }
+.st.r { border-left-color: var(--ye); }
+.st.v { border-left-color: var(--vi); }
+.st.d { border-left-color: var(--red); }
+.st.g { border-left-color: var(--gr); }
+
+.log { list-style: none; padding: 0; max-height: 360px; overflow-y: auto; }
+.log li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 6px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14.5px;
+  align-items: center;
+}
+.log small { color: var(--mut); font-size: 12.5px; }
+.plus { color: var(--gr); font-weight: 700; }
+.minus { color: var(--red); font-weight: 700; }
+
+.muscle-bars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.m-row {
+  background: var(--surface);
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.m-top { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; color: var(--ink-strong); }
+.m-bar { height: 7px; background: var(--card); overflow: hidden; border: 1px solid var(--line); }
+.m-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--red), var(--cy)); }
+
+/* ACHIEVEMENTS */
+.ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+.ach {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 15px;
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.ach.t1 { border-color: #9e632b; box-shadow: inset 0 0 16px rgba(205, 127, 50, 0.12); }
+.ach.t2 { border-color: #8c52b5; box-shadow: inset 0 0 20px rgba(140, 82, 181, 0.16); }
+.ach.t3 { border-color: #c9971c; box-shadow: 0 0 16px rgba(212, 175, 55, 0.22), inset 0 0 24px rgba(212, 175, 55, 0.15); }
+.ach-ic {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  position: relative;
+  border: 1.5px solid var(--ac, var(--line));
+  color: var(--mut);
+}
+.ach.t1 .ach-ic { --ac: #b86b23; color: #b86b23; }
+.ach.t2 .ach-ic { --ac: #8244bd; color: #8244bd; }
+.ach.t3 .ach-ic { --ac: #b8860b; color: #b8860b; }
+.ach-body { flex: 1; min-width: 0; }
+.ach-lvl { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mut); }
+.ach-ttl { font-size: 17.5px; color: var(--ink-strong); margin: 2px 0; text-transform: uppercase; }
+.ach-desc { font-size: 13px; color: var(--mut); margin-bottom: 7px; line-height: 1.4; }
+
+/* SETTINGS & CHANCES TABLE */
+.cfg { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.cfg label { display: flex; flex-direction: column; gap: 5px; color: var(--mut); font-size: 14px; font-weight: 500; }
+.door-cfg-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.door-cfg-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 11px 13px;
+  display: grid;
+  grid-template-columns: 185px repeat(5, 1fr);
+  gap: 8px;
+  align-items: center;
+  font-size: 13.5px;
+}
+.door-cfg-item input { width: 100% !important; padding: 6px 8px; }
+
+/* MODAL / DISCLAIMER */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(5px);
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.modal {
+  max-width: 480px;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--line-gold);
+  border-top: 2px solid var(--cy);
+  border-bottom: 2px solid var(--cy);
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  animation: pop 0.25s;
+}
+
+/* CAREER LADDER LIST */
+.ladder { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 12px; }
+.lad-col {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+.lad-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  border-left: 3px solid var(--rc, #666);
+  margin-bottom: 4px;
+  background: var(--card);
+  color: var(--ink-strong);
+}
+.lad-row.cur { background: color-mix(in srgb, var(--cy) 18%, var(--card)); outline: 1px solid var(--rc); font-weight: 600; }
+.lad-row.done { opacity: 0.88; }
+
+.shake { animation: shake 0.45s; }
+@keyframes shake {
+  20% { transform: translate(-5px, 2px); }
+  40% { transform: translate(5px, -3px); }
+  60% { transform: translate(-4px, -2px); }
+  80% { transform: translate(3px, 3px); }
+}
+@media (max-width: 700px) {
+  .doors { grid-template-columns: 1fr; }
+  .prof-bar { grid-template-columns: auto 1fr; }
+  .medals-row { grid-column: 1 / -1; }
+  .door-cfg-item { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .door-cfg-item strong { grid-column: 1 / -1; }
+  .souls-scene { height: 245px; }
+}
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas><canvas id="fx"></canvas>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand" data-a="tab" data-v="home" title="На стартовый экран">
+      <div class="brand-ic" id="brand-ic"></div>
+      <div>
+        <div class="logo-txt">STAT<span>TRACK</span></div>
+        <small class="logo-sub">Система геймификации учёбы, спорта и дисциплины</small>
+      </div>
+    </div>
+    <div class="top-actions" id="top-actions"></div>
+  </header>
+
+  <div id="prof-header"></div>
+  <div class="tabs" id="tabs"></div>
+  <main id="main"></main>
+</div>
+<div id="modal-root"></div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+const K='stattrack_v2';
+
+/* 10 PERMANENT DOORS ORDERED BY RISK & CHANCE (Easy -> Hard) */
+const DEF_DOORS=[
+  {id:0,n:'Солнечная терраса',s:52,r:45,g:2,k:1,c:15,col:'#c9a252',risk:'Риск I • Очень лёгкая'},
+  {id:1,n:'Сад безмятежности',s:58,r:38,g:2.5,k:1.5,c:20,col:'#52a888',risk:'Риск II • Лёгкая'},
+  {id:2,n:'Библиотечный зал',s:64,r:30.5,g:3.5,k:2,c:25,col:'#d49b4b',risk:'Риск III • Спокойная'},
+  {id:3,n:'Механический шлюз',s:68,r:25,g:4.5,k:2.5,c:30,col:'#d97b38',risk:'Риск IV • Умеренная'},
+  {id:4,n:'Зеркальная галерея',s:71,r:20,g:5.5,k:3.5,c:35,col:'#64a6d1',risk:'Риск V • Средняя'},
+  {id:5,n:'Алхимическая лаборатория',s:73,r:16,g:6.5,k:4.5,c:38,col:'#9a6fe0',risk:'Риск VI • Опасная'},
+  {id:6,n:'Крипта древних рун',s:75,r:12,g:7.5,k:5.5,c:42,col:'#cc5894',risk:'Риск VII • Тяжёлая'},
+  {id:7,n:'Кузница титанов',s:76,r:9,g:8.5,k:6.5,c:46,col:'#e85d24',risk:'Риск VIII • Суровая'},
+  {id:8,n:'Обсидиановый бастион',s:77,r:6,g:9.5,k:7.5,c:50,col:'#cc293d',risk:'Риск IX • Кошмарная'},
+  {id:9,n:'Врата Бездны',s:77,r:4,g:10.5,k:8.5,c:55,col:'#e62200',risk:'Риск X • Адская'}
+];
+
+/* 20 STUDY RANKS (UP TO 500 HOURS = 30,000 MIN) */
+const STUDY_RANKS=[
+  [0,'Бревно необучаемое'],
+  [1,'Память рыбки'],
+  [3,'Овощ с учебником'],
+  [6,'Ноль без палочки'],
+  [10,'Искатель покемонов'],
+  [15,'Мозг на 1% заряда'],
+  [22,'Ученик по видеороликам'],
+  [30,'Вечный «Я завтра начну»'],
+  [40,'Гугл-стажер'],
+  [55,'Шпаргалочник-любитель'],
+  [75,'Тетрадь-убийца'],
+  [100,'Логический ниндзя'],
+  [130,'Всезнайка-выскочка'],
+  [165,'Мозг-компьютер'],
+  [205,'Ходячая энциклопедия'],
+  [250,'Профессор в отпуске'],
+  [300,'Мудрец из пещеры'],
+  [360,'Нейро-Оверлорд'],
+  [425,'Абсолютный Разум'],
+  [500,'Владыка Знаний']
+];
+
+/* 20 SPORT RANKS (UP TO 150 WORKOUTS) */
+const SPORT_RANKS=[
+  [0,'Диванный клещ'],
+  [1,'Безвольная амеба'],
+  [3,'Слабая рука'],
+  [5,'Плед-атлет'],
+  [8,'Потный новичок'],
+  [12,'Бегун за автобусом'],
+  [16,'Гравитрон 100кг'],
+  [21,'Подниматель грифов'],
+  [27,'Подающий надежды'],
+  [34,'Спортивный нытик'],
+  [42,'Болтун у тренажера'],
+  [50,'Протеиновый гурман'],
+  [59,'Фитнес маньяк'],
+  [69,'Крепкий орешек'],
+  [80,'Геракл'],
+  [92,'Титан'],
+  [105,'Олимпиец'],
+  [119,'Живая легенда'],
+  [134,'Абсолютный зверь'],
+  [150,'Абсолютный бог']
+];
+
+const RARITY_NAMES=['Обычный','Редкий','Сверхредкий','Эпический','Мифический','Хроматический','Легендарный'];
+const getRarityIdx=lvl=>lvl<3?0:lvl<6?1:lvl<9?2:lvl<12?3:lvl<15?4:lvl<18?5:6;
+
+/* MUSCLE GROUPS & ACTIVITIES */
+const MUSCLES=[
+  {id:'chest',n:'Грудь'},
+  {id:'legs',n:'Ноги'},
+  {id:'shoulders',n:'Плечи'},
+  {id:'biceps',n:'Бицепс'},
+  {id:'triceps',n:'Трицепс'},
+  {id:'back',n:'Спина'},
+  {id:'abs',n:'Пресс'},
+  {id:'pool',n:'Бассейн'},
+  {id:'yoga',n:'Йога'},
+  {id:'home',n:'Домашняя тренировка'},
+  {id:'bars',n:'Турники'},
+  {id:'other',n:'Другая активность'}
+];
+
+/* 20 ACHIEVEMENTS (3 TIERS EACH) */
+const ACHS=[
+  {id:'st_hrs',n:'Покоритель времени',d:'Провести за учёбой указанное число часов',u:'ч',t:[3,25,100],ic:'book',val:s=>+(s.stats.min/60).toFixed(1)},
+  {id:'keys',n:'Взломщик лабиринта',d:'Найти ключи в лабиринте учёбы',u:'ключ.',t:[5,15,40],ic:'key',val:s=>s.stats.keys||0},
+  {id:'early_k',n:'Любимчик фортуны',d:'Выбить ключ досрочно до конца плана',u:'раз',t:[1,5,15],ic:'clover',val:s=>s.stats.earlyKeys||0},
+  {id:'games',n:'Киберспортсмен',d:'Сыграть выпавшие в дверях катки',u:'кат.',t:[5,15,35],ic:'game',val:s=>s.stats.games||0},
+  {id:'full_runs',n:'Железная выдержка',d:'Пройти план учёбы до конца без раннего ключа',u:'заб.',t:[3,10,25],ic:'shield',val:s=>s.stats.fullRuns||0},
+  {id:'earn_tot',n:'Капиталист',d:'Заработать суммарно рублей за дисциплину',u:'₽',t:[2000,10000,50000],ic:'coin',val:s=>s.stats.totalEarned||0},
+  {id:'wk_tot',n:'Марафонец спорта',d:'Выполнить и отметить тренировки',u:'трен.',t:[5,25,75],ic:'bolt',val:s=>s.stats.wk||0},
+  {id:'wk_min',n:'Машина выносливости',d:'Набрать суммарное время тренировок',u:'мин',t:[180,600,1800],ic:'flame',val:s=>s.stats.wkMin||0},
+  ...MUSCLES.map(m=>({
+    id:'m_'+m.id,
+    n:'Мастер: '+m.n,
+    d:`Прокачать «${m.n}» на тренировках`,
+    u:'трен.',
+    t:[5,15,35],
+    ic:'muscle_'+m.id,
+    val:s=>(s.stats.muscles&&s.stats.muscles[m.id])||0
+  }))
+];
+
+const DEF=()=>({
+  profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',medals:['st_hrs','wk_tot','keys']},
+  cfg:{rs:500,rw:500,full:true,kMult:1,gMult:1,rMult:1,doors:JSON.parse(JSON.stringify(DEF_DOORS))},
+  bank:{card:0,pend:0,paid:0},
+  stats:{min:0,wk:0,wkMin:0,keys:0,earlyKeys:0,fullRuns:0,games:0,totalEarned:0,earlyStreak:0,muscles:{},customActs:{}},
+  logStudy:[],
+  logWork:[],
+  logBank:[],
+  run:{study:null},
+  sel:{study:180},
+  wkForm:{sel:['chest','biceps','triceps'],dur:'',customName:''},
+  tab:'home',
+  histTab:'study',
+  mute:false,
+  theme:'dark'
+});
+
+let S=null;
+try{
+  const raw=localStorage.getItem(K);
+  if(raw)S=JSON.parse(raw);
+  else{
+    const old=JSON.parse(localStorage.getItem('labyrinth_v1')||'null');
+    if(old){
+      S=DEF();
+      if(old.bank)Object.assign(S.bank,old.bank);
+      if(old.stats)Object.assign(S.stats,old.stats);
+      if(old.cfg){S.cfg.rs=old.cfg.rs??500;S.cfg.rw=old.cfg.rw??500;S.cfg.full=old.cfg.full??true;}
+    }
+  }
+}catch(e){}
+const base=DEF();
+S=Object.assign(base,S||{});
+S.profile=Object.assign(base.profile,S.profile||{});
+S.cfg=Object.assign(base.cfg,S.cfg||{});
+if(!S.cfg.doors||S.cfg.doors.length!==10)S.cfg.doors=JSON.parse(JSON.stringify(DEF_DOORS));
+S.bank=Object.assign(base.bank,S.bank||{});
+S.stats=Object.assign(base.stats,S.stats||{});
+S.stats.muscles=Object.assign({},S.stats.muscles||{});
+S.stats.customActs=Object.assign({},S.stats.customActs||{});
+S.wkForm=Object.assign(base.wkForm,S.wkForm||{});
+if(!S.theme)S.theme='dark';
+
+let modalState=null;
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const applyTheme=()=>{document.documentElement.setAttribute('data-theme',S.theme||'dark')};
+applyTheme();
+
+/* ICONS */
+const P={
+  logo:'<circle cx="12" cy="10" r="6"/><path d="M12 16v6M9 19h6M8 5l2-2 2 2 2-2 2 2"/>',
+  home:'<path d="M12 2v16M9 6l3-4 3 4M5 20l7-3 7 3M3 22h18"/>',
+  study:'<path d="M3 5l9 2 9-2v14l-9 2-9-2z"/><path d="M12 7v14"/>',
+  work:'<path d="M14.5 4.5l5 5-11 11-5-5zM3 21l3.5-3.5M16 3l5 5"/>',
+  rest:'<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-9z"/>',
+  key:'<circle cx="8" cy="8" r="4"/><path d="M11 11l9 9M16 16l3-3M13 13l2-2"/>',
+  snd:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9c2 2 2 4 0 6M19 6c4 4 4 8 0 12"/>',
+  mute:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/>',
+  sun:'<circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+  moon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  bank:'<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9 10c0-2 6-2 6 0s-6 2-6 4 6 2 6 0"/>',
+  game:'<path d="M7 8h10a4 4 0 0 1 4 4v3a2 2 0 0 1-3.5 1.3L16 14H8l-1.5 2.3A2 2 0 0 1 3 15v-3a4 4 0 0 1 4-4z"/><path d="M8 10.5v3M6.5 12h3M16 11h.01M18 12.5h.01"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.77 1.02 1.41 1.09H21a2 2 0 1 1 0 4h-.09c-.64.07-1.15.49-1.51 1.09z"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 14.5-4 16 0"/>',
+  trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  crown:'<path d="M3 18h18l-2-11-5 4-2-6-2 6-5-4z"/>',
+  skull:'<circle cx="9" cy="11" r="1.5"/><circle cx="15" cy="11" r="1.5"/><path d="M6 16v3h12v-3a7 7 0 1 0-12 0zM10 19v-2M14 19v-2"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/>',
+  star:'<path d="M12 2l3 6.5L22 9.5l-5 4.8 1.2 7L12 18l-6.2 3.3 1.2-7-5-4.8 7-1z"/>',
+  flame:'<path d="M12 2c2 5 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-4-1-5 1-8z"/>',
+  clover:'<circle cx="9" cy="9" r="3.5"/><circle cx="15" cy="9" r="3.5"/><circle cx="9" cy="15" r="3.5"/><circle cx="15" cy="15" r="3.5"/><path d="M12 15v7"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1.5 5-1.5 5 0s-5 1.5-5 3 5 1.5 5 0"/>',
+  book:'<path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M7 4v16"/>'
+};
+const icon=(n,s=22)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${P[n]||P.star}</svg>`;
+
+/* EVOLVING ACHIEVEMENT ICONS (Tier 0 -> Tier 1 -> Tier 2 -> Tier 3) */
+function achIconSvg(icName,tier,size=34){
+  const basePath=P[icName]|| (icName.startsWith('muscle_')?P.work:P.trophy);
+  const wing=tier>=2?'<path d="M2 12c2-4 4-6 6-6M22 12c-2-4-4-6-6-6" stroke-width="1.6" opacity=".85"/>':'';
+  const crown=tier>=3?'<path d="M7 4.5l2.5 2 2.5-3 2.5 3 2.5-2-.8 3.5H7.8z" fill="currentColor" stroke="none"/>':'';
+  const stars=tier===1?'<circle cx="12" cy="21" r="1.4" fill="currentColor"/>':
+              tier===2?'<circle cx="9" cy="21" r="1.4" fill="currentColor"/><circle cx="15" cy="21" r="1.4" fill="currentColor"/>':
+              tier>=3?'<circle cx="7.5" cy="21" r="1.5" fill="currentColor"/><circle cx="12" cy="21.5" r="1.8" fill="currentColor"/><circle cx="16.5" cy="21" r="1.5" fill="currentColor"/>':'';
+  const ring=tier>=2?`<circle cx="12" cy="12" r="10.5" stroke-dasharray="${tier===3?'2 2':'4 3'}" stroke-width="1.2" opacity=".7"/>`:'';
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">${ring}${wing}${crown}<g transform="scale(${tier>=3?.72:tier===2?.78:.85}) translate(${tier>=3?4.5:tier===2?3.3:2.1},${tier>=3?4.8:3})">${basePath}</g>${stars}</svg>`;
+}
+
+function getAchState(a){
+  const v=a.val(S);
+  const lvl=v>=a.t[2]?3:v>=a.t[1]?2:v>=a.t[0]?1:0;
+  const nextTarget=lvl<3?a.t[lvl]:a.t[2];
+  const prevTarget=lvl===0?0:a.t[lvl-1];
+  const pct=lvl>=3?100:Math.max(0,Math.min(100,((v-prevTarget)/(nextTarget-prevTarget))*100));
+  return {v,lvl,nextTarget,pct};
+}
+
+/* ==========================================================================
+   DARK SOULS ATMOSPHERIC SOUND ENGINE
+   ========================================================================== */
+let AC=null;
+const tone=(f,t,d,ty='sine',v=.16,f2)=>{
+  const c=AC,o=c.createOscillator(),g=c.createGain(),n=c.currentTime+t;
+  o.type=ty;o.frequency.setValueAtTime(f,n);
+  if(f2)o.frequency.exponentialRampToValueAtTime(f2,n+d);
+  g.gain.setValueAtTime(0.0001,n);
+  g.gain.linearRampToValueAtTime(v,n+.025);
+  g.gain.exponentialRampToValueAtTime(.0008,n+d);
+  o.connect(g);g.connect(c.destination);
+  o.start(n);o.stop(n+d+.06);
+};
+const bell=(f,t,d,v=.12)=>{
+  tone(f,t,d,'sine',v);
+  tone(f*2,t,d*.75,'sine',v*.45);
+  tone(f*2.4,t,d*.55,'triangle',v*.25);
+  tone(f*.5,t,d*1.1,'sine',v*.6);
+};
+const noise=(t,d,f,q,v,ty='bandpass')=>{
+  const c=AC,n=c.currentTime+t,b=c.createBuffer(1,Math.ceil(c.sampleRate*d),c.sampleRate),a=b.getChannelData(0);
+  for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;
+  const s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain();
+  s.buffer=b;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;
+  g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);
+  s.connect(fl);fl.connect(g);g.connect(c.destination);s.start(n);
+};
+const SND={
+  open0:()=>{noise(0,.55,140,.9,.38,'lowpass');tone(68,0,.65,'sawtooth',.12,38);bell(146.83,.08,.9,.08)},
+  open1:()=>{noise(0,.85,220,1.2,.42,'lowpass');tone(55,0,.9,'sine',.32,29);bell(110,.1,1.1,.09)},
+  open2:()=>{noise(0,.14,2400,3.5,.24);[0.16,0.3,0.44].forEach(t=>noise(t,.08,3200,2.5,.12));tone(82.4,.1,.75,'triangle',.16,45)},
+  key:()=>{
+    tone(36.71,0,2.4,'sine',.35,34);
+    [146.83,220,293.66,349.23,440].forEach((f,i)=>bell(f,i*.09,2.1,.09));
+  },
+  done:()=>{
+    noise(0,.4,420,1.5,.18,'bandpass');
+    [146.83,220,293.66,440].forEach((f,i)=>bell(f,i*.11,1.5,.08));
+  },
+  tick:()=>{tone(1320,0,.045,'triangle',.045,880);tone(2640,0,.025,'sine',.025)},
+  t_l:()=>{bell(220,0,1.1,.09);bell(293.66,.12,1.2,.08)},
+  t_y:()=>{bell(196,0,1.2,.1);bell(293.66,.14,1.3,.09)},
+  t_g:()=>{[146.83,185,220,293.66].forEach((f,i)=>bell(f,i*.12,1.6,.09))},
+  t_o:()=>{tone(55,0,1.2,'sawtooth',.12,36);bell(146.83,0,1.5,.11);bell(155.56,.18,1.5,.09)},
+  t_r:()=>{
+    tone(41.2,0,1.6,'sine',.38,27.5);
+    tone(82.4,0,1.4,'sawtooth',.14,41.2);
+    bell(164.81,.05,1.8,.1);bell(155.56,.22,1.8,.1);
+    noise(0,.9,130,.7,.32,'lowpass');
+  },
+  t_au:()=>{
+    tone(55,0,1.8,'sine',.28);
+    [220,277.18,329.63,440,554.37].forEach((f,i)=>bell(f,i*.08,1.8,.085));
+  }
+};
+const snd=n=>{if(S.mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();(SND[n]||SND.tick)()}catch(e){}};
+
+/* HELPERS */
+const DUR=[10,15,20,25,30,35,40,45,50,55,60];
+const dw=(c,d)=>Math.exp(-((d-c)**2)/242);
+const hm=n=>{const h=Math.floor(n/60),m=Math.round(n%60);return h?h+' ч'+(m?' '+m+' мин':''):m+' мин'};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const fmt=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+const mmss=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+const money=(m,u)=>m==='study'?u*S.cfg.rs/60:u*S.cfg.rw;
+
+function pickDur(c,rem){
+  const ds=DUR.filter(d=>d<=rem);
+  if(!ds.length)return rem;
+  let x=Math.random()*ds.reduce((a,d)=>a+dw(c,d),0),p=ds[ds.length-1];
+  for(const d of ds){x-=dw(c,d);if(x<=0){p=d;break}}
+  return rem-p<10&&rem<=60?rem:p;
+}
+
+const TC={g:'#2e7d4c',l:'#5c8a32',y:'#b87d28',o:'#c9561e',r:'#a82026',au:'#b8860b'};
+function tier(t,d){
+  if(t==='key')return[TC.au,'Ключ','au'];
+  if(t==='game')return[TC.au,'Катка','au'];
+  if(t==='rest')return d>=15?[TC.g,'Долгий отдых','g']:d>=10?[TC.l,'Отдых','l']:[TC.y,'Передышка','y'];
+  return d>=50?[TC.r,'Адская','r']:d>=40?[TC.o,'Тяжёлая','o']:d>=25?[TC.y,'Обычная','y']:[TC.l,'Лёгкая','l'];
+}
+const TIPS=['Выпей глоток Эстуса (воды)','Сделай 15 приседаний у костра','Разомни шею и плечи от лат','Вглядись в горизонт Лотрика на 20 секунд','Пройдись по залу','Глубоко подыши: вдох на 4 счёта, выдох на 4','Потянись и встряхни кисти'];
+
+/* EFFECTIVE DOOR CHANCES WITH STEP>=3 PROTECTION & EARLY KEY PENALTY */
+function getDoorOdds(door,step=0){
+  const canKey=step>=3;
+  const streakPen=Math.pow(0.5,S.stats.earlyStreak||0);
+  let k=canKey?+(door.k*(S.cfg.kMult||1)*streakPen).toFixed(2):0;
+  let g=+(door.g*(S.cfg.gMult||1)).toFixed(2);
+  let r=+(door.r*(S.cfg.rMult||1)).toFixed(1);
+  if(k+g+r>95){const sc=95/(k+g+r);k=+(k*sc).toFixed(2);g=+(g*sc).toFixed(2);r=+(r*sc).toFixed(1);}
+  const s=+(100-k-g-r).toFixed(1);
+  return {s,r,g,k,canKey,streakPen};
+}
+
+function pickDoors(){
+  const pool=S.cfg.doors.slice().sort(()=>Math.random()-.5).slice(0,3);
+  return pool.sort((a,b)=>(a.k+a.g)-(b.k+b.g)||a.c-b.c);
+}
+
+function calcRank(list,val){
+  let lvl=0;
+  for(let i=0;i<list.length;i++){if(val>=list[i][0])lvl=i;}
+  const curReq=list[lvl][0];
+  const nextReq=lvl<list.length-1?list[lvl+1][0]:curReq;
+  const pct=lvl>=list.length-1?100:Math.max(0,Math.min(100,((val-curReq)/(nextReq-curReq))*100));
+  const rar=getRarityIdx(lvl);
+  return {lvl,name:list[lvl][1],curReq,nextReq,pct,rar,rarName:RARITY_NAMES[rar],max:lvl>=list.length-1};
+}
+
+function getStudyRank(){return calcRank(STUDY_RANKS,+(S.stats.min/60).toFixed(2));}
+function getSportRank(){return calcRank(SPORT_RANKS,S.stats.wk||0);}
+
+/* LOGGING & EARNING */
+const addStudyLog=(txt,amt)=>{S.logStudy.unshift({t:Date.now(),txt,amt});S.logStudy=S.logStudy.slice(0,50)};
+const addWorkLog=(txt,amt)=>{S.logWork.unshift({t:Date.now(),txt,amt});S.logWork=S.logWork.slice(0,50)};
+const addBankLog=(txt,amt)=>{S.logBank.unshift({t:Date.now(),txt,amt});S.logBank=S.logBank.slice(0,50)};
+const creditMoney=amt=>{const a=Math.round(amt);S.bank.pend+=a;S.stats.totalEarned=(S.stats.totalEarned||0)+a;return a};
+
+/* HEADER & PROFILE BAR RENDER */
+function renderHeader(){
+  $('#brand-ic').innerHTML=icon('logo',26);
+  const isLight=S.theme==='light';
+  $('#top-actions').innerHTML=`
+    <button class="icon-btn cut-sm ${S.tab==='ach'?'on':''}" data-a="tab" data-v="ach" title="Достижения">${icon('trophy',18)} <span>Медали</span></button>
+    <button class="icon-btn cut-sm ${S.tab==='profile'?'on':''}" data-a="tab" data-v="profile" title="Профиль">${icon('user',18)} <span>Профиль</span></button>
+    <button class="icon-btn cut-sm ${S.tab==='settings'?'on':''}" data-a="tab" data-v="settings" title="Настройки и шансы">${icon('gear',18)}</button>
+    <button class="icon-btn cut-sm" data-a="theme" title="Переключить облик: Чёрный Рыцарь / Белый Рыцарь">${icon(isLight?'moon':'sun',18)} <span>${isLight?'Чёрный Рыцарь':'Белый Рыцарь'}</span></button>
+    <button class="icon-btn cut-sm" data-a="mute" title="Звук">${icon(S.mute?'mute':'snd',18)}</button>
+  `;
+
+  const sr=getStudyRank(),wr=getSportRank();
+  const hrs=(S.stats.min/60).toFixed(1);
+  const medals=(S.profile.medals||[]).map(id=>{
+    const a=ACHS.find(x=>x.id===id);if(!a)return '';
+    const st=getAchState(a);
+    const col=st.lvl===3?'#b8860b':st.lvl===2?'#8244bd':st.lvl===1?'#b86b23':'#665e54';
+    return `<div class="medal-mini" style="border-color:${col};color:${col}" title="${a.n} (Ур. ${st.lvl}/3)">${achIconSvg(a.ic,st.lvl,20)}</div>`;
+  }).join('');
+
+  $('#prof-header').innerHTML=`
+    <div class="prof-bar cut" style="--accent:${S.profile.accent}" data-a="tab" data-v="profile" title="Открыть профиль и подробную статистику">
+      <div class="ava">${icon(S.profile.ava||'crown',28)}</div>
+      <div class="prof-info">
+        <div class="prof-top">
+          <span class="prof-nick">${S.profile.nick}</span>
+          <span class="prof-title">${S.profile.title}</span>
+        </div>
+        <div class="mut" style="font-size:13px;margin-top:3px">Нажми, чтобы открыть развёрнутую статистику, сменить ник или медали</div>
+      </div>
+      <div class="medals-row">${medals||'<span class="mut" style="font-size:13px">Нет выбранных медалей</span>'}</div>
+    </div>
+    <div class="rk-grid">
+      <div class="rk-cell cut-sm rar-${sr.rar}" data-a="tab" data-v="profile">
+        <div class="rk-head"><span>Статус учёбы • Ур. ${sr.lvl+1}/20</span><span class="rk-badge">${sr.rarName}</span></div>
+        <div class="rk-name">${icon('study',19)} ${sr.name}</div>
+        <div class="rk-xp"><i style="width:${sr.pct}%"></i></div>
+        <div class="rk-sub"><span>${hrs} ч из ${sr.nextReq} ч</span><span>${sr.max?'МАКС. РАНГ (500 ч)':'След. ранг: '+sr.nextReq+' ч'}</span></div>
+      </div>
+      <div class="rk-cell cut-sm rar-${wr.rar}" data-a="tab" data-v="profile">
+        <div class="rk-head"><span>Статус спорта • Ур. ${wr.lvl+1}/20</span><span class="rk-badge">${wr.rarName}</span></div>
+        <div class="rk-name">${icon('work',19)} ${wr.name}</div>
+        <div class="rk-xp"><i style="width:${wr.pct}%"></i></div>
+        <div class="rk-sub"><span>${S.stats.wk} из ${wr.nextReq} трен.</span><span>${wr.max?'МАКС. РАНГ (150 трен.)':'След. ранг: '+wr.nextReq+' трен.'}</span></div>
+      </div>
+    </div>
+  `;
+
+  const T=[
+    ['home','Старт','home'],
+    ['study','Учёба','study'],
+    ['work','Спорт','work'],
+    ['ach','Достижения','trophy'],
+    ['bank','Банк и История','bank']
+  ];
+  $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,18)} ${v}</button>`).join('');
+}
+
+/* ==========================================================================
+   REALISTIC PAINTERLY DARK SOULS HERO RENDERER (ECLIPSE, ARCHTREE & KNIGHT)
+   ========================================================================== */
+function drawHeroArt(){
+  const cv=$('#hero-canvas');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=cv.width=1200, H=cv.height=360;
+  const isLight=S.theme==='light';
+
+  /* Deterministic PRNG for organic textures, branches, mountains & ash */
+  let seed=1337;
+  const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
+
+  /* 1. SKY & ATMOSPHERIC GRADIENT */
+  const sky=ctx.createLinearGradient(0,0,0,H);
+  if(isLight){
+    sky.addColorStop(0,'#8c8982');
+    sky.addColorStop(0.45,'#c4c1ba');
+    sky.addColorStop(0.82,'#e2dfd9');
+    sky.addColorStop(1,'#f7f4ee');
+  }else{
+    sky.addColorStop(0,'#040304');
+    sky.addColorStop(0.38,'#1c0905');
+    sky.addColorStop(0.72,'#4a1608');
+    sky.addColorStop(1,'#140d0a');
+  }
+  ctx.fillStyle=sky;
+  ctx.fillRect(0,0,W,H);
+
+  /* 2. VOLUMETRIC CLOUDS / INK-WASH MIST LAYERS */
+  for(let i=0;i<75;i++){
+    const cx=rand()*W, cy=rand()*H*0.82, rx=90+rand()*220, ry=24+rand()*55;
+    const cg=ctx.createRadialGradient(cx,cy,5,cx,cy,rx);
+    if(isLight){
+      const v=i%2===0?250:155;
+      cg.addColorStop(0,`rgba(${v},${v-2},${v-5},${0.11+rand()*0.12})`);
+      cg.addColorStop(1,'rgba(210,206,198,0)');
+    }else{
+      const dist=Math.hypot(cx-560,cy-105);
+      const warm=dist<340;
+      cg.addColorStop(0,warm?`rgba(255,${95+Math.floor(rand()*70)},20,${0.08+rand()*0.11})`:`rgba(18,10,9,${0.25+rand()*0.25})`);
+      cg.addColorStop(1,'rgba(0,0,0,0)');
+    }
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.scale(1,ry/rx);
+    ctx.fillStyle=cg;
+    ctx.beginPath();ctx.arc(0,0,rx,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+
+  /* 3. REALISTIC DARKSIGN ECLIPSE (DARK) OR PALE ASH SUN (LIGHT) */
+  const ex=560, ey=96, er=44;
+  if(!isLight){
+    /* Outer atmospheric horizon blaze */
+    const blaze=ctx.createRadialGradient(ex,ey+85,10,ex,ey+40,360);
+    blaze.addColorStop(0,'rgba(255,165,60,0.55)');
+    blaze.addColorStop(0.3,'rgba(235,68,15,0.32)');
+    blaze.addColorStop(0.65,'rgba(120,20,10,0.12)');
+    blaze.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=blaze;
+    ctx.fillRect(0,0,W,H);
+
+    /* Corona glow around the black sun */
+    const cor=ctx.createRadialGradient(ex,ey,er*0.88,ex,ey,er*3.4);
+    cor.addColorStop(0,'rgba(255,240,180,0.95)');
+    cor.addColorStop(0.14,'rgba(255,120,20,0.88)');
+    cor.addColorStop(0.38,'rgba(210,35,10,0.35)');
+    cor.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=cor;
+    ctx.beginPath();ctx.arc(ex,ey,er*3.4,0,Math.PI*2);ctx.fill();
+
+    /* Turbulent solar flares / plasma tongues around the ring */
+    for(let a=0;a<180;a++){
+      const ang=(a/180)*Math.PI*2;
+      const len=er*(1.04+0.32*Math.pow(rand(),2.2));
+      const x1=ex+Math.cos(ang)*(er-2), y1=ey+Math.sin(ang)*(er-2);
+      const x2=ex+Math.cos(ang+0.04)*len, y2=ey+Math.sin(ang+0.04)*len;
+      ctx.strokeStyle=a%3===0?'rgba(255,230,150,0.75)':'rgba(255,85,15,0.55)';
+      ctx.lineWidth=1.2+rand()*2.2;
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    }
+
+    /* Bleeding magma stream dripping down from the Darksign */
+    const drip=ctx.createLinearGradient(ex,ey+er,ex,ey+er+110);
+    drip.addColorStop(0,'rgba(255,190,90,0.9)');
+    drip.addColorStop(0.45,'rgba(255,75,15,0.55)');
+    drip.addColorStop(1,'rgba(255,40,0,0)');
+    ctx.strokeStyle=drip;
+    ctx.lineWidth=2.6;
+    ctx.beginPath();ctx.moveTo(ex-1,ey+er);ctx.quadraticCurveTo(ex+3,ey+er+55,ex-2,ey+er+105);ctx.stroke();
+
+    /* Pitch-black eclipsed sun core */
+    const core=ctx.createRadialGradient(ex,ey,er*0.2,ex,ey,er);
+    core.addColorStop(0,'#020101');
+    core.addColorStop(0.86,'#070302');
+    core.addColorStop(1,'#2e0902');
+    ctx.fillStyle=core;
+    ctx.beginPath();ctx.arc(ex,ey,er,0,Math.PI*2);ctx.fill();
+  }else{
+    /* Light Mode: Ethereal pale halo & misty ink-wash ring */
+    const halo=ctx.createRadialGradient(ex-80,ey+15,er*0.5,ex-80,ey+15,er*4.5);
+    halo.addColorStop(0,'rgba(255,255,255,0.95)');
+    halo.addColorStop(0.35,'rgba(240,238,232,0.55)');
+    halo.addColorStop(1,'rgba(200,196,188,0)');
+    ctx.fillStyle=halo;
+    ctx.beginPath();ctx.arc(ex-80,ey+15,er*4.5,0,Math.PI*2);ctx.fill();
+
+    ctx.strokeStyle='rgba(90,85,78,0.28)';
+    ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.arc(ex-80,ey+15,er*1.05,0,Math.PI*2);ctx.stroke();
+
+    /* Distant ghostly gothic cathedral silhouette on the right (like Ref 2) */
+    ctx.fillStyle='rgba(150,146,138,0.42)';
+    const bx=980, by=245;
+    const spires=[[0,75,16],[22,105,20],[48,142,24],[78,95,18],[102,68,14],[-26,60,15]];
+    spires.forEach(([dx,h,w])=>{
+      ctx.beginPath();
+      ctx.moveTo(bx+dx,by);
+      ctx.lineTo(bx+dx,by-h*0.65);
+      ctx.lineTo(bx+dx+w/2,by-h);
+      ctx.lineTo(bx+dx+w,by-h*0.65);
+      ctx.lineTo(bx+dx+w,by);
+      ctx.closePath();
+      ctx.fill();
+    });
+  }
+
+  /* 4. LAYERED CRAGGY MOUNTAIN RIDGES & VALLEY */
+  function drawMountainLayer(yBase,amp,roughness,colTop,colBot,rimCol){
+    const pts=[];
+    for(let x=0;x<=W;x+=15){
+      const valley=Math.exp(-Math.pow((x-560)/250,2))*75;
+      const n=Math.sin(x*0.005+roughness)*amp*0.5+Math.cos(x*0.017-roughness)*amp*0.3+(rand()-0.5)*amp*0.35;
+      pts.push([x,yBase+valley-Math.abs(n)]);
+    }
+    const mg=ctx.createLinearGradient(0,yBase-amp,0,H);
+    mg.addColorStop(0,colTop);
+    mg.addColorStop(1,colBot);
+    ctx.fillStyle=mg;
+    ctx.beginPath();
+    ctx.moveTo(0,H);
+    pts.forEach(([x,y])=>ctx.lineTo(x,y));
+    ctx.lineTo(W,H);
+    ctx.closePath();
+    ctx.fill();
+
+    if(rimCol){
+      ctx.strokeStyle=rimCol;
+      ctx.lineWidth=1.4;
+      ctx.beginPath();
+      pts.forEach(([x,y],idx)=>idx?ctx.lineTo(x,y):ctx.moveTo(x,y));
+      ctx.stroke();
+    }
+  }
+
+  if(!isLight){
+    drawMountainLayer(215,95,1.2,'#240e08','#0a0605','rgba(255,115,40,0.28)');
+    drawMountainLayer(255,75,2.7,'#170a07','#060404','rgba(255,90,25,0.18)');
+  }else{
+    drawMountainLayer(225,70,1.5,'rgba(165,160,152,0.55)','rgba(215,212,205,0.85)',null);
+    drawMountainLayer(265,55,3.1,'rgba(125,120,112,0.65)','rgba(195,190,182,0.9)',null);
+  }
+
+  /* 5. REALISTIC BOTANICAL GNARLED ARCHTREE ON THE LEFT CRAG */
+  function drawTreeBranch(x,y,len,ang,w,depth){
+    if(depth<=0||w<0.4)return;
+    const nx=x+Math.cos(ang)*len;
+    const ny=y+Math.sin(ang)*len;
+    const cx=(x+nx)/2+(rand()-0.5)*len*0.28;
+    const cy=(y+ny)/2+(rand()-0.5)*len*0.28;
+
+    ctx.strokeStyle=isLight?`rgba(42,39,36,${0.55+depth*0.05})`:'#090605';
+    ctx.lineWidth=w;
+    ctx.lineCap='round';
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.quadraticCurveTo(cx,cy,nx,ny);
+    ctx.stroke();
+
+    /* Rim highlight on bark facing the Eclipse */
+    if(!isLight&&depth>3){
+      ctx.strokeStyle='rgba(255,110,35,0.22)';
+      ctx.lineWidth=Math.max(0.8,w*0.22);
+      ctx.beginPath();
+      ctx.moveTo(x+w*0.35,y);
+      ctx.quadraticCurveTo(cx+w*0.35,cy,nx+w*0.25,ny);
+      ctx.stroke();
+    }
+
+    const sub=depth>6?2:rand()>0.32?2:3;
+    for(let i=0;i<sub;i++){
+      const spread=(i-(sub-1)/2)*(0.42+rand()*0.28)+(rand()-0.5)*0.18;
+      drawTreeBranch(nx,ny,len*(0.72+rand()*0.14),ang+spread,w*(0.65+rand()*0.08),depth-1);
+    }
+  }
+  /* Roots & Main Gnarled Trunk on the left cliff */
+  drawTreeBranch(185,325,58,-Math.PI/2+0.12,22,9);
+  drawTreeBranch(185,315,45,Math.PI*0.78,12,4);
+  drawTreeBranch(192,315,48,Math.PI*0.22,12,4);
+
+  /* Craggy foreground ground & lava embers */
+  const fg=ctx.createLinearGradient(0,275,0,H);
+  if(isLight){
+    fg.addColorStop(0,'rgba(95,90,82,0.75)');
+    fg.addColorStop(1,'#f7f4ee');
+  }else{
+    fg.addColorStop(0,'#120a07');
+    fg.addColorStop(1,'#080605');
+  }
+  ctx.fillStyle=fg;
+  ctx.beginPath();
+  ctx.moveTo(0,285);
+  for(let x=0;x<=W;x+=20){
+    ctx.lineTo(x,290+Math.sin(x*0.012)*14+(rand()-0.5)*8);
+  }
+  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+
+  /* Glowing ember fissures on the left ground in Dark Mode (matching Ref 1) */
+  if(!isLight){
+    for(let i=0;i<28;i++){
+      const lx=45+rand()*260, ly=292+rand()*45, lr=2+rand()*6;
+      const lg=ctx.createRadialGradient(lx,ly,0.5,lx,ly,lr*3);
+      lg.addColorStop(0,'rgba(255,210,90,0.95)');
+      lg.addColorStop(0.4,'rgba(255,80,10,0.65)');
+      lg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=lg;
+      ctx.beginPath();ctx.arc(lx,ly,lr*3,0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  /* 6. DETAILED PAINTERLY ARMORED KNIGHT (KNEELING IN ASH WITH ARROWS & SWORD) */
+  ctx.save();
+  const kx=isLight?735:585, ky=168;
+  ctx.translate(kx,ky);
+
+  const armorBase=isLight?'#2b2927':'#110e0d';
+  const armorMid=isLight?'#4a4744':'#1f1917';
+  const armorRim=isLight?'#d8d5ce':'#ff8533';
+  const armorSubRim=isLight?'#9e9a92':'#b84a1b';
+
+  /* Ash / Mist Dispersion Clouds behind the Knight (iconic effect from Ref 2) */
+  for(let i=0;i<85;i++){
+    const px=-25-rand()*150, py=15+rand()*125, pr=3+rand()*18;
+    ctx.fillStyle=isLight?`rgba(45,42,38,${0.04+rand()*0.18})`:`rgba(25,16,14,${0.12+rand()*0.25})`;
+    ctx.beginPath();ctx.arc(px,py,pr,0,Math.PI*2);ctx.fill();
+  }
+  /* Fine ash flecks blowing off the armor */
+  for(let i=0;i<160;i++){
+    const px=-10-rand()*175, py=5+rand()*135, pr=0.8+rand()*2.4;
+    ctx.fillStyle=isLight?`rgba(30,28,25,${0.25+rand()*0.55})`:`rgba(255,120,40,${0.15+rand()*0.45})`;
+    ctx.beginPath();ctx.arc(px,py,pr,0,Math.PI*2);ctx.fill();
+  }
+
+  /* Planted Greatsword & Crossguard */
+  ctx.save();
+  ctx.translate(isLight?58:-52, 48);
+  ctx.rotate(isLight?0.18:-0.28);
+  /* Blade */
+  const blG=ctx.createLinearGradient(-4,0,4,0);
+  blG.addColorStop(0,armorRim);blG.addColorStop(0.5,armorMid);blG.addColorStop(1,'#090808');
+  ctx.fillStyle=blG;
+  ctx.beginPath();ctx.moveTo(-3.5,-22);ctx.lineTo(3.5,-22);ctx.lineTo(2,145);ctx.lineTo(-2,145);ctx.closePath();ctx.fill();
+  /* Crossguard & Pommel */
+  ctx.fillStyle=armorSubRim;
+  ctx.beginPath();ctx.moveTo(-22,-22);ctx.quadraticCurveTo(0,-17,22,-22);ctx.quadraticCurveTo(0,-26,-22,-22);ctx.fill();
+  ctx.fillStyle=armorBase;
+  ctx.fillRect(-2.5,-46,5,24);
+  ctx.fillStyle=armorRim;
+  ctx.beginPath();ctx.arc(0,-49,5,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+
+  /* Three Pierced Arrows in the Knight's Back (matching Ref 1) */
+  const arrows=[[-62,8,-14,52],[-74,26,-18,64],[-50,-2,-8,46]];
+  arrows.forEach(([x1,y1,x2,y2])=>{
+    ctx.strokeStyle=armorMid;ctx.lineWidth=2.2;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.strokeStyle=armorRim;ctx.lineWidth=0.9;
+    ctx.beginPath();ctx.moveTo(x1,y1-0.8);ctx.lineTo(x2,y2-0.8);ctx.stroke();
+    /* Fletching feathers */
+    ctx.fillStyle=armorBase;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-9,y1-8);ctx.lineTo(x1+4,y1-2);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-11,y1+2);ctx.lineTo(x1+3,y1+4);ctx.closePath();ctx.fill();
+  });
+
+  /* Helper for Painterly Rim-Lit Armor Plates */
+  function drawArmorPlate(pts,rimSide='top'){
+    ctx.fillStyle=armorBase;
+    ctx.beginPath();
+    pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));
+    ctx.closePath();
+    ctx.fill();
+
+    /* Metallic shading gradient */
+    const g=ctx.createLinearGradient(pts[0][0],pts[0][1],pts[2][0],pts[2][1]);
+    g.addColorStop(0,armorSubRim);
+    g.addColorStop(0.35,armorMid);
+    g.addColorStop(1,armorBase);
+    ctx.fillStyle=g;
+    ctx.fill();
+
+    /* Specular Rim Highlight from Eclipse / Mist */
+    ctx.strokeStyle=armorRim;
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0],pts[0][1]);
+    ctx.lineTo(pts[1][0],pts[1][1]);
+    if(rimSide==='both')ctx.lineTo(pts[2][0],pts[2][1]);
+    ctx.stroke();
+  }
+
+  /* Tattered Flowing Cloak / Cape */
+  ctx.fillStyle=isLight?'rgba(38,35,32,0.88)':'rgba(20,12,11,0.94)';
+  ctx.beginPath();
+  ctx.moveTo(-25,42);
+  ctx.quadraticCurveTo(-78,85,-115,155);
+  ctx.quadraticCurveTo(-55,165,-5,152);
+  ctx.quadraticCurveTo(28,120,18,52);
+  ctx.closePath();
+  ctx.fill();
+
+  /* Segmented Back & Cuirass Lames */
+  for(let i=0;i<6;i++){
+    const y=42+i*14, w=34+i*2.5;
+    drawArmorPlate([[-w,y],[w,y-3],[w+4,y+13],[-w-3,y+15]],'top');
+  }
+
+  /* Left & Right Layered Pauldrons (Shoulder Armor) */
+  for(let i=0;i<4;i++){
+    const dy=i*9;
+    drawArmorPlate([[-46-i*2,34+dy],[-12,26+dy],[-10,38+dy],[-48-i*2,45+dy]],'both');
+    drawArmorPlate([[12,28+dy],[46+i*2,36+dy],[48+i*2,47+dy],[10,40+dy]],'both');
+  }
+
+  /* Bowed Fluted Knight Helmet (Alva / Lothric Knight Helm) */
+  ctx.save();
+  ctx.translate(4, 8);
+  ctx.rotate(0.24);
+  /* Tattered Plume */
+  ctx.fillStyle=isLight?'#3b3734':'#381412';
+  ctx.beginPath();ctx.moveTo(-8,-16);ctx.quadraticCurveTo(-42,-28,-64,-4);ctx.quadraticCurveTo(-32,-2,-6,-2);ctx.fill();
+  /* Helm Skull & Crest */
+  drawArmorPlate([[-18,-10],[2,-22],[22,-8],[20,14],[-18,14]],'both');
+  /* Forward Pointed Visor & Bevor */
+  drawArmorPlate([[-14,6],[24,2],[28,18],[4,28],[-16,18]],'both');
+  /* Glowing Visor Slits */
+  ctx.strokeStyle=armorRim;ctx.lineWidth=1.4;
+  ctx.beginPath();ctx.moveTo(6,10);ctx.lineTo(23,9);ctx.moveTo(5,15);ctx.lineTo(22,14);ctx.stroke();
+  ctx.restore();
+
+  /* Armored Arms & Gauntlets */
+  drawArmorPlate([[24,52],[48,48],[62,92],[42,96]],'both');
+  drawArmorPlate([[-42,50],[-24,48],[-32,98],[-52,94]],'top');
+
+  /* Kneeling Greaves & Sabatons in the Ash */
+  drawArmorPlate([[-38,118],[32,115],[52,162],[-54,162]],'top');
+  ctx.restore();
+}
+
+/* 1. HOME / START SCREEN */
+function homeView(){
+  const r=S.run.study;
+  const unlAch=ACHS.filter(a=>getAchState(a).lvl>0).length;
+  const isLight=S.theme==='light';
+  return `<section class="card cut hero">
+    <div class="souls-scene">
+      <div class="souls-scene-photo"></div>
+      <canvas id="hero-canvas" width="1200" height="360"></canvas>
+      <div class="scene-overlay"></div>
+    </div>
+    <div class="scene-caption">
+      <div class="tag" style="--t:var(--cy)">${isLight?'Облик: Белый Рыцарь Тумана':'Облик: Чёрный Рыцарь Пепла'}</div>
+      <h2 style="font-size:30px;margin-top:4px">Выбери режим на сегодня</h2>
+      <p class="mut" style="max-width:620px;margin:0 auto">Проходи лабиринт фокуса в учёбе, отмечай реальные тренировки и мышечные группы, открывай легендарные ранги и возвращай свои деньги за дисциплину.</p>
+    </div>
+    <div class="hero-grid">
+      <div class="hub-card cut-sm" style="--c:var(--cy)" data-a="tab" data-v="study">
+        <div>
+          <h3>${icon('study',20)} Лабиринт учёбы</h3>
+          <p>Открывай 10 уникальных дверей, выполняй таймеры фокуса, лови катки и ищи ключ.</p>
+        </div>
+        <div class="hub-stat">${r?`Активный забег: ${r.prog}/${r.target} мин (${fmt(r.earned)})`:`Награда: ${fmt(S.cfg.rs)} / час`}</div>
+      </div>
+      <div class="hub-card cut-sm" style="--c:var(--gr)" data-a="tab" data-v="work">
+        <div>
+          <h3>${icon('work',20)} Тренировки и Спорт</h3>
+          <p>Отмечай выполненные в жизни тренировки без лабиринта, выбирай группы мышц и веди учёт.</p>
+        </div>
+        <div class="hub-stat">Выполнено: ${S.stats.wk} трен. • +${fmt(S.cfg.rw)} за трен.</div>
+      </div>
+      <div class="hub-card cut-sm" style="--c:var(--ye)" data-a="tab" data-v="ach">
+        <div>
+          <h3>${icon('trophy',20)} Достижения</h3>
+          <p>20 многоуровневых медалей за учёбу, ключи, катки и каждую группу мышц.</p>
+        </div>
+        <div class="hub-stat">Открыто медалей: ${unlAch} / ${ACHS.length}</div>
+      </div>
+      <div class="hub-card cut-sm" style="--c:var(--vi)" data-a="tab" data-v="bank">
+        <div>
+          <h3>${icon('bank',20)} Банк и История</h3>
+          <p>Контролируй депозит, доступные к выводу средства и раздельный журнал активности.</p>
+        </div>
+        <div class="hub-stat">К выплате: ${fmt(S.bank.pend)} • На карте: ${fmt(S.bank.card)}</div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* 2. STUDY LABYRINTH */
+function studyView(){
+  const r=S.run.study;
+  if(!r){
+    const opts=[60,120,180,240],t=S.sel.study;
+    const pen=Math.pow(0.5,S.stats.earlyStreak||0);
+    return `<section class="card cut">
+      <h2>Лабиринт учёбы</h2>
+      <p class="mut">Укажи план на сегодня. В первые 3 хода ключ выпасть не может. Чем опаснее дверь, тем выше шанс на ключ или катку!</p>
+      ${S.stats.earlyStreak>0?`<p style="color:var(--ye);font-size:14px;margin-top:6px">⚡ В прошлом забеге выпал досрочный ключ (серия: ${S.stats.earlyStreak}). Шанс на ключ в этом забеге снижен до <b>${Math.round(pen*100)}%</b> от базового. Пройди полное время без ключа, чтобы сбросить штраф!</p>`:''}
+      <div class="chips">${opts.map(v=>`<button class="chip cut-sm ${t===v?'on':''}" data-a="sel" data-v="${v}">${v/60} ч</button>`).join('')}</div>
+      <label class="mut">Свой план (мин): <input type="number" min="10" value="${t}" data-k="selStudy"></label>
+      <div class="kv">Награда за полный план<b>${fmt(money('study',t))}</b></div>
+      <button class="btn cy" data-a="startStudy">Войти в лабиринт</button>
+    </section>`;
+  }
+
+  const p=Math.min(100,r.prog/r.target*100);
+  const stepInfo=r.step<3?`Ход ${r.step+1} (защита от ключа первые 3 хода: ${r.step}/3)`:`Ход ${r.step+1} (ключи активны)`;
+  const hudHtml=`<div class="hud">
+    <div><span class="mut">Прогресс плана • ${stepInfo}</span><b>${r.prog} / ${r.target} мин</b></div>
+    <div><span class="mut">Накоплено в забеге</span><b style="color:var(--ye)">${fmt(r.earned)}</b></div>
+  </div>
+  <div class="bar"><i style="width:${p}%"></i><em>${icon('key',24)}</em></div>`;
+
+  const runActions=`<div class="row" style="justify-content:space-between;margin-top:16px">
+    ${r.earned>0?`<button class="btn ye" data-a="cashoutAsk">Забрать ${fmt(r.earned)} и выйти</button>`:'<span></span>'}
+    <button class="btn gh" data-a="resetAsk">Сбросить забег</button>
+  </div>`;
+
+  if(r.phase==='doors'){
+    return `<section class="card cut">${hudHtml}
+      <h2>Выбери врата (отсортированы по риску и шансу)</h2>
+      <div class="doors">${r.d.map((d,i)=>{
+        const od=getDoorOdds(d,r.step);
+        return `<button class="door cut ${r.op===i?'open':''} ${r.op>=0&&r.op!==i?'dim':''}" style="--c:${d.col}" data-a="openDoor" data-v="${i}">
+          <span class="risk-pill">${d.risk}</span>
+          <div class="nm">${d.n}</div>
+          <div class="frame"><div class="glow"></div><div class="panel p${d.id}"></div></div>
+          <div class="od"><span>Учёба</span><u style="--w:${od.s}%"></u><b>${od.s}%</b></div>
+          <div class="od"><span>Отдых</span><u style="--w:${od.r}%"></u><b>${od.r}%</b></div>
+          <div class="od" style="--c:#c98218"><span>Катка</span><u style="--w:${Math.min(100,od.g*5)}%"></u><b>${od.g}%</b></div>
+          <div class="od" style="--c:#b8860b"><span>Ключ</span><u style="--w:${Math.min(100,od.k*6)}%"></u><b>${od.canKey?od.k+'%':'0% (1-3)'}</b></div>
+          <div class="hist">${DUR.map(x=>`<i style="height:${Math.round(dw(d.c,x)*100)}%;background:${tier('focus',x)[0]}"></i>`).join('')}</div>
+          <div class="hs">Таймер 10–60 мин, чаще около ${d.c} мин</div>
+        </button>`;
+      }).join('')}</div>
+      ${runActions}
+    </section>`;
+  }
+
+  if(r.phase==='reveal'){
+    const c=r.cur,rest=c.type==='rest',game=c.type==='game';
+    const tt=tier(c.type,c.dur),col=tt[0],tn=tt[1];
+    if(game){
+      return `<section class="card cut pop" style="--t:${col};border-color:${col}">
+        <div class="rays"></div>${hudHtml}
+        <div style="color:${col};margin:10px 0">${icon('game',80)}</div>
+        <span class="tag gold">КАТКА</span>
+        <h2 style="color:${col}">Время сыграть катку!</h2>
+        <p class="mut" style="max-width:460px;margin:8px auto 16px">Тебе выпала законная игровая партия без таймера и ограничений по минутам. Сыграй одну катку и возвращайся в лабиринт!</p>
+        <div class="row" style="justify-content:center">
+          <button class="btn ye" data-a="finishRoom">Катка сыграна — идти дальше</button>
+          <button class="btn gh" data-a="cancelRoom">Пропустить</button>
+        </div>
+      </section>`;
+    }
+    return `<section class="card cut pop" style="--t:${col};border-color:${col}">
+      <div class="rays"></div>${hudHtml}
+      <div style="color:${col};margin:10px 0">${icon(rest?'rest':'study',76)}</div>
+      <span class="tag">${tn}</span>
+      <h2 style="color:${col}">${rest?'Отдых до':'Учёба'} ${c.dur} мин</h2>
+      <p class="mut">${c.tip||(rest?'Передохни у костра, а таймер подскажет, когда пора возвращаться.':'Сфокусируйся на задаче. Таймер запустится после нажатия.')}</p>
+      <div class="row" style="justify-content:center"><button class="btn ${rest?'gr':'cy'}" data-a="startTimer">Запустить таймер</button></div>
+    </section>`;
+  }
+
+  if(r.phase==='timer'){
+    const c=r.cur,rest=c.type==='rest',col=tier(c.type,c.dur)[0];
+    const tot=c.dur*60000,pct=(1-c.left/tot)*100;
+    return `<section class="card cut" style="border-color:${col}">${hudHtml}
+      <div class="center">
+        <h2 style="color:${col}">${rest?'Отдых до':'Учёба'} ${c.dur} мин</h2>
+        <div class="ring" id="ring" style="--p:${pct};--c:${col}">
+          <div><div class="big" id="tm">${mmss(c.left)}</div><div class="mut">${c.paused?'на паузе':'идёт время'}</div></div>
+        </div>
+        <div class="row" style="justify-content:center">
+          <button class="btn ${rest?'gr':'cy'}" data-a="pauseTimer">${c.paused?'Продолжить':'Пауза'}</button>
+          <button class="btn vi" data-a="finishRoom">${rest?'Закончить отдых':'Отметить: отзанимался'}</button>
+          <button class="btn gh" data-a="cancelRoom">Отменить комнату</button>
+        </div>
+      </div>
+      ${runActions}
+    </section>`;
+  }
+
+  return `<section class="card cut center" style="border-color:var(--ye)">
+    <div style="color:var(--ye);margin:8px 0 14px">${icon('key',84)}</div>
+    <h2 style="color:var(--ye)">${r.early?'Ключ найден! Досрочный побег из лабиринта':'План полностью выполнен! Ключ твой'}</h2>
+    <p class="mut">${r.early?'Удача улыбнулась тебе раньше срока. В следующем забеге шанс на ранний ключ будет ниже, пока не пройдёшь полный план.':'Ты закрыл весь учебный план. Штрафы на выпадение ключа полностью сброшены!'}</p>
+    <div class="kv">Зачислено в банк<b>${fmt(r.earned)}</b></div>
+    <button class="btn cy" data-a="endStudyRun">Новый забег</button>
+  </section>`;
+}
+
+/* 3. WORKOUTS WITHOUT LABYRINTH + MUSCLE GROUPS */
+function workView(){
+  const f=S.wkForm;
+  const customKeys=Object.keys(S.stats.customActs||{});
+  return `<section class="card cut" style="border-color:var(--gr)">
+    <h2>Отметить тренировку</h2>
+    <p class="mut">Никаких лабиринтов для спорта: позанимался в реальной жизни — выбери группы мышц или активность, при желании укажи время и сразу забери награду.</p>
+    <h3 style="margin-top:14px">1. Какие группы мышц / активности были сегодня? (можно несколько)</h3>
+    <div class="chips">
+      ${MUSCLES.map(m=>`<button class="chip cut-sm ${f.sel.includes(m.id)?'on':''}" data-a="toggleMuscle" data-v="${m.id}">${icon('work',15)} ${m.n}</button>`).join('')}
+    </div>
+    ${f.sel.includes('other')?`
+      <div class="row" style="margin-top:8px">
+        <label class="mut">Укажи свою активность: <input type="text" id="custom-act-inp" placeholder="Напр. Бокс, Бег, Растяжка..." value="${f.customName||''}"></label>
+      </div>
+    `:''}
+    <div class="row" style="margin-top:14px">
+      <label class="mut">2. Время тренировки, мин (по желанию): <input type="number" id="wk-dur-inp" min="1" max="600" placeholder="Необязательно" value="${f.dur||''}"></label>
+    </div>
+    <div class="kv">Награда за тренировку<b>${fmt(S.cfg.rw)}</b></div>
+    <button class="btn gr" data-a="logWorkout">${icon('bolt',18)} Записать тренировку (+${fmt(S.cfg.rw)})</button>
+  </section>
+
+  <section class="card cut">
+    <h2>Статистика спорта по группам мышц</h2>
+    <div class="stats" style="margin-bottom:14px">
+      <div class="st g"><span>Всего тренировок</span><b>${S.stats.wk}</b></div>
+      <div class="st"><span>Учтённое время</span><b>${hm(S.stats.wkMin||0)}</b></div>
+      <div class="st r"><span>Текущий статус спорта</span><b style="font-size:19px">${getSportRank().name}</b></div>
+    </div>
+    <div class="muscle-bars">
+      ${MUSCLES.map(m=>{
+        const cnt=S.stats.muscles[m.id]||0;
+        const max=Math.max(10,...MUSCLES.map(x=>S.stats.muscles[x.id]||0));
+        return `<div class="m-row cut-sm">
+          <div class="m-top"><span>${m.n}</span><b>${cnt} трен.</b></div>
+          <div class="m-bar"><i style="width:${Math.min(100,(cnt/max)*100)}%"></i></div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${customKeys.length?`<h3 style="margin-top:16px">Свои вписанные активности</h3>
+      <div class="chips">${customKeys.map(k=>`<span class="chip cut-sm">${k}: <b style="color:var(--cy)">${S.stats.customActs[k]}</b></span>`).join('')}</div>`:''}
+  </section>`;
+}
+
+/* 4. ACHIEVEMENTS VIEW */
+function achView(){
+  return `<section class="card cut" style="border-color:var(--ye)">
+    <h2>Достижения и Медали (3 уровня у каждого)</h2>
+    <p class="mut">При выполнении цели достижение переходит на следующий уровень (I → II → III), а его иконка эволюционирует. Нажми «На витрину», чтобы прикрепить открытую медаль в свой профиль (до 4 штук).</p>
+    <div class="ach-grid" style="margin-top:14px">
+      ${ACHS.map(a=>{
+        const st=getAchState(a);
+        const pinned=(S.profile.medals||[]).includes(a.id);
+        return `<div class="ach cut-sm t${st.lvl}">
+          <div class="ach-ic">${achIconSvg(a.ic,st.lvl,38)}</div>
+          <div class="ach-body">
+            <div class="ach-lvl">Уровень ${st.lvl}/3 • Цели: ${a.t.join(' / ')} ${a.u}</div>
+            <div class="ach-ttl">${a.n}</div>
+            <div class="ach-desc">${a.d}</div>
+            <div class="rk-xp"><i style="width:${st.pct}%;background:${st.lvl===3?'#b8860b':st.lvl===2?'#8244bd':st.lvl===1?'#b86b23':'var(--cy)'}"></i></div>
+            <div class="rk-sub">
+              <span>Прогресс: ${st.v} / ${st.nextTarget} ${a.u}</span>
+              ${st.lvl>0?`<button class="btn gh" style="padding:4px 10px;font-size:12px;background:${pinned?'var(--cy)':'var(--card)'};color:${pinned?'#ffffff':'var(--ink-strong)'}" data-a="pinMedal" data-v="${a.id}">${pinned?'★ В профиле':'На витрину'}</button>`:'<span>Закрыто</span>'}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </section>`;
+}
+
+/* 5. PROFILE, CUSTOMIZATION (NAMED COLORS) & 20+20 CAREER LADDER */
+function profileView(){
+  const sr=getStudyRank(),wr=getSportRank();
+  const avas=['bolt','crown','skull','shield','star','flame','trophy','key','study','work'];
+  const colors=[
+    ['#d49b4b','Золото Лотрика'],
+    ['#b8292f','Багровая Кровь'],
+    ['#4f9e69','Изумруд Глубин'],
+    ['#8c52b5','Аметист Бездны'],
+    ['#e85d24','Пламя Хаоса'],
+    ['#64a6d1','Сталь Анор Лондо']
+  ];
+  const hrs=(S.stats.min/60).toFixed(1);
+
+  return `<section class="card cut" style="border-color:${S.profile.accent}">
+    <h2>Профиль и Кастомизация</h2>
+    <div class="cfg" style="margin-top:10px">
+      <label>Никнейм игрока
+        <input type="text" id="prof-nick-inp" value="${S.profile.nick}" maxlength="24">
+      </label>
+      <label>Титул / Девиз под ником
+        <input type="text" id="prof-title-inp" value="${S.profile.title}" maxlength="36">
+      </label>
+    </div>
+    <div style="margin-top:14px">
+      <span class="mut" style="font-size:14px">Выбери символ профиля:</span>
+      <div class="chips">${avas.map(av=>`<button class="chip cut-sm ${S.profile.ava===av?'on':''}" data-a="setAva" data-v="${av}">${icon(av,20)}</button>`).join('')}</div>
+    </div>
+    <div style="margin-top:10px">
+      <span class="mut" style="font-size:14px">Цвет печати профиля:</span>
+      <div class="chips">${colors.map(([c,label])=>`<button class="chip cut-sm ${S.profile.accent===c?'on':''}" style="border-color:${c};${S.profile.accent===c?'box-shadow:0 0 12px '+c:''}" data-a="setAccent" data-v="${c}"><span style="width:12px;height:12px;border-radius:50%;background:${c};display:inline-block"></span> ${label}</button>`).join('')}</div>
+    </div>
+    <button class="btn cy" data-a="saveProfile">Сохранить профиль</button>
+  </section>
+
+  <section class="card cut">
+    <h2>Развёрнутая статистика аккаунта</h2>
+    <div class="stats">
+      <div class="st"><span>Всего часов учёбы</span><b>${hrs} ч (${S.stats.min} мин)</b></div>
+      <div class="st g"><span>Всего тренировок</span><b>${S.stats.wk} шт. (${hm(S.stats.wkMin||0)})</b></div>
+      <div class="st r"><span>Ключей найдено (досрочно)</span><b>${S.stats.keys} (${S.stats.earlyKeys||0})</b></div>
+      <div class="st v"><span>Полных забегов учёбы</span><b>${S.stats.fullRuns||0}</b></div>
+      <div class="st d"><span>Каток сыграно</span><b>${S.stats.games||0}</b></div>
+      <div class="st r"><span>Всего заработано</span><b>${fmt(S.stats.totalEarned||0)}</b></div>
+    </div>
+  </section>
+
+  <section class="card cut">
+    <h2>Карьерная лестница статусов (20 уровней Учёбы и 20 уровней Спорта)</h2>
+    <p class="mut">С каждым уровнем требования растут, а ячейка получает более высокую редкость и свечение.</p>
+    <div class="ladder">
+      <div class="lad-col">
+        <h3>Учёба (до 500 часов)</h3>
+        ${STUDY_RANKS.map(([req,name],i)=>{
+          const rar=getRarityIdx(i);
+          const cur=sr.lvl===i,done=sr.lvl>i;
+          return `<div class="lad-row rar-${rar} ${cur?'cur':''} ${done?'done':''}">
+            <span><b>${i+1}.</b> ${name} ${cur?'👈':''}</span>
+            <span class="mut">${req} ч</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="lad-col">
+        <h3>Спорт (до 150 тренировок)</h3>
+        ${SPORT_RANKS.map(([req,name],i)=>{
+          const rar=getRarityIdx(i);
+          const cur=wr.lvl===i,done=wr.lvl>i;
+          return `<div class="lad-row rar-${rar} ${cur?'cur':''} ${done?'done':''}">
+            <span><b>${i+1}.</b> ${name} ${cur?'👈':''}</span>
+            <span class="mut">${req} трен.</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  </section>`;
+}
+
+/* 6. BANK & SPLIT HISTORY */
+function bankView(){
+  const b=S.bank,ht=S.histTab||'study';
+  const curLogs=ht==='study'?S.logStudy:ht==='work'?S.logWork:S.logBank;
+  return `<section class="card cut" style="border-color:var(--ye)">
+    <h2>Банк и Финансы</h2>
+    <div class="stats">
+      <div class="st r"><span>Депозит на карте</span><b>${fmt(b.card)}</b></div>
+      <div class="st g"><span>Доступно к выплате</span><b>${fmt(b.pend)}</b></div>
+      <div class="st v"><span>Всего выплачено мне</span><b>${fmt(b.paid)}</b></div>
+      <div class="st d"><span>Заблокировано на карте</span><b>${fmt(Math.max(0,b.card-b.pend))}</b></div>
+    </div>
+    <div class="row">
+      <label class="mut">Пополнить баланс карты <input type="number" id="am" min="0" placeholder="₽"></label>
+      <button class="btn cy" data-a="topup">Пополнить</button>
+    </div>
+    <div class="row">
+      <label class="mut">Переведено / Выплачено мне <input type="number" id="pm" min="0" value="${b.pend}"></label>
+      <button class="btn vi" data-a="payout">Получить выплату</button>
+    </div>
+  </section>
+
+  <section class="card cut">
+    <h2>Раздельная история активности</h2>
+    <div class="chips">
+      <button class="chip cut-sm ${ht==='study'?'on':''}" data-a="histTab" data-v="study">${icon('study',16)} История учёбы (${S.logStudy.length})</button>
+      <button class="chip cut-sm ${ht==='work'?'on':''}" data-a="histTab" data-v="work">${icon('work',16)} История тренировок (${S.logWork.length})</button>
+      <button class="chip cut-sm ${ht==='bank'?'on':''}" data-a="histTab" data-v="bank">${icon('bank',16)} Операции банка (${S.logBank.length})</button>
+    </div>
+    ${curLogs.length?`<ul class="log">${curLogs.map(l=>`<li>
+      <span>${l.txt}<br><small>${new Date(l.t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small></span>
+      <b class="${l.amt<0?'minus':'plus'}">${l.amt>0?'+':''}${fmt(l.amt)}</b>
+    </li>`).join('')}</ul>`:'<p class="mut">В этом разделе пока нет записей.</p>'}
+  </section>`;
+}
+
+/* 7. SETTINGS & CHANCES PANEL IN GEAR */
+function settingsView(){
+  return `<section class="card cut" style="border-color:var(--cy)">
+    <h2>⚙️ Настройки наград и правил</h2>
+    <div class="cfg">
+      <label>Награда за 1 час учёбы, ₽
+        <input type="number" min="0" data-k="rs" value="${S.cfg.rs}">
+      </label>
+      <label>Награда за 1 тренировку, ₽
+        <input type="number" min="0" data-k="rw" value="${S.cfg.rw}">
+      </label>
+      <label style="justify-content:center">
+        <span><input type="checkbox" data-k="full" ${S.cfg.full?'checked':''}> Досрочный ключ оплачивает остаток плана</span>
+      </label>
+    </div>
+  </section>
+
+  <section class="card cut" style="border-color:var(--ye)">
+    <h2>🎲 Панель шансов выпадения предметов и настройка 10 дверей</h2>
+    <p class="mut">Здесь можно изменить глобальные множители шансов или настроить проценты для каждой из 10 дверей вручную. Чем выше риск комнаты, тем выше базовый шанс на Ключ и Катку.</p>
+    <div class="cfg" style="margin-top:12px">
+      <label>Глобальный множитель Ключей (×)
+        <input type="number" step="0.1" min="0" max="5" data-k="kMult" value="${S.cfg.kMult??1}">
+      </label>
+      <label>Глобальный множитель Каток (×)
+        <input type="number" step="0.1" min="0" max="5" data-k="gMult" value="${S.cfg.gMult??1}">
+      </label>
+      <label>Глобальный множитель Отдыха (×)
+        <input type="number" step="0.1" min="0" max="5" data-k="rMult" value="${S.cfg.rMult??1}">
+      </label>
+    </div>
+
+    <div class="door-cfg-list">
+      <div class="door-cfg-item" style="background:transparent;border:0;color:var(--mut);font-size:13px">
+        <strong>Дверь (постоянное имя)</strong>
+        <span>Отдых %</span><span>Катка %</span><span>Ключ %</span><span>Сред. мин</span><span>Учёба %</span>
+      </div>
+      ${S.cfg.doors.map((d,idx)=>`
+        <div class="door-cfg-item cut-sm">
+          <strong style="color:color-mix(in srgb, ${d.col} 80%, var(--ink-strong))">${idx+1}. ${d.n}</strong>
+          <label class="mut" style="font-size:12px">Отдых %<input type="number" step="0.5" min="0" max="90" data-door="${idx}" data-df="r" value="${d.r}"></label>
+          <label class="mut" style="font-size:12px">Катка %<input type="number" step="0.5" min="0" max="50" data-door="${idx}" data-df="g" value="${d.g}"></label>
+          <label class="mut" style="font-size:12px">Ключ %<input type="number" step="0.5" min="0" max="50" data-door="${idx}" data-df="k" value="${d.k}"></label>
+          <label class="mut" style="font-size:12px">Ср. мин<input type="number" step="5" min="10" max="60" data-door="${idx}" data-df="c" value="${d.c}"></label>
+          <span>Учёба: <b>${+(100-d.r-d.g-d.k).toFixed(1)}%</b></span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="row">
+      <button class="btn gh" data-a="resetDoorsCfg">Вернуть стандартные шансы дверей</button>
+      <button class="btn gh" style="color:var(--red)" data-a="wipeAsk">Сбросить все данные приложения</button>
+    </div>
+  </section>`;
+}
+
+/* MODAL RENDER */
+function renderModal(){
+  if(!modalState){$('#modal-root').innerHTML='';return;}
+  if(modalState==='cashout'){
+    const r=S.run.study;
+    $('#modal-root').innerHTML=`<div class="modal-bg">
+      <div class="modal cut">
+        <h2 style="color:var(--ye)">⚠️ Дисклеймер: Забрать деньги?</h2>
+        <p class="mut" style="margin:10px 0">Если ты заберёшь накопленные <b>${fmt(r?r.earned:0)}</b> сейчас, текущий забег в лабиринте <b>досрочно завершится</b> (без получения ключа и без бонуса за полный план).</p>
+        <div class="row">
+          <button class="btn ye" data-a="cashoutConfirm">Да, забрать ${fmt(r?r.earned:0)} и закончить</button>
+          <button class="btn gh" data-a="closeModal">Отмена (продолжить забег)</button>
+        </div>
+      </div>
+    </div>`;
+  }else if(modalState==='reset'){
+    $('#modal-root').innerHTML=`<div class="modal-bg">
+      <div class="modal cut" style="border-color:var(--red)">
+        <h2 style="color:var(--red)">Сбросить текущий забег?</h2>
+        <p class="mut" style="margin:10px 0">Весь прогресс текущего забега и незабранные деньги этого забега сгорят. Если хочешь сохранить заработанное — используй кнопку «Забрать деньги и выйти».</p>
+        <div class="row">
+          <button class="btn" data-a="resetConfirm">Сбросить без выплаты</button>
+          <button class="btn gh" data-a="closeModal">Отмена</button>
+        </div>
+      </div>
+    </div>`;
+  }else if(modalState==='wipe'){
+    $('#modal-root').innerHTML=`<div class="modal-bg">
+      <div class="modal cut" style="border-color:var(--red)">
+        <h2 style="color:var(--red)">Удалить все данные StatTrack?</h2>
+        <p class="mut" style="margin:10px 0">Вся статистика часов, тренировок, медали, история и баланс банка будут полностью обнулены.</p>
+        <div class="row">
+          <button class="btn" data-a="wipeConfirm">Да, удалить всё</button>
+          <button class="btn gh" data-a="closeModal">Отмена</button>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+function render(){
+  applyTheme();
+  renderHeader();
+  const views={
+    home:homeView,
+    study:studyView,
+    work:workView,
+    ach:achView,
+    profile:profileView,
+    bank:bankView,
+    settings:settingsView
+  };
+  $('#main').innerHTML=(views[S.tab]||homeView)();
+  if(S.tab==='home')drawHeroArt();
+  renderModal();
+}
+
+/* LABYRINTH RESOLUTION LOGIC */
+function resolveDoor(i){
+  const r=S.run.study;if(!r||r.op!==i)return;
+  const d=r.d[i],od=getDoorOdds(d,r.step),x=Math.random()*100,rem=r.target-r.prog;
+  const type=x<od.k?'key':x<od.k+od.g?'game':x<od.k+od.g+od.r?'rest':'focus';
+
+  if(type==='key'){
+    r.phase='done';r.early=true;
+    S.stats.keys++;
+    S.stats.earlyKeys=(S.stats.earlyKeys||0)+1;
+    S.stats.earlyStreak=(S.stats.earlyStreak||0)+1;
+    if(S.cfg.full&&rem>0)r.earned+=Math.round(money('study',rem));
+    creditMoney(r.earned);
+    addStudyLog(`Учёба: ${hm(r.prog)} (ключ найден на ходу ${r.step+1})`,r.earned);
+    snd('key');burst(TC.au,160);
+  }else{
+    const dur=type==='game'?0:type==='rest'?5*rnd(1,3):pickDur(d.c,rem);
+    const t=tier(type,dur);
+    r.cur={type,dur,left:dur*60000,end:0,paused:true,tip:type==='rest'?TIPS[rnd(0,TIPS.length-1)]:''};
+    r.phase='reveal';
+    snd('t_'+t[2]);burst(t[0],t[2]==='r'||t[2]==='au'?90:45);
+  }
+  save();render();
+}
+
+function finishStudyRoom(){
+  const r=S.run.study;if(!r||!r.cur)return;
+  const c=r.cur;
+  r.step=(r.step||0)+1;
+  if(c.type==='focus'){
+    const u=c.dur;
+    r.prog+=u;
+    S.stats.min+=u;
+    r.earned+=Math.round(money('study',u));
+  }else if(c.type==='game'){
+    S.stats.games=(S.stats.games||0)+1;
+  }
+  r.cur=null;
+  if(r.prog>=r.target){
+    r.phase='done';r.early=false;
+    S.stats.keys++;
+    S.stats.fullRuns=(S.stats.fullRuns||0)+1;
+    S.stats.earlyStreak=0;
+    creditMoney(r.earned);
+    addStudyLog(`Учёба (полный план): ${hm(r.prog)}`,r.earned);
+    snd('key');burst('#d4af37',140);
+  }else{
+    r.phase='doors';r.d=pickDoors();r.op=-1;snd('done');
+  }
+  save();render();
+}
+
+/* ACTIONS */
+const A={
+  tab:d=>{S.tab=d.v;modalState=null;save();render();snd('tick')},
+  histTab:d=>{S.histTab=d.v;save();render();snd('tick')},
+  mute:()=>{S.mute=!S.mute;save();render();snd('tick')},
+  theme:()=>{
+    S.theme=S.theme==='light'?'dark':'light';
+    applyTheme();
+    drawGrid();
+    save();
+    render();
+    snd('done');
+  },
+  sel:d=>{S.sel.study=+d.v;save();render();snd('tick')},
+  startStudy:()=>{
+    S.run.study={phase:'doors',target:Math.max(10,S.sel.study),prog:0,earned:0,step:0,d:pickDoors(),op:-1};
+    snd('done');save();render();
+  },
+  openDoor:d=>{
+    const r=S.run.study;if(!r||r.op>=0)return;
+    r.op=+d.v;snd('open'+(+d.v%3));shake();render();
+    setTimeout(()=>resolveDoor(+d.v),750);
+  },
+  startTimer:()=>{
+    const r=S.run.study;if(!r||!r.cur)return;
+    r.cur.end=Date.now()+r.cur.left;r.cur.paused=false;r.phase='timer';
+    snd('tick');save();render();
+  },
+  pauseTimer:()=>{
+    const c=S.run.study?.cur;if(!c)return;
+    if(c.paused){c.end=Date.now()+c.left;c.paused=false}
+    else{c.left=c.end-Date.now();c.paused=true}
+    snd('tick');save();render();
+  },
+  finishRoom:()=>finishStudyRoom(),
+  cancelRoom:()=>{
+    const r=S.run.study;if(!r)return;
+    r.cur=null;r.phase='doors';r.d=pickDoors();r.op=-1;snd('tick');save();render();
+  },
+  cashoutAsk:()=>{modalState='cashout';snd('tick');renderModal()},
+  cashoutConfirm:()=>{
+    const r=S.run.study;
+    if(r&&r.earned>0){
+      creditMoney(r.earned);
+      addStudyLog(`Учёба (досрочный вывод): ${hm(r.prog)}`,r.earned);
+      snd('done');burst('#d49b4b',90);
+    }
+    S.run.study=null;modalState=null;save();render();
+  },
+  resetAsk:()=>{modalState='reset';snd('tick');renderModal()},
+  resetConfirm:()=>{S.run.study=null;modalState=null;snd('tick');save();render()},
+  endStudyRun:()=>{S.run.study=null;snd('tick');save();render()},
+  closeModal:()=>{modalState=null;snd('tick');renderModal()},
+
+  /* WORKOUT ACTIONS */
+  toggleMuscle:d=>{
+    const id=d.v,arr=S.wkForm.sel;
+    const idx=arr.indexOf(id);
+    if(idx>=0)arr.splice(idx,1);else arr.push(id);
+    snd('tick');save();render();
+  },
+  logWorkout:()=>{
+    const durInp=$('#wk-dur-inp'),custInp=$('#custom-act-inp');
+    const dur=durInp?Math.max(0,+durInp.value||0):0;
+    const cust=custInp?custInp.value.trim():'';
+    const sel=S.wkForm.sel.length?S.wkForm.sel:['home'];
+
+    S.stats.wk=(S.stats.wk||0)+1;
+    if(dur>0)S.stats.wkMin=(S.stats.wkMin||0)+dur;
+
+    const names=[];
+    sel.forEach(id=>{
+      S.stats.muscles[id]=(S.stats.muscles[id]||0)+1;
+      const m=MUSCLES.find(x=>x.id===id);
+      if(m)names.push(id==='other'&&cust?`Другое (${cust})`:m.n);
+    });
+    if(sel.includes('other')&&cust){
+      S.stats.customActs[cust]=(S.stats.customActs[cust]||0)+1;
+    }
+
+    const earned=creditMoney(S.cfg.rw);
+    addWorkLog(`Тренировка: ${names.join(', ')}${dur?` (${dur} мин)`:''}`,earned);
+    S.wkForm.dur='';S.wkForm.customName='';
+    snd('key');burst('#4f9e69',110);
+    save();render();
+  },
+
+  /* PROFILE & MEDALS */
+  setAva:d=>{S.profile.ava=d.v;snd('tick');save();render()},
+  setAccent:d=>{S.profile.accent=d.v;snd('tick');save();render()},
+  saveProfile:()=>{
+    const n=$('#prof-nick-inp')?.value.trim(),t=$('#prof-title-inp')?.value.trim();
+    if(n)S.profile.nick=n;
+    if(t)S.profile.title=t;
+    snd('done');burst(S.profile.accent,60);save();render();
+  },
+  pinMedal:d=>{
+    const id=d.v;
+    S.profile.medals=S.profile.medals||[];
+    const idx=S.profile.medals.indexOf(id);
+    if(idx>=0)S.profile.medals.splice(idx,1);
+    else{
+      if(S.profile.medals.length>=4)S.profile.medals.shift();
+      S.profile.medals.push(id);
+    }
+    snd('tick');save();render();
+  },
+
+  /* BANK */
+  topup:()=>{
+    const v=Math.round(+$('#am').value);if(!(v>0))return;
+    S.bank.card+=v;addBankLog('Пополнение депозита карты',v);
+    snd('done');save();render();
+  },
+  payout:()=>{
+    let v=Math.round(+$('#pm').value);v=Math.min(v,S.bank.pend);if(!(v>0))return;
+    S.bank.pend-=v;S.bank.paid+=v;S.bank.card=Math.max(0,S.bank.card-v);
+    addBankLog('Выплата заработанных средств',-v);
+    snd('done');save();render();
+  },
+
+  /* SETTINGS */
+  resetDoorsCfg:()=>{
+    S.cfg.doors=JSON.parse(JSON.stringify(DEF_DOORS));
+    S.cfg.kMult=1;S.cfg.gMult=1;S.cfg.rMult=1;
+    snd('done');save();render();
+  },
+  wipeAsk:()=>{modalState='wipe';snd('tick');renderModal()},
+  wipeConfirm:()=>{S=DEF();modalState=null;save();render();drawGrid()}
+};
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');
+  if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset);
+});
+
+document.addEventListener('input',e=>{
+  if(e.target.id==='wk-dur-inp')S.wkForm.dur=e.target.value;
+  if(e.target.id==='custom-act-inp')S.wkForm.customName=e.target.value;
+});
+
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.door!==undefined){
+    const idx=+t.dataset.door,f=t.dataset.df,val=Math.max(0,+t.value||0);
+    const d=S.cfg.doors[idx];
+    if(d){
+      d[f]=val;
+      d.s=Math.max(1,+(100-d.r-d.g-d.k).toFixed(1));
+      save();render();
+    }
+    return;
+  }
+  const k=t.dataset.k;if(!k)return;
+  if(k==='selStudy')S.sel.study=Math.max(10,+t.value||60);
+  else if(k==='full')S.cfg.full=t.checked;
+  else S.cfg[k]=Math.max(0,+t.value||0);
+  save();render();
+});
+
+/* TIMER LOOP */
+setInterval(()=>{
+  const r=S.run.study;
+  if(!r||r.phase!=='timer'||!r.cur||r.cur.paused)return;
+  r.cur.left=r.cur.end-Date.now();
+  if(r.cur.left<=0){finishStudyRoom();return}
+  if(S.tab==='study'){
+    const t=$('#tm'),g=$('#ring');
+    if(t)t.textContent=mmss(r.cur.left);
+    if(g)g.style.setProperty('--p',(1-r.cur.left/(r.cur.dur*60000))*100);
+  }
+},400);
+
+/* BACKGROUND CANVAS: RISING BONFIRE EMBERS (DARK) & DRIFTING ASH (LIGHT) */
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const bg=$('#bg'),fx=$('#fx'),bx=bg.getContext('2d'),fc=fx.getContext('2d');
+let W=0,H=0,PT=[];
+const rgb=h=>{
+  const c=h.startsWith('#')?h:'#d49b4b';
+  return [1,3,5].map(i=>parseInt(c.substr(i,2),16)||180).join(',');
+};
+function drawGrid(){
+  W=bg.width=fx.width=innerWidth;H=bg.height=fx.height=innerHeight;
+  bx.clearRect(0,0,W,H);
+  bx.strokeStyle=S.theme==='light'?'rgba(60,50,40,0.04)':'rgba(212,155,75,0.03)';
+  bx.lineWidth=1;
+  const s=56;
+  bx.beginPath();
+  for(let x=0;x<W;x+=s){bx.moveTo(x,0);bx.lineTo(x,H)}
+  for(let y=0;y<H;y+=s){bx.moveTo(0,y);bx.lineTo(W,y)}
+  bx.stroke();
+}
+function ember(){
+  return{
+    x:Math.random()*innerWidth,
+    y:Math.random()*innerHeight,
+    vx:(Math.random()-.5)*.35,
+    vy:-.3-Math.random()*.55,
+    r:1+Math.random()*2.2,
+    c:'255,110,35',
+    t:0
+  };
+}
+function burst(h,n=60){
+  if(RM)return;const c=rgb(h);
+  for(let i=0;i<n;i++){
+    const a=Math.random()*6.283,s=2+Math.random()*6;
+    PT.push({x:W/2,y:H*.38,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,r:1.5+Math.random()*3,l:1,d:.012+Math.random()*.012,c,t:1});
+  }
+}
+function shake(){if(RM)return;const w=$('.wrap');w.classList.add('shake');setTimeout(()=>w.classList.remove('shake'),450)}
+function loop(){
+  fc.clearRect(0,0,W,H);PT=PT.filter(p=>!p.t||p.l>0);
+  const ambientCol=S.theme==='light'?'75,68,60':'255,105,30';
+  for(const p of PT){
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.t){p.vy+=.06;p.l-=p.d}
+    else{if(p.y<-10){p.y=innerHeight+10;p.x=Math.random()*innerWidth}}
+    const a=p.t?Math.max(p.l,0):.28+.2*Math.sin((p.y+p.x)/55);
+    fc.fillStyle='rgba('+(p.t?p.c:ambientCol)+','+a+')';
+    fc.beginPath();fc.arc(p.x,p.y,p.r,0,6.3);fc.fill();
+  }
+  requestAnimationFrame(loop);
+}
+drawGrid();
+if(!RM){for(let i=0;i<38;i++)PT.push(ember());loop()}
+addEventListener('resize',drawGrid);
+
+/* KEYBOARD SHORTCUTS */
+document.addEventListener('keydown',e=>{
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+  const k=e.key;
+  if(k==='Escape'&&modalState){A.closeModal();return;}
+  if(k==='m'||k==='M'||k==='ь'||k==='Ь'){A.mute();return;}
+  if(S.tab==='study'){
+    const r=S.run.study;
+    if(!r){if(k==='Enter')A.startStudy();return;}
+    if(r.phase==='doors'&&'123'.includes(k))A.openDoor({v:+k-1});
+    else if(r.phase==='reveal'&&(k===' '||k==='Enter')){e.preventDefault();r.cur?.type==='game'?A.finishRoom():A.startTimer();}
+    else if(r.phase==='timer'){if(k===' '){e.preventDefault();A.pauseTimer();}else if(k==='Enter')A.finishRoom();}
+    else if(r.phase==='done'&&k==='Enter')A.endStudyRun();
+  }
+});
+
+render();
+})();
+</script>
+</body>
+</html>
