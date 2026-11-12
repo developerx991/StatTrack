@@ -109,31 +109,52 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 .cut { border-radius: 6px; position: relative; }
 .cut-sm { border-radius: 4px; }
 
+/* SMOOTH VIEW & TAP ANIMATIONS */
+@keyframes viewFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+#main > section {
+  animation: viewFadeIn 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+#main > section:nth-child(2) { animation-delay: 0.04s; }
+#main > section:nth-child(3) { animation-delay: 0.08s; }
+
+button, .hub-card, .rk-cell, .res-pill, .prof-main-click {
+  transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, filter 0.18s ease;
+}
+button:active:not(:disabled), .hub-card:active, .rk-cell:active, .res-pill:active {
+  transform: scale(0.96) !important;
+}
+
 /* ==========================================================================
-   COMPACT MOBILE-FIRST HEADER & TOPBAR
+   COMPACT MOBILE-FIRST HEADER & TOPBAR (NO OVERLAP WITH KEY PILL)
    ========================================================================== */
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 10px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--line);
+  flex-wrap: nowrap;
 }
 .brand {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 7px;
   cursor: pointer;
   user-select: none;
   text-decoration: none;
   color: inherit;
   min-width: 0;
+  flex-shrink: 1;
+  overflow: hidden;
 }
 .brand-ic {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   background: radial-gradient(circle, var(--card2), var(--surface));
   border: 1.5px solid var(--line-gold);
   display: grid;
@@ -142,16 +163,16 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   box-shadow: 0 0 12px rgba(212, 155, 75, 0.25);
   flex-shrink: 0;
 }
-.brand-ic svg { color: var(--cy); width: 20px; height: 20px; }
+.brand-ic svg { color: var(--cy); width: 18px; height: 18px; }
 .logo-txt {
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   color: var(--ink-strong);
   display: flex;
   align-items: center;
-  gap: 2px;
+  white-space: nowrap;
 }
 .logo-txt span { color: var(--cy); }
 .logo-sub {
@@ -167,18 +188,18 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 }
 .top-actions {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   align-items: center;
   margin-left: auto;
   flex-shrink: 0;
 }
 .top-grp-main, .top-grp-sys {
   display: flex;
-  gap: 5px;
+  gap: 4px;
   align-items: center;
 }
 .top-grp-sys {
-  padding-left: 6px;
+  padding-left: 5px;
   margin-left: 2px;
   border-left: 1px solid var(--line-gold);
 }
@@ -186,15 +207,14 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   background: linear-gradient(180deg, var(--card2), var(--card));
   color: var(--ink-strong);
   border: 1px solid var(--line);
-  padding: 7px 10px;
+  padding: 6px 9px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  font: 600 12.5px 'Inter', sans-serif;
-  transition: all 0.2s ease;
-  min-height: 34px;
+  font: 600 12px 'Inter', sans-serif;
+  min-height: 32px;
 }
 .icon-btn:hover, .icon-btn.on {
   border-color: var(--cy);
@@ -204,19 +224,19 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 .res-pill {
   background: var(--surface);
   border: 1px solid var(--line-gold);
-  padding: 6px 9px;
+  padding: 5px 8px;
   font: 600 12px 'Inter', sans-serif;
   color: var(--cy);
   display: inline-flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
-  min-height: 34px;
+  min-height: 32px;
   white-space: nowrap;
 }
 
 /* ==========================================================================
-   COLLAPSIBLE DRAWER FOR PROFILE & STATUS RANKS
+   COLLAPSIBLE DRAWER FOR PROFILE & STREAK BONUS BUTTON
    ========================================================================== */
 .prof-compact-wrap {
   margin-bottom: 10px;
@@ -225,24 +245,29 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   background: linear-gradient(90deg, var(--card2), var(--card));
   border: 1px solid var(--line-gold);
   box-shadow: var(--shadow-card);
-  padding: 9px 12px;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  transition: all 0.2s ease;
+  gap: 8px;
+}
+.prof-left-group {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  flex: 1;
 }
 .prof-main-click {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   min-width: 0;
-  flex: 1;
   cursor: pointer;
 }
 .ava {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: var(--surface);
   border: 2px solid var(--accent);
@@ -252,7 +277,7 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 30%, transparent);
   flex-shrink: 0;
 }
-.ava svg { width: 20px; height: 20px; }
+.ava svg { width: 19px; height: 19px; }
 .prof-info { min-width: 0; flex: 1; }
 .prof-top {
   display: flex;
@@ -261,14 +286,15 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   flex-wrap: wrap;
 }
 .prof-nick {
-  font-size: 18px;
+  font-size: 17px;
   color: var(--ink-strong);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px;
+  max-width: 135px;
+  cursor: pointer;
 }
 .prof-title {
   font: 600 10.5px 'Inter', sans-serif;
@@ -280,27 +306,35 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   padding: 2px 7px;
   border-radius: 3px;
 }
-.streak-badge {
+.streak-btn {
   font: 700 11px 'Inter', sans-serif;
   color: #fff;
   background: linear-gradient(135deg, #c9561e, #8f2327);
-  padding: 2px 7px;
-  border-radius: 3px;
+  border: 1px solid rgba(255, 210, 140, 0.45);
+  padding: 3px 8px;
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(201, 86, 30, 0.35);
+}
+.streak-btn:hover {
+  filter: brightness(1.12);
+  border-color: #ffd27d;
 }
 .prof-mini-ranks {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 3px;
-  font-size: 11.5px;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 11px;
   color: var(--mut);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 .prof-mini-ranks b { color: var(--ink-strong); font-weight: 600; }
 
@@ -308,8 +342,8 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   background: var(--surface);
   color: var(--cy);
   border: 1px solid var(--line-gold);
-  padding: 6px 10px;
-  font: 600 11.5px 'Inter', sans-serif;
+  padding: 6px 9px;
+  font: 600 11px 'Inter', sans-serif;
   border-radius: 4px;
   cursor: pointer;
   display: inline-flex;
@@ -317,7 +351,6 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   gap: 4px;
   flex-shrink: 0;
   white-space: nowrap;
-  transition: all 0.2s ease;
 }
 .drawer-toggle-btn:hover, .drawer-toggle-btn.open {
   background: color-mix(in srgb, var(--cy) 18%, var(--surface));
@@ -342,9 +375,7 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   box-shadow: var(--shadow-card);
   animation: slideDown 0.22s ease-out;
 }
-.prof-drawer.open {
-  display: block;
-}
+.prof-drawer.open { display: block; }
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }
@@ -384,7 +415,6 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   border-top: 3px solid var(--rc, #7f8b99);
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 .rk-cell:hover { border-color: var(--rc); }
 .rk-cell .rk-head {
@@ -476,8 +506,8 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
   z-index: 25;
   display: flex;
   gap: 6px;
-  margin: 0 -12px 14px;
-  padding: 8px 12px;
+  margin: 0 -12px 12px;
+  padding: 7px 12px;
   background: color-mix(in srgb, var(--bg) 90%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -490,17 +520,16 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 .tabs::-webkit-scrollbar { display: none; }
 .tab {
   flex: 0 0 auto;
-  padding: 8px 13px;
+  padding: 7px 12px;
   background: linear-gradient(180deg, var(--card2), var(--card));
   color: var(--mut);
   border: 1px solid var(--line);
-  font-size: 14px;
+  font-size: 13.5px;
   cursor: pointer;
-  transition: all 0.18s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -519,22 +548,22 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 /* CARDS & COMMON UI */
 .card {
   background: linear-gradient(180deg, var(--card2), var(--card) 75%);
-  padding: 16px;
-  margin-bottom: 14px;
+  padding: 15px;
+  margin-bottom: 12px;
   border: 1px solid var(--line);
   border-top: 2px solid var(--line-gold);
   box-shadow: var(--shadow-card);
 }
 .mut { color: var(--mut); }
 h2 {
-  font-size: 22px;
+  font-size: 21px;
   line-height: 1.2;
   margin-bottom: 6px;
   text-transform: uppercase;
   color: var(--ink-strong);
 }
 h3 {
-  font-size: 17px;
+  font-size: 16.5px;
   margin-bottom: 6px;
   text-transform: uppercase;
   color: var(--cy);
@@ -543,11 +572,10 @@ h3 {
   background: linear-gradient(180deg, #8f2327, #591215);
   color: #ffffff;
   border: 1px solid #c95156;
-  font-size: 15px;
-  padding: 10px 18px;
+  font-size: 14.5px;
+  padding: 9px 16px;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.18s ease;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
@@ -557,7 +585,6 @@ h3 {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 .btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08); }
-.btn:active:not(:disabled) { transform: translateY(0); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn.cy {
   background: linear-gradient(180deg, #9c6c25, #694410);
@@ -583,25 +610,24 @@ h3 {
   background: var(--surface);
   color: var(--ink-strong);
   border: 1px solid var(--line);
-  font-size: 13.5px;
-  padding: 8px 13px;
+  font-size: 13px;
+  padding: 7px 12px;
   box-shadow: none;
 }
 .btn.gh:hover:not(:disabled) { border-color: var(--cy); color: var(--cy); }
 
-.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
-.chips { display: flex; gap: 7px; flex-wrap: wrap; margin: 10px 0; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 9px 0; }
 .chip {
   background: var(--surface);
   color: var(--ink-strong);
   border: 1px solid var(--line);
-  padding: 7px 13px;
-  font-size: 14px;
+  padding: 7px 12px;
+  font-size: 13.5px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.16s ease;
 }
 .chip:hover { border-color: var(--line-gold); }
 .chip.on {
@@ -615,23 +641,23 @@ input[type=number], input[type=text], select {
   background: var(--surface);
   border: 1px solid var(--line-gold);
   color: var(--ink-strong);
-  padding: 9px 11px;
-  font: 500 15px 'Inter', sans-serif;
+  padding: 8px 10px;
+  font: 500 14.5px 'Inter', sans-serif;
   border-radius: 4px;
   max-width: 100%;
 }
-input[type=number] { width: 110px; }
+input[type=number] { width: 105px; }
 input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--cy); outline-offset: 1px; }
-.kv { margin: 10px 0; color: var(--mut); font-size: 14px; }
-.kv b { color: var(--cy); font-size: 22px; margin-left: 6px; }
-.hud { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
-.hud b { display: block; font-size: 21px; color: var(--ink-strong); }
+.kv { margin: 9px 0; color: var(--mut); font-size: 13.5px; }
+.kv b { color: var(--cy); font-size: 21px; margin-left: 6px; }
+.hud { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: center; }
+.hud b { display: block; font-size: 20px; color: var(--ink-strong); }
 .bar {
   position: relative;
   height: 12px;
   background: var(--surface);
   border: 1px solid var(--line-gold);
-  margin: 10px 0 16px;
+  margin: 10px 0 14px;
   border-radius: 3px;
 }
 .bar i {
@@ -649,17 +675,19 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   line-height: 0;
 }
 
-/* START HUB SCREEN */
+/* ==========================================================================
+   CLEAN, UNCLUTTERED START HUB SCREEN
+   ========================================================================== */
 .hero {
   text-align: center;
-  padding: 0 0 18px 0;
+  padding: 0 0 14px 0;
   overflow: hidden;
   border-top: 2px solid var(--cy);
 }
 .souls-scene {
   position: relative;
   width: 100%;
-  height: 210px;
+  height: 125px;
   background: #080605;
   border-bottom: 1px solid var(--line-gold);
   overflow: hidden;
@@ -696,46 +724,45 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(180deg, transparent 45%, var(--card2) 100%);
+  background: linear-gradient(180deg, transparent 35%, var(--card2) 100%);
   pointer-events: none;
 }
 .scene-caption {
   position: relative;
   z-index: 3;
-  margin-top: -28px;
-  padding: 0 14px;
+  margin-top: -22px;
+  padding: 0 12px;
 }
 .hero-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 10px;
-  margin-top: 14px;
-  padding: 0 14px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+  padding: 0 12px;
   text-align: left;
 }
 .hub-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-left: 3px solid var(--c, var(--cy));
-  padding: 13px;
+  padding: 11px 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
 }
 .hub-card:hover {
   transform: translateY(-2px);
   border-color: var(--c, var(--cy));
   box-shadow: var(--shadow-card);
 }
-.hub-card h3 { color: var(--c, var(--cy)); margin: 0; font-size: 18px; display: flex; align-items: center; gap: 7px; }
-.hub-card p { font-size: 13px; color: var(--mut); line-height: 1.4; }
+.hub-card h3 { color: var(--c, var(--cy)); margin: 0; font-size: 16.5px; display: flex; align-items: center; gap: 6px; }
+.hub-card p { font-size: 12px; color: var(--mut); line-height: 1.35; }
 .hub-stat {
-  font: 600 12.5px 'Inter', sans-serif;
+  font: 600 11.5px 'Inter', sans-serif;
   color: var(--ink-strong);
-  padding-top: 7px;
+  padding-top: 6px;
   border-top: 1px solid var(--line);
 }
 
@@ -752,7 +779,6 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   color: var(--ink);
   font: inherit;
   text-align: center;
-  transition: all 0.22s ease;
   position: relative;
 }
 [data-theme="light"] .door { --dc: color-mix(in srgb, var(--c) 72%, #1a120b); }
@@ -790,12 +816,12 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 .nm { font-size: 18px; color: var(--dc); min-height: 24px; }
 .frame {
-  height: 136px;
+  height: 132px;
   background: #040303;
   position: relative;
   perspective: 650px;
   margin: 6px auto 10px;
-  width: 110px;
+  width: 106px;
   border: 5px solid #2e2925;
   border-bottom-width: 6px;
   border-radius: 62px 62px 2px 2px;
@@ -973,8 +999,8 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .ring {
   --p: 0;
   --c: var(--ember);
-  width: 220px;
-  height: 220px;
+  width: 215px;
+  height: 215px;
   border-radius: 50%;
   margin: 12px auto;
   display: grid;
@@ -984,8 +1010,8 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   animation: pulse 2.4s ease-in-out infinite;
 }
 .ring > div {
-  width: 190px;
-  height: 190px;
+  width: 185px;
+  height: 185px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--card) 60%, var(--surface) 100%);
   border: 1px solid var(--line-gold);
@@ -994,12 +1020,12 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   align-content: center;
   text-align: center;
 }
-.big { font-size: 48px; line-height: 1; font-weight: 700; color: var(--ink-strong); }
+.big { font-size: 46px; line-height: 1; font-weight: 700; color: var(--ink-strong); }
 .center { text-align: center; }
 @keyframes pulse {
   50% { box-shadow: 0 0 42px color-mix(in srgb, var(--c) 60%, transparent); }
 }
-.pop { text-align: center; animation: pop 0.45s; position: relative; overflow: hidden; }
+.pop { text-align: center; animation: pop 0.4s cubic-bezier(0.22, 1, 0.36, 1); position: relative; overflow: hidden; }
 .pop > :not(.rays) { position: relative; }
 .rays {
   position: absolute !important;
@@ -1015,18 +1041,18 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   pointer-events: none;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pop { from { transform: scale(0.86); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: none; opacity: 1; } }
 .tag {
   display: inline-block;
-  padding: 4px 14px;
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  padding: 3px 12px;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #ffffff;
   background: var(--t, var(--cy));
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 3px;
-  margin: 4px 0 8px;
+  margin: 4px 0 6px;
 }
 .tag.gold {
   background: linear-gradient(100deg, #8a5a10, #d49b4b, #9c6b19);
@@ -1093,7 +1119,6 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   gap: 11px;
   align-items: center;
   position: relative;
-  transition: all 0.2s ease;
 }
 .ach.t1 { border-color: #9e632b; box-shadow: inset 0 0 16px rgba(205, 127, 50, 0.12); }
 .ach.t2 { border-color: #8c52b5; box-shadow: inset 0 0 20px rgba(140, 82, 181, 0.16); }
@@ -1119,7 +1144,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .ach-desc { font-size: 12.5px; color: var(--mut); margin-bottom: 6px; line-height: 1.35; }
 
 /* ==========================================================================
-   CS2 CASE ROULETTE & SHOP STYLES
+   CS2 CASE ROULETTE & SHOP STYLES (WITH GUARDIAN SHOP ITEM BADGES)
    ========================================================================== */
 .case-box {
   background: var(--surface);
@@ -1187,7 +1212,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .r-card b { font-size: 12.5px; margin-top: 5px; line-height: 1.15; }
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 10px;
   margin-top: 12px;
 }
@@ -1200,6 +1225,29 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   flex-direction: column;
   justify-content: space-between;
   gap: 10px;
+  transition: transform 0.18s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.shop-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--rc, var(--cy));
+  box-shadow: var(--shadow-card);
+}
+.shop-item-top {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+}
+.shop-ic-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--rc) 28%, var(--card2)), var(--card));
+  border: 1.5px solid color-mix(in srgb, var(--rc) 65%, transparent);
+  color: var(--rc);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--rc) 20%, transparent);
 }
 .inv-bar {
   background: var(--surface);
@@ -1213,42 +1261,51 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 
 /* ==========================================================================
-   GITHUB HEATMAP, CHARTS & QUESTS
+   FULL-WIDTH GITHUB HEATMAP (FITS SCREEN WITHOUT HORIZONTAL SCROLL), CHARTS & QUESTS
    ========================================================================== */
 .heatmap-wrap {
-  overflow-x: auto;
-  padding: 8px 0;
-  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  padding: 6px 0;
+  overflow: hidden;
 }
 .heatmap {
   display: grid;
-  grid-template-rows: repeat(7, 15px);
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  grid-template-rows: repeat(7, auto);
   grid-auto-flow: column;
-  grid-auto-columns: 15px;
-  gap: 4px;
-  width: max-content;
+  gap: 3px;
+  width: 100%;
 }
 .hm-cell {
-  width: 15px;
-  height: 15px;
+  width: 100%;
+  aspect-ratio: 1;
   border-radius: 2px;
   background: var(--surface);
   border: 1px solid var(--line);
 }
-.hm-cell.l1 { background: #4a3519; border-color: #694b23; }
-.hm-cell.l2 { background: #7d5722; border-color: #9e6e2b; }
-.hm-cell.l3 { background: #b57c29; border-color: #d49b4b; }
-.hm-cell.l4 { background: #f2aa3c; border-color: #ffd27d; box-shadow: 0 0 6px rgba(242, 170, 60, 0.5); }
-[data-theme="light"] .hm-cell.l1 { background: #d6c4a5; }
-[data-theme="light"] .hm-cell.l2 { background: #b89760; }
-[data-theme="light"] .hm-cell.l3 { background: #966c28; }
-[data-theme="light"] .hm-cell.l4 { background: #694408; }
+.hm-legend-cell {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 2px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.hm-cell.l1, .hm-legend-cell.l1 { background: #4a3519; border-color: #694b23; }
+.hm-cell.l2, .hm-legend-cell.l2 { background: #7d5722; border-color: #9e6e2b; }
+.hm-cell.l3, .hm-legend-cell.l3 { background: #b57c29; border-color: #d49b4b; }
+.hm-cell.l4, .hm-legend-cell.l4 { background: #f2aa3c; border-color: #ffd27d; box-shadow: 0 0 5px rgba(242, 170, 60, 0.45); }
+[data-theme="light"] .hm-cell.l1, [data-theme="light"] .hm-legend-cell.l1 { background: #d6c4a5; }
+[data-theme="light"] .hm-cell.l2, [data-theme="light"] .hm-legend-cell.l2 { background: #b89760; }
+[data-theme="light"] .hm-cell.l3, [data-theme="light"] .hm-legend-cell.l3 { background: #966c28; }
+[data-theme="light"] .hm-cell.l4, [data-theme="light"] .hm-legend-cell.l4 { background: #694408; }
 
 .chart-bars {
   display: flex;
   align-items: flex-end;
   gap: 6px;
-  height: 155px;
+  height: 150px;
   padding: 16px 8px 6px;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -1277,21 +1334,58 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 
 .quest-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
 }
 .quest-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-left: 3px solid var(--cy);
-  padding: 12px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
 }
-.quest-card.done { border-left-color: var(--gr); }
+.quest-card.done { border-left-color: var(--gr); opacity: 0.86; }
+
+/* STREAK 30-DAY CHAIN MODAL GRID */
+.streak-chain-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin: 12px 0;
+  max-height: 310px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.sc-cell {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 6px 4px;
+  text-align: center;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.sc-cell.pct-up {
+  border-color: color-mix(in srgb, var(--cy) 65%, var(--line));
+  background: color-mix(in srgb, var(--cy) 10%, var(--surface));
+}
+.sc-cell.passed {
+  border-color: var(--gr);
+  background: color-mix(in srgb, var(--gr) 16%, var(--surface));
+}
+.sc-cell.current {
+  border: 2px solid var(--ember);
+  box-shadow: 0 0 10px rgba(255, 85, 26, 0.45);
+}
+.sc-day { font-size: 10px; color: var(--mut); font-weight: 600; }
+.sc-rew { font-weight: 700; font-size: 11.5px; color: var(--ink-strong); }
 
 /* EXERCISE JOURNAL & PR TABLE */
 .pr-grid {
@@ -1343,15 +1437,15 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   padding: 14px;
 }
 .modal {
-  max-width: 440px;
+  max-width: 460px;
   width: 100%;
   background: var(--card);
   border: 1px solid var(--line-gold);
   border-top: 2px solid var(--cy);
   border-bottom: 2px solid var(--cy);
-  padding: 20px;
+  padding: 18px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-  animation: pop 0.25s;
+  animation: pop 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* CAREER LADDER LIST */
@@ -1391,28 +1485,36 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
    ========================================================================== */
 @media (max-width: 720px) {
   .logo-sub { display: none; }
-  .logo-txt { font-size: 19px; }
-  .brand-ic { width: 32px; height: 32px; }
+  .logo-txt { font-size: 16.5px; letter-spacing: 0.04em; }
+  .brand-ic { width: 29px; height: 29px; }
+  .brand-ic svg { width: 16px; height: 16px; }
   .icon-btn span { display: none; }
-  .icon-btn { padding: 7px 9px; }
-  .res-pill { padding: 6px 8px; font-size: 11.5px; }
+  .icon-btn { padding: 6px 8px; min-height: 30px; }
+  .res-pill { padding: 5px 7px; font-size: 11px; min-height: 30px; }
   .doors { grid-template-columns: 1fr; }
   .door { padding: 12px; }
-  .frame { height: 120px; width: 98px; }
+  .frame { height: 118px; width: 96px; }
   .door-cfg-head { display: none !important; }
   .door-cfg-item { grid-template-columns: 1fr 1fr; gap: 8px; }
   .door-cfg-item strong { grid-column: 1 / -1; font-size: 15px; }
-  .souls-scene { height: 165px; }
-  .hero-grid { grid-template-columns: 1fr; padding: 0 10px; }
+  .souls-scene { height: 110px; }
+  .hero-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 10px; }
+  .hub-card { padding: 10px; }
+  .hub-card h3 { font-size: 15px; }
+  .hub-card p { font-size: 11.5px; }
   .stats { grid-template-columns: 1fr 1fr; }
   .row > .btn { flex: 1 1 auto; }
   .row label { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .row label input[type="text"], .row label input[type="number"] { flex: 1; max-width: 170px; }
   .inv-bar .btn { flex: 1 1 calc(50% - 6px); justify-content: center; }
+  .heatmap { gap: 2px; }
 }
-@media (max-width: 390px) {
+@media (max-width: 380px) {
+  .logo-txt { font-size: 15px; }
+  .hero-grid { grid-template-columns: 1fr; }
   .stats { grid-template-columns: 1fr; }
-  .prof-nick { max-width: 115px; font-size: 16px; }
+  .prof-nick { max-width: 95px; font-size: 15px; }
+  .streak-chain-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
 }
 [hidden] { display: none !important; }
 </style>
@@ -1518,6 +1620,26 @@ const ACHS=[
   }))
 ];
 
+/* ==========================================================================
+   30-DAY STREAK PROGRESSION: 1% ON DAY 1 -> 10% ON DAY 30, KEYS ON NON-UP DAYS
+   ========================================================================== */
+const STREAK_UP_DAYS=[1,4,7,10,13,17,20,24,27,30];
+function getStreakBonusPctForDay(day){
+  if(!day||day<=0)return 0;
+  let pct=0;
+  for(const d of STREAK_UP_DAYS){
+    if(day>=d)pct++;
+  }
+  return Math.min(10,pct);
+}
+function isStreakPctUpgradeDay(day){
+  return STREAK_UP_DAYS.includes(day);
+}
+function getStreakMult(){
+  const pct=getStreakBonusPctForDay(S.streak.cur||0);
+  return 1+(pct/100);
+}
+
 /* DATE & WEEK KEYS */
 const toDayKey=ts=>{
   const d=new Date(ts||Date.now());
@@ -1600,10 +1722,12 @@ try{
   if(raw)S=JSON.parse(raw);
 }catch(e){}
 S=normalizeState(S);
+/* Always open on the clean Start screen on launch */
+S.tab='home';
 
 let modalState=null;
 let profDrawerOpen=false;
-let restTimer={left:0,total:0,end:0,running:false};
+let showAllQuestsHome=false;
 let caseSpinning=false;
 
 const BACKEND_URL='https://stattrack-backend.onrender.com';
@@ -1645,7 +1769,9 @@ async function loadCloudProfile(){
     if(!res.ok)return;
     const cloudData=await res.json();
     if(cloudData&&cloudData.stats){
+      const curTab=S.tab||'home';
       S=normalizeState(cloudData);
+      S.tab=curTab;
       try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
     }else{
       if(tg.initDataUnsafe.user.first_name){
@@ -1716,14 +1842,19 @@ function recordDailyActivity(studyMin=0,workouts=0,doorsOpened=0){
       S.streak.cur=(S.streak.cur||0)+1;
       if(S.streak.cur>(S.streak.best||0))S.streak.best=S.streak.cur;
       S.streak.lastDate=today;
+      const newDay=S.streak.cur;
+      /* On days where bonus % does not increase (or after day 30), grant 1 Key */
+      if(!isStreakPctUpgradeDay(newDay)){
+        S.stats.keys=(S.stats.keys||0)+1;
+        S.stats.keyBalance=(S.stats.keyBalance||0)+1;
+        addBankLog(`🔥 Серия ${newDay} дн.: получен бонусный 🔑 Ключ за постоянство!`,0);
+      }else{
+        const newPct=getStreakBonusPctForDay(newDay);
+        addBankLog(`🔥 Серия ${newDay} дн.: бонус к наградам вырос до +${newPct}%!`,0);
+      }
     }
   }
   checkWeeklyPlanCompletion();
-}
-
-function getStreakMult(){
-  const bonus=Math.min(0.5,(S.streak.cur||0)*0.05);
-  return 1+bonus;
 }
 
 function getWeekProgress(weekMondayStr){
@@ -1960,28 +2091,28 @@ const creditMoney=(amt,applyStreak=true)=>{
   return a;
 };
 
-/* COMPACT MOBILE HEADER & COLLAPSIBLE PROFILE DRAWER */
+/* COMPACT MOBILE HEADER, STREAK BUTTON NEXT TO NICK & COLLAPSIBLE PROFILE DRAWER */
 function renderHeader(){
-  $('#brand-ic').innerHTML=icon('logo',22);
+  $('#brand-ic').innerHTML=icon('logo',20);
   const isLight=S.theme==='light';
   $('#top-actions').innerHTML=`
     <div class="top-grp-main">
       <div class="res-pill cut-sm" data-a="tab" data-v="shop" title="Твои ключи и сундуки для Магазина и Кейсов">
-        ${icon('key',14)} <b>${S.stats.keyBalance||0}</b>
+        ${icon('key',13)} <b>${S.stats.keyBalance||0}</b>
         ${(S.stats.chests||0)>0?` • 📦<b>${S.stats.chests}</b>`:''}
       </div>
-      <button class="icon-btn cut-sm ${S.tab==='profile'?'on':''}" data-a="tab" data-v="profile" title="Профиль">${icon('user',16)} <span>Профиль</span></button>
-      <button class="icon-btn cut-sm" data-a="theme" title="Переключить облик: Чёрный Рыцарь / Белый Рыцарь">${icon(isLight?'moon':'sun',16)} <span>${isLight?'Тёмная':'Светлая'}</span></button>
+      <button class="icon-btn cut-sm ${S.tab==='profile'?'on':''}" data-a="tab" data-v="profile" title="Профиль">${icon('user',15)} <span>Профиль</span></button>
+      <button class="icon-btn cut-sm" data-a="theme" title="Переключить облик: Чёрный Рыцарь / Белый Рыцарь">${icon(isLight?'moon':'sun',15)} <span>${isLight?'Тёмная':'Светлая'}</span></button>
     </div>
     <div class="top-grp-sys">
-      <button class="icon-btn cut-sm ${S.tab==='settings'?'on':''}" data-a="tab" data-v="settings" title="Настройки и шансы">${icon('gear',16)}</button>
-      <button class="icon-btn cut-sm" data-a="mute" title="Звук">${icon(S.mute?'mute':'snd',16)}</button>
+      <button class="icon-btn cut-sm ${S.tab==='settings'?'on':''}" data-a="tab" data-v="settings" title="Настройки и шансы">${icon('gear',15)}</button>
+      <button class="icon-btn cut-sm" data-a="mute" title="Звук">${icon(S.mute?'mute':'snd',15)}</button>
     </div>
   `;
 
   const sr=getStudyRank(),wr=getSportRank();
   const hrs=(S.stats.min/60).toFixed(1);
-  const sBonus=Math.round((getStreakMult()-1)*100);
+  const sBonus=getStreakBonusPctForDay(S.streak.cur||0);
   const medals=(S.profile.medals||[]).map(id=>{
     const a=ACHS.find(x=>x.id===id);if(!a)return '';
     const st=getAchState(a);
@@ -1992,15 +2123,17 @@ function renderHeader(){
   $('#prof-header').innerHTML=`
     <div class="prof-compact-wrap">
       <div class="prof-bar cut" style="--accent:${S.profile.accent}">
-        <div class="prof-main-click" data-a="tab" data-v="profile" title="Открыть профиль и кастомизацию">
-          <div class="ava">${icon(S.profile.ava||'crown',22)}</div>
+        <div class="prof-left-group">
+          <div class="ava" data-a="tab" data-v="profile" title="Открыть профиль">${icon(S.profile.ava||'crown',20)}</div>
           <div class="prof-info">
             <div class="prof-top">
-              <span class="prof-nick">${S.profile.nick}</span>
-              <span class="streak-badge" title="Непрерывная серия активных дней (бонус +${sBonus}% к рублям)">🔥 ${S.streak.cur||0}д (+${sBonus}%)</span>
+              <span class="prof-nick" data-a="tab" data-v="profile" title="Открыть профиль">${S.profile.nick}</span>
+              <button class="streak-btn" data-a="openStreakModal" title="Посмотреть серию дней и цепочку бонусов">
+                🔥 ${S.streak.cur||0} дн. • +${sBonus}% ℹ️
+              </button>
               ${(S.inv.freeze||0)>0?`<span class="prof-title" style="color:#4a8db7;border-color:#4a8db7">❄️${S.inv.freeze}</span>`:''}
             </div>
-            <div class="prof-mini-ranks">
+            <div class="prof-mini-ranks" data-a="toggleProfDrawer">
               <span>📚 Ур.${sr.lvl+1} <b>${sr.name}</b></span>
               <span>•</span>
               <span>⚔️ Ур.${wr.lvl+1} <b>${wr.name}</b></span>
@@ -2049,7 +2182,7 @@ function renderHeader(){
     ['ach','Достижения','trophy'],
     ['bank','Банк и План','bank']
   ];
-  $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,16)} ${v}</button>`).join('');
+  $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,15)} ${v}</button>`).join('');
 
   const activeTab=$('#tabs .tab.on');
   if(activeTab&&activeTab.scrollIntoView){
@@ -2390,18 +2523,18 @@ function getQuestsList(){
   return [
     {
       id:'d_1h',
-      period:'Ежедневный квест',
+      period:'Сегодня',
       n:'Час знаний: 1 час учёбы',
-      d:'Провести за учёбой минимум 60 минут за сегодня',
+      d:'60 минут учёбы за сегодня',
       cur:td.min,target:60,u:'мин',
       rewTxt:'1 000 ₽',
       money:1000,chests:0,keys:0
     },
     {
       id:'d_mini',
-      period:'Ежедневный квест',
-      n:'Внезапная мини-тренировка',
-      d:'Выполнить быструю разминку (кнопка ниже) или любую тренировку сегодня',
+      period:'Сегодня',
+      n:'Внезапная разминка',
+      d:'Быстрая разминка или тренировка',
       cur:(td.wk>0||S.quests.miniDone)?1:0,target:1,u:'вып.',
       rewTxt:'300 ₽',
       money:300,chests:0,keys:0,
@@ -2409,36 +2542,36 @@ function getQuestsList(){
     },
     {
       id:'d_combo',
-      period:'Ежедневный квест',
-      n:'Комбо дня: 2 часа учёбы и 1 тренировка',
-      d:`Учёба: ${td.min}/120 мин • Тренировка: ${td.wk}/1`,
+      period:'Сегодня',
+      n:'Комбо: 2 ч учёбы + 1 трен.',
+      d:`Учёба: ${td.min}/120м • Спорт: ${td.wk}/1`,
       cur:Math.min(120,td.min)+(td.wk>=1?60:0),target:180,u:'очк.',
       rewTxt:'500 ₽ + 📦 1 Сундук',
       money:500,chests:1,keys:0
     },
     {
       id:'d_doors',
-      period:'Ежедневный квест',
-      n:'Искатель глубин: 3 комнаты лабиринта',
-      d:'Пройти 3 комнаты в лабиринте учёбы за сегодня',
+      period:'Сегодня',
+      n:'Искатель: 3 двери лабиринта',
+      d:'Пройти 3 комнаты в лабиринте за сегодня',
       cur:td.doors||0,target:3,u:'комн.',
       rewTxt:'400 ₽ + 🔑 1 Ключ',
       money:400,chests:0,keys:1
     },
     {
       id:'w_combo',
-      period:'Недельный квест',
-      n:'Поход недели: 10 ч учёбы и 3 тренировки',
-      d:`За неделю: ${hm(wp.min)} из 10 ч • Тренировок: ${wp.wk}/3`,
+      period:'Неделя',
+      n:'Поход недели: 10 ч + 3 трен.',
+      d:`Учёба: ${hm(wp.min)}/10ч • Спорт: ${wp.wk}/3`,
       cur:Math.min(600,wp.min)+Math.min(3,wp.wk)*100,target:900,u:'очк.',
-      rewTxt:'3 000 ₽ + 📦 2 Сундука + 🔑 1 Ключ',
+      rewTxt:'3 000 ₽ + 📦 2 Сунд. + 🔑 1 Ключ',
       money:3000,chests:2,keys:1
     },
     {
       id:'w_days',
-      period:'Недельный квест',
-      n:'Пламя дисциплины: 5 активных дней за неделю',
-      d:'Заниматься учёбой или спортом минимум 5 дней на этой неделе',
+      period:'Неделя',
+      n:'Пламя: 5 активных дней',
+      d:'Заниматься минимум 5 дней за неделю',
       cur:wp.days,target:5,u:'дн.',
       rewTxt:'2 000 ₽ + 📦 1 Сундук',
       money:2000,chests:1,keys:0
@@ -2446,12 +2579,12 @@ function getQuestsList(){
   ];
 }
 
-/* 1. HOME / START SCREEN */
+/* 1. CLEAN, UNCLUTTERED HOME / START SCREEN */
 function homeView(){
   const r=S.run.study;
-  const isLight=S.theme==='light';
   const qs=getQuestsList();
-  const sBonus=Math.round((getStreakMult()-1)*100);
+  const visibleQs=showAllQuestsHome?qs:qs.slice(0,3);
+  const sBonus=getStreakBonusPctForDay(S.streak.cur||0);
 
   return `<section class="card cut hero">
     <div class="souls-scene">
@@ -2460,38 +2593,37 @@ function homeView(){
       <div class="scene-overlay"></div>
     </div>
     <div class="scene-caption">
-      <div class="tag" style="--t:var(--cy)">${isLight?'Облик: Белый Рыцарь Тумана':'Облик: Чёрный Рыцарь Пепла'}</div>
-      <h2 style="font-size:24px;margin-top:2px">Выбери режим на сегодня</h2>
-      <p class="mut" style="max-width:640px;margin:0 auto;font-size:13.5px">Проходи лабиринт фокуса в учёбе, выполняй ежедневные квесты, открывай кейсы за ключи, веди журнал весов и забирай награду за дисциплину.</p>
+      <h2 style="font-size:21px;margin-bottom:2px">Куда отправимся сегодня?</h2>
+      <p class="mut" style="font-size:12.5px">Выбери нужный раздел ниже — без лишних экранов и перегруза</p>
     </div>
     <div class="hero-grid">
       <div class="hub-card cut-sm" style="--c:var(--cy)" data-a="tab" data-v="study">
         <div>
-          <h3>${icon('study',19)} Лабиринт учёбы</h3>
-          <p>10 уникальных врат, предметы тактики (Разведка, Щит, Переброс) и поиск ключей.</p>
+          <h3>${icon('study',17)} Учёба</h3>
+          <p>Лабиринт из 10 врат, таймер и ключи</p>
         </div>
-        <div class="hub-stat">${r?`Активный забег: ${r.prog}/${r.target} мин (${fmt(r.earned)})`:`Награда: ${fmt(S.cfg.rs)} / час`}</div>
+        <div class="hub-stat">${r?`Забег: ${r.prog}/${r.target}м`:`${fmt(S.cfg.rs)} / час`}</div>
       </div>
       <div class="hub-card cut-sm" style="--c:var(--gr)" data-a="tab" data-v="work">
         <div>
-          <h3>${icon('work',19)} Спорт и Журнал весов</h3>
-          <p>Отмечай тренировки, засекай отдых между подходами, веди подходы и рекорды.</p>
+          <h3>${icon('work',17)} Спорт</h3>
+          <p>Тренировки, мышцы и вес тела</p>
         </div>
-        <div class="hub-stat">Выполнено: ${S.stats.wk} трен. • +${fmt(S.cfg.rw)} за трен.</div>
+        <div class="hub-stat">${S.stats.wk} трен. • +${fmt(S.cfg.rw)}</div>
       </div>
       <div class="hub-card cut-sm" style="--c:var(--ye)" data-a="tab" data-v="shop">
         <div>
-          <h3>${icon('shop',19)} Магазин и Кейсы CS2</h3>
-          <p>Трать ключи на крутку рулетки кейсов или покупай предметы для лабиринта.</p>
+          <h3>${icon('shop',17)} Магазин</h3>
+          <p>Рулетка кейсов CS2 и Лавка Хранителя</p>
         </div>
-        <div class="hub-stat">Ключей: ${S.stats.keyBalance||0} шт. • Сундуков: ${S.stats.chests||0} шт.</div>
+        <div class="hub-stat">🔑 ${S.stats.keyBalance||0} кл. • 📦 ${S.stats.chests||0} сунд.</div>
       </div>
       <div class="hub-card cut-sm" style="--c:var(--vi)" data-a="tab" data-v="progress">
         <div>
-          <h3>${icon('chart',19)} Графики и GitHub-карта</h3>
-          <p>Тепловая карта дней, часы по неделям, лучшее время суток и бэкап данных.</p>
+          <h3>${icon('chart',17)} Прогресс</h3>
+          <p>Полная GitHub-карта и графики</p>
         </div>
-        <div class="hub-stat">Серия: ${S.streak.cur||0} дн. (Рекорд: ${S.streak.best||0} дн. • Бонус +${sBonus}%)</div>
+        <div class="hub-stat">🔥 ${S.streak.cur||0} дн. (+${sBonus}%)</div>
       </div>
     </div>
   </section>
@@ -2499,30 +2631,35 @@ function homeView(){
   <section class="card cut">
     <div class="hud">
       <div>
-        <h2>📜 Ежедневные и недельные квесты</h2>
-        <p class="mut" style="font-size:13.5px">Выполняй задания, чтобы получать рубли, ключи и бесплатные сундуки (кейсы)!</p>
+        <h2 style="font-size:18px;margin-bottom:2px">📜 Задания на сегодня</h2>
+        <p class="mut" style="font-size:12px">Быстрые награды за дисциплину</p>
       </div>
-      ${(S.stats.savedGames||0)>0?`<button class="btn ye" data-a="playSavedGame">🎮 Сыграть катку из запаса (${S.stats.savedGames})</button>`:''}
+      <div style="display:flex;gap:6px;align-items:center">
+        ${(S.stats.savedGames||0)>0?`<button class="btn ye" style="padding:6px 10px;font-size:12px" data-a="playSavedGame">🎮 Катка (${S.stats.savedGames})</button>`:''}
+        <button class="btn gh" style="padding:5px 10px;font-size:12px" data-a="toggleHomeQuests">
+          ${showAllQuestsHome?'Свернуть':'Все квесты ('+qs.length+')'}
+        </button>
+      </div>
     </div>
     <div class="quest-list">
-      ${qs.map(q=>{
+      ${visibleQs.map(q=>{
         const claimed=!!S.quests.claimed[q.id];
         const ready=q.cur>=q.target;
         const pct=Math.min(100,Math.round((q.cur/q.target)*100));
         return `<div class="quest-card cut-sm ${claimed?'done':''}">
           <div>
-            <div class="ach-lvl">${q.period} • Награда: <b style="color:var(--cy)">${q.rewTxt}</b></div>
-            <div class="ach-ttl" style="font-size:16.5px">${q.n}</div>
-            <div class="ach-desc">${q.d}</div>
+            <div class="ach-lvl">${q.period} • <b style="color:var(--cy)">${q.rewTxt}</b></div>
+            <div class="ach-ttl" style="font-size:15.5px">${q.n}</div>
+            <div class="ach-desc" style="margin-bottom:4px">${q.d}</div>
             <div class="rk-xp"><i style="width:${pct}%;background:${claimed?'var(--gr)':'var(--cy)'}"></i></div>
           </div>
-          <div class="row" style="justify-content:space-between;margin-top:6px">
-            <span class="mut" style="font-size:12px">Прогресс: ${pct}%</span>
+          <div class="row" style="justify-content:space-between;margin-top:4px">
+            <span class="mut" style="font-size:11.5px">${pct}%</span>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              ${q.quickBtn?`<button class="btn gh" style="padding:5px 10px;font-size:12px" data-a="doMiniWorkout">⚡ Сделать разминку</button>`:''}
-              ${claimed?`<span style="color:var(--gr);font-weight:700;font-size:12.5px">✓ Получено</span>`:
-                ready?`<button class="btn gr" style="padding:6px 12px;font-size:12.5px" data-a="claimQuest" data-v="${q.id}">Забрать награду</button>`:
-                `<span class="mut" style="font-size:12px">В процессе</span>`}
+              ${q.quickBtn?`<button class="btn gh" style="padding:4px 9px;font-size:11.5px" data-a="doMiniWorkout">⚡ Разминка</button>`:''}
+              ${claimed?`<span style="color:var(--gr);font-weight:700;font-size:12px">✓ Выполнено</span>`:
+                ready?`<button class="btn gr" style="padding:5px 11px;font-size:12px" data-a="claimQuest" data-v="${q.id}">Забрать</button>`:
+                `<span class="mut" style="font-size:11.5px">В процессе</span>`}
             </div>
           </div>
         </div>`;
@@ -2537,13 +2674,14 @@ function studyView(){
   if(!r){
     const opts=[60,120,180,240],t=S.sel.study;
     const pen=Math.pow(0.5,S.stats.earlyStreak||0);
+    const sBonus=getStreakBonusPctForDay(S.streak.cur||0);
     return `<section class="card cut">
       <h2>Лабиринт учёбы</h2>
       <p class="mut">Укажи план на сегодня. В первые 3 хода ключ выпасть не может. Найденные в лабиринте ключи зачисляют деньги и остаются у тебя для покупок в Магазине!</p>
       ${S.stats.earlyStreak>0?`<p style="color:var(--ye);font-size:13.5px;margin-top:6px">⚡ В прошлом забеге выпал досрочный ключ (серия: ${S.stats.earlyStreak}). Шанс на ключ в этом забеге снижен до <b>${Math.round(pen*100)}%</b> от базового. Пройди полное время без ключа, чтобы сбросить штраф!</p>`:''}
       <div class="chips">${opts.map(v=>`<button class="chip cut-sm ${t===v?'on':''}" data-a="sel" data-v="${v}">${v/60} ч</button>`).join('')}</div>
       <label class="mut">Свой план (мин): <input type="number" min="10" value="${t}" data-k="selStudy"></label>
-      <div class="kv">Награда за полный план (с учётом бонуса серии +${Math.round((getStreakMult()-1)*100)}%)<b>${fmt(money('study',t)*getStreakMult())}</b></div>
+      <div class="kv">Награда за полный план (с учётом бонуса серии +${sBonus}%)<b>${fmt(money('study',t)*getStreakMult())}</b></div>
       <div class="row">
         <button class="btn cy" data-a="startStudy">Войти в лабиринт</button>
         ${(S.stats.savedGames||0)>0?`<button class="btn ye" data-a="playSavedGame">🎮 Сыграть отложенную катку (${S.stats.savedGames})</button>`:''}
@@ -2670,7 +2808,7 @@ function studyView(){
   </section>`;
 }
 
-/* 3. WORKOUTS + REST TIMER BETWEEN SETS + BODY WEIGHT TRACKER */
+/* 3. WORKOUTS & BODY WEIGHT TRACKER (REST TIMER REMOVED AS REQUESTED) */
 function workView(){
   const f=S.wkForm;
   const customKeys=Object.keys(S.stats.customActs||{});
@@ -2701,23 +2839,6 @@ function workView(){
     <div class="row">
       <button class="btn gr" data-a="logWorkout">${icon('bolt',17)} Записать тренировку</button>
       <button class="btn gh" data-a="logWorkoutAndJournal">📝 Записать и расписать подходы</button>
-    </div>
-  </section>
-
-  <section class="card cut" style="border-color:var(--cy)">
-    <h2>⏱️ Таймер отдыха между подходами</h2>
-    <p class="mut">Запусти отсчёт отдыха прямо во время тренировки — по окончании прозвучит колокол.</p>
-    <div class="row" style="justify-content:space-between">
-      <div class="chips" style="margin:4px 0">
-        <button class="chip cut-sm" data-a="startRestTimer" data-v="60">60 сек</button>
-        <button class="chip cut-sm" data-a="startRestTimer" data-v="90">90 сек</button>
-        <button class="chip cut-sm" data-a="startRestTimer" data-v="120">2 мин</button>
-        <button class="chip cut-sm" data-a="startRestTimer" data-v="180">3 мин</button>
-        <button class="btn gh" data-a="stopRestTimer">Сброс</button>
-      </div>
-      <div style="font-size:34px;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--cy)" id="rest-timer-disp">
-        ${restTimer.running?mmss(restTimer.left):'00:00'}
-      </div>
     </div>
   </section>
 
@@ -2836,7 +2957,7 @@ function gymView(){
   </section>`;
 }
 
-/* 5. SHOP & CS2 CASE ROULETTE VIEW */
+/* 5. SHOP & CS2 CASE ROULETTE VIEW (WITH GUARDIAN SHOP ITEM ICONS) */
 function shopView(){
   const rerollPrice=1+(S.shop.rerollBuys||0);
   const stripItems=Array.from({length:45},(_,idx)=>SHOP_ITEMS[idx%SHOP_ITEMS.length]);
@@ -2873,18 +2994,23 @@ function shopView(){
 
   <section class="card cut">
     <h2>🛒 Лавка Хранителя (Фиксированные цены за Ключи)</h2>
-    <p class="mut">Покупай нужные предметы напрямую за ключи, полученные в конце раундов лабиринта.</p>
+    <p class="mut">Покупай нужные предметы напрямую за ключи, полученные в лабиринте и за дни серии.</p>
     <div class="shop-grid">
       ${SHOP_ITEMS.map(it=>{
         const cost=it.id==='reroll'?rerollPrice:it.baseCost;
         const owned=S.inv[it.id]||0;
         return `<div class="shop-item cut-sm" style="--rc:${it.col}">
-          <div>
-            <div class="rk-head"><span>В инвентаре: <b>${owned} шт.</b></span><span style="color:${it.col}">${icon(it.ic,18)}</span></div>
-            <div class="ach-ttl" style="color:${it.col};margin-top:4px">${it.n}</div>
-            <div class="ach-desc" style="margin-top:4px">${it.d}</div>
+          <div class="shop-item-top">
+            <div class="shop-ic-badge">${icon(it.ic,22)}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--mut);font-weight:600;text-transform:uppercase">
+                <span>В сумке: <b style="color:var(--ink-strong)">${owned} шт.</b></span>
+              </div>
+              <div class="ach-ttl" style="color:${it.col};margin-top:2px;font-size:16.5px">${it.n}</div>
+              <div class="ach-desc" style="margin-top:3px;margin-bottom:0">${it.d}</div>
+            </div>
           </div>
-          <button class="btn cy" style="width:100%;font-size:14px;padding:9px" data-a="buyItem" data-v="${it.id}" ${(S.stats.keyBalance||0)<cost?'disabled':''}>
+          <button class="btn cy" style="width:100%;font-size:13.5px;padding:8px" data-a="buyItem" data-v="${it.id}" ${(S.stats.keyBalance||0)<cost?'disabled':''}>
             Купить за ${cost} 🔑
           </button>
         </div>`;
@@ -2893,9 +3019,9 @@ function shopView(){
   </section>`;
 }
 
-/* 6. PROGRESS, GITHUB HEATMAP, WEEKLY CHART, BEST TIME OF DAY & BACKUP */
+/* 6. PROGRESS, FULL-SCREEN GITHUB HEATMAP, WEEKLY CHART, BEST TIME OF DAY & BACKUP */
 function progressView(){
-  /* Build 140 days (20 weeks) GitHub heatmap */
+  /* Build 140 days (20 weeks) GitHub heatmap — fits full width without scrolling */
   const today=new Date();
   const dayOfWk=(today.getDay()+6)%7;
   const endMon=new Date(today.getFullYear(),today.getMonth(),today.getDate()-dayOfWk);
@@ -2933,16 +3059,16 @@ function progressView(){
   S.hours.forEach((v,i)=>{if(v>(S.hours[peakHr]||0))peakHr=i});
 
   return `<section class="card cut" style="border-color:var(--cy)">
-    <h2>🟩 Тепловая карта активности (за 20 недель)</h2>
-    <p class="mut">Каждая ячейка — один день (свайпай влево-вправо). Чем ярче свечение костра, тем больше учёбы и тренировок было в этот день.</p>
+    <h2>🟩 Цифровая карта активности (20 недель целиком)</h2>
+    <p class="mut" style="font-size:13px">Полная панорама за 140 дней на одном экране. Чем ярче клетка, тем больше учёбы и тренировок было в этот день.</p>
     <div class="heatmap-wrap">
       <div class="heatmap">
         ${cells.map(c=>`<div class="hm-cell ${c.lvl?'l'+c.lvl:''}" title="${c.k}: Учёба ${c.min} мин, Тренировок: ${c.wk}"></div>`).join('')}
       </div>
     </div>
-    <div class="row" style="justify-content:space-between;margin-top:8px;font-size:12.5px">
+    <div class="row" style="justify-content:space-between;margin-top:8px;font-size:12px">
       <span>🔥 Серия: <b>${S.streak.cur||0} дн.</b> (Рекорд: <b>${S.streak.best||0} дн.</b>)</span>
-      <span class="mut">Меньше <span class="hm-cell" style="display:inline-block;vertical-align:middle"></span> <span class="hm-cell l2" style="display:inline-block;vertical-align:middle"></span> <span class="hm-cell l4" style="display:inline-block;vertical-align:middle"></span> Больше</span>
+      <span class="mut">Меньше <span class="hm-legend-cell"></span> <span class="hm-legend-cell l2"></span> <span class="hm-legend-cell l4"></span> Больше</span>
     </div>
   </section>
 
@@ -3194,10 +3320,52 @@ function settingsView(){
   </section>`;
 }
 
-/* MODAL RENDER */
+/* MODAL RENDER (INCLUDING 30-DAY STREAK PROGRESSION WINDOW) */
 function renderModal(){
   if(!modalState){$('#modal-root').innerHTML='';return;}
-  if(modalState==='cashout'){
+  if(modalState==='streak'){
+    const cur=S.streak.cur||0;
+    const best=S.streak.best||0;
+    const curPct=getStreakBonusPctForDay(cur);
+    const nextDay=cur+1;
+    const nextIsUp=isStreakPctUpgradeDay(nextDay);
+    const nextPct=getStreakBonusPctForDay(nextDay);
+
+    const daysHtml=Array.from({length:30},(_,idx)=>{
+      const d=idx+1;
+      const isUp=isStreakPctUpgradeDay(d);
+      const pct=getStreakBonusPctForDay(d);
+      const passed=cur>=d;
+      const isCur=cur===d;
+      return `<div class="sc-cell ${isUp?'pct-up':''} ${passed?'passed':''} ${isCur?'current':''}">
+        <span class="sc-day">День ${d}</span>
+        <span class="sc-rew" style="color:${isUp?'var(--cy)':'var(--gr)'}">${isUp?`+${pct}%`:'🔑 Ключ'}</span>
+      </div>`;
+    }).join('');
+
+    $('#modal-root').innerHTML=`<div class="modal-bg" data-a="closeModalBg">
+      <div class="modal cut">
+        <div class="hud">
+          <h2 style="color:var(--cy);margin:0">🔥 Серия непрерывности</h2>
+          <span class="tag" style="--t:var(--ember);margin:0">${cur} дн. подряд</span>
+        </div>
+        <p class="mut" style="font-size:13px;margin-top:6px">
+          Текущий бонус к заработку: <b style="color:var(--cy)">+${curPct}%</b> (Максимум +10% на 30-й день).<br>
+          Лучшая серия: <b>${best} дн.</b> • В дни без повышения % выдаётся <b>+1 🔑 Ключ</b>!
+        </p>
+        <div style="margin-top:8px;padding:8px 10px;background:var(--surface);border:1px solid var(--line-gold);border-radius:4px;font-size:13px">
+          👉 <b>Следующий (${nextDay}-й) день серии даст:</b>
+          <span style="color:${nextIsUp?'var(--cy)':'var(--gr)'};font-weight:700">
+            ${nextIsUp?`Повышение бонуса до +${nextPct}%`:`+1 🔑 Ключ в инвентарь (бонус +${curPct}% сохраняется)`}
+          </span>
+        </div>
+        <div class="streak-chain-grid">${daysHtml}</div>
+        <div class="row" style="justify-content:flex-end">
+          <button class="btn cy" data-a="closeModal">Понятно</button>
+        </div>
+      </div>
+    </div>`;
+  }else if(modalState==='cashout'){
     const r=S.run.study;
     $('#modal-root').innerHTML=`<div class="modal-bg">
       <div class="modal cut">
@@ -3345,6 +3513,16 @@ const A={
     snd('tick');
     renderHeader();
   },
+  openStreakModal:()=>{
+    modalState='streak';
+    snd('tick');
+    renderModal();
+  },
+  toggleHomeQuests:()=>{
+    showAllQuestsHome=!showAllQuestsHome;
+    snd('tick');
+    render();
+  },
   histTab:d=>{S.histTab=d.v;save();render();snd('tick')},
   mute:()=>{S.mute=!S.mute;save();render();snd('tick')},
   theme:()=>{
@@ -3455,6 +3633,7 @@ const A={
   resetConfirm:()=>{S.run.study=null;modalState=null;snd('tick');save();render()},
   endStudyRun:()=>{S.run.study=null;snd('tick');save();render()},
   closeModal:()=>{modalState=null;snd('tick');renderModal()},
+  closeModalBg:(d,e)=>{if(e&&e.target.classList.contains('modal-bg')){modalState=null;snd('tick');renderModal();}},
 
   /* SHOP & CS2 CASE ROULETTE ACTIONS */
   buyItem:d=>{
@@ -3587,16 +3766,7 @@ const A={
     snd('tick');save();render();
   },
 
-  /* REST TIMER & BODY METRICS */
-  startRestTimer:d=>{
-    const sec=+d.v||60;
-    restTimer={left:sec*1000,total:sec*1000,end:Date.now()+sec*1000,running:true};
-    snd('tick');render();
-  },
-  stopRestTimer:()=>{
-    restTimer.running=false;restTimer.left=0;
-    snd('tick');render();
-  },
+  /* BODY METRICS */
   addBodyMetric:()=>{
     const w=parseFloat($('#bm-weight')?.value);
     const waist=parseFloat($('#bm-waist')?.value)||0;
@@ -3744,7 +3914,7 @@ $('#import-file-inp')?.addEventListener('change',e=>{
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');
-  if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset);
+  if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset,e);
 });
 
 document.addEventListener('input',e=>{
@@ -3775,18 +3945,8 @@ document.addEventListener('change',e=>{
   save();render();
 });
 
-/* TIMER LOOP (STUDY LABYRINTH & WORKOUT REST TIMER) */
+/* TIMER LOOP (STUDY LABYRINTH) */
 setInterval(()=>{
-  if(restTimer.running){
-    restTimer.left=restTimer.end-Date.now();
-    if(restTimer.left<=0){
-      restTimer.running=false;restTimer.left=0;
-      snd('key');burst('#52a86f',70);
-    }
-    const disp=$('#rest-timer-disp');
-    if(disp)disp.textContent=mmss(restTimer.left);
-  }
-
   const r=S.run.study;
   if(!r||r.phase!=='timer'||!r.cur||r.cur.paused)return;
   r.cur.left=r.cur.end-Date.now();
