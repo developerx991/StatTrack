@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="StatTrack">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>StatTrack — Трекер прогресса и дисциплины</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Forum&family=Inter:wght@400;500;600;700&display=swap">
 <style>
@@ -33,7 +33,7 @@
   --or: #e06d2b;
   --ember: #ff551a;
   --accent: #d49b4b;
-  --shadow-card: 0 14px 36px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(212, 155, 75, 0.14);
+  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(212, 155, 75, 0.14);
   --glow-ambient: radial-gradient(650px 420px at 50% 0%, rgba(230, 92, 25, 0.14), transparent 70%),
                   radial-gradient(550px 400px at 90% 85%, rgba(184, 41, 47, 0.09), transparent 70%);
   color-scheme: dark;
@@ -59,7 +59,7 @@
   --or: #9e3d12;
   --ember: #2d3748;
   --accent: #4a433b;
-  --shadow-card: 0 10px 28px rgba(25, 20, 15, 0.1), inset 0 1px 0 #ffffff;
+  --shadow-card: 0 8px 22px rgba(25, 20, 15, 0.08), inset 0 1px 0 #ffffff;
   --glow-ambient: radial-gradient(650px 420px at 50% 0%, rgba(255, 255, 255, 0.8), transparent 70%),
                   radial-gradient(550px 400px at 90% 85%, rgba(140, 130, 115, 0.15), transparent 70%);
   color-scheme: light;
@@ -71,12 +71,13 @@ html {
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  -webkit-tap-highlight-color: transparent;
 }
 *, *:before, *:after { box-sizing: inherit; margin: 0; }
 body {
   min-height: 100vh;
   color: var(--ink);
-  font: 400 15.5px/1.55 'Inter', system-ui, sans-serif;
+  font: 400 15px/1.5 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--bg);
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -90,174 +91,279 @@ body::before {
   z-index: 0;
   background: var(--glow-ambient);
 }
-.wrap { max-width: 1040px; margin: auto; padding: 18px 14px 80px; position: relative; z-index: 1; }
+.wrap {
+  max-width: 1040px;
+  margin: auto;
+  padding: 10px 12px 90px;
+  position: relative;
+  z-index: 1;
+}
 
 /* SOULS SERIF TYPOGRAPHY */
 h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, .logo-txt, .prof-nick, .ach-ttl {
   font-family: 'Cormorant Garamond', 'Forum', Georgia, serif;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
-.cut { border-radius: 3px; position: relative; }
-.cut-sm { border-radius: 2px; }
+.cut { border-radius: 6px; position: relative; }
+.cut-sm { border-radius: 4px; }
 
-/* HEADER & LOGO (WITH SEPARATED RIGHT GEAR & SOUND BUTTONS) */
+/* ==========================================================================
+   COMPACT MOBILE-FIRST HEADER & TOPBAR
+   ========================================================================== */
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--line);
 }
 .brand {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 9px;
   cursor: pointer;
   user-select: none;
   text-decoration: none;
   color: inherit;
+  min-width: 0;
 }
 .brand-ic {
-  width: 46px;
-  height: 46px;
+  width: 36px;
+  height: 36px;
   background: radial-gradient(circle, var(--card2), var(--surface));
   border: 1.5px solid var(--line-gold);
   display: grid;
   place-items: center;
   border-radius: 50%;
-  box-shadow: 0 0 16px rgba(212, 155, 75, 0.25);
+  box-shadow: 0 0 12px rgba(212, 155, 75, 0.25);
+  flex-shrink: 0;
 }
-.brand-ic svg { color: var(--cy); }
+.brand-ic svg { color: var(--cy); width: 20px; height: 20px; }
 .logo-txt {
-  font-size: 30px;
+  font-size: 22px;
   line-height: 1;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--ink-strong);
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
 }
 .logo-txt span { color: var(--cy); }
 .logo-sub {
   display: block;
-  font: 500 12.5px 'Inter', sans-serif;
+  font: 500 10.5px 'Inter', sans-serif;
   color: var(--mut);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  margin-top: 3px;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .top-actions {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   align-items: center;
-  flex-wrap: wrap;
   margin-left: auto;
+  flex-shrink: 0;
 }
-.top-grp-main {
+.top-grp-main, .top-grp-sys {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   align-items: center;
-  flex-wrap: wrap;
 }
 .top-grp-sys {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding-left: 14px;
-  margin-left: 6px;
-  border-left: 2px solid var(--line-gold);
+  padding-left: 6px;
+  margin-left: 2px;
+  border-left: 1px solid var(--line-gold);
 }
 .icon-btn {
   background: linear-gradient(180deg, var(--card2), var(--card));
   color: var(--ink-strong);
   border: 1px solid var(--line);
-  padding: 9px 14px;
+  padding: 7px 10px;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font: 600 13.5px 'Inter', sans-serif;
+  justify-content: center;
+  gap: 5px;
+  font: 600 12.5px 'Inter', sans-serif;
   transition: all 0.2s ease;
+  min-height: 34px;
 }
 .icon-btn:hover, .icon-btn.on {
   border-color: var(--cy);
   color: var(--cy);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--cy) 25%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--cy) 25%, transparent);
 }
 .res-pill {
   background: var(--surface);
   border: 1px solid var(--line-gold);
-  padding: 7px 12px;
-  font: 600 13px 'Inter', sans-serif;
+  padding: 6px 9px;
+  font: 600 12px 'Inter', sans-serif;
   color: var(--cy);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   cursor: pointer;
+  min-height: 34px;
+  white-space: nowrap;
 }
 
-/* PROFILE MINI BAR & COVENANT RARITIES */
+/* ==========================================================================
+   COLLAPSIBLE DRAWER FOR PROFILE & STATUS RANKS
+   ========================================================================== */
+.prof-compact-wrap {
+  margin-bottom: 10px;
+}
 .prof-bar {
   background: linear-gradient(90deg, var(--card2), var(--card));
   border: 1px solid var(--line-gold);
   box-shadow: var(--shadow-card);
-  padding: 15px 18px;
-  margin-bottom: 14px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 14px;
+  padding: 9px 12px;
+  display: flex;
   align-items: center;
-  cursor: pointer;
-  transition: all 0.22s ease;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.2s ease;
 }
-.prof-bar:hover {
-  border-color: var(--cy);
-  transform: translateY(-1px);
+.prof-main-click {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+  cursor: pointer;
 }
 .ava {
-  width: 56px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--surface);
   border: 2px solid var(--accent);
   display: grid;
   place-items: center;
   color: var(--accent);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 30%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 30%, transparent);
   flex-shrink: 0;
 }
-.prof-info { min-width: 0; }
-.prof-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.prof-nick { font-size: 23px; color: var(--ink-strong); text-transform: uppercase; letter-spacing: 0.06em; }
+.ava svg { width: 20px; height: 20px; }
+.prof-info { min-width: 0; flex: 1; }
+.prof-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.prof-nick {
+  font-size: 18px;
+  color: var(--ink-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
 .prof-title {
-  font: 600 12px 'Inter', sans-serif;
-  letter-spacing: 0.06em;
+  font: 600 10.5px 'Inter', sans-serif;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--cy);
   background: color-mix(in srgb, var(--cy) 12%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--cy) 45%, transparent);
-  padding: 3px 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
 }
 .streak-badge {
-  font: 700 12px 'Inter', sans-serif;
+  font: 700 11px 'Inter', sans-serif;
   color: #fff;
   background: linear-gradient(135deg, #c9561e, #8f2327);
-  padding: 3px 10px;
-  border-radius: 2px;
+  padding: 2px 7px;
+  border-radius: 3px;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
+  white-space: nowrap;
 }
-.medals-row { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.prof-mini-ranks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--mut);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.prof-mini-ranks b { color: var(--ink-strong); font-weight: 600; }
+
+.drawer-toggle-btn {
+  background: var(--surface);
+  color: var(--cy);
+  border: 1px solid var(--line-gold);
+  padding: 6px 10px;
+  font: 600 11.5px 'Inter', sans-serif;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.drawer-toggle-btn:hover, .drawer-toggle-btn.open {
+  background: color-mix(in srgb, var(--cy) 18%, var(--surface));
+  border-color: var(--cy);
+}
+.drawer-chevron {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+.drawer-toggle-btn.open .drawer-chevron {
+  transform: rotate(180deg);
+}
+
+/* COLLAPSIBLE STATUS DRAWER */
+.prof-drawer {
+  display: none;
+  margin-top: 8px;
+  padding: 12px;
+  background: linear-gradient(180deg, var(--card2), var(--card));
+  border: 1px solid var(--line-gold);
+  border-radius: 6px;
+  box-shadow: var(--shadow-card);
+  animation: slideDown 0.22s ease-out;
+}
+.prof-drawer.open {
+  display: block;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.drawer-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12.5px;
+}
+.medals-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .medal-mini {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -267,55 +373,54 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 }
 .rk-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
 }
 .rk-cell {
   position: relative;
-  padding: 14px 16px;
-  background: linear-gradient(180deg, var(--card2), var(--card));
+  padding: 11px 13px;
+  background: linear-gradient(180deg, var(--card2), var(--surface));
   border: 1px solid var(--line);
   border-top: 3px solid var(--rc, #7f8b99);
-  box-shadow: var(--shadow-card);
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.rk-cell:hover { transform: translateY(-2px); border-color: var(--rc); }
+.rk-cell:hover { border-color: var(--rc); }
 .rk-cell .rk-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--mut);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 .rk-cell .rk-badge {
-  padding: 2px 9px;
+  padding: 2px 7px;
   font-weight: 700;
-  font-size: 11.5px;
+  font-size: 10.5px;
   color: #ffffff;
   background: var(--rc);
   border-radius: 2px;
 }
 .rk-cell .rk-name {
-  font-size: 19px;
+  font-size: 17px;
   color: var(--rc);
   display: flex;
   align-items: center;
-  gap: 7px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
   text-transform: uppercase;
 }
 .rk-xp {
-  height: 7px;
+  height: 6px;
   background: var(--surface);
   overflow: hidden;
   border: 1px solid var(--line);
+  border-radius: 3px;
 }
 .rk-xp i {
   display: block;
@@ -326,10 +431,10 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 .rk-sub {
   display: flex;
   justify-content: space-between;
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 500;
   color: var(--mut);
-  margin-top: 6px;
+  margin-top: 5px;
 }
 
 /* RARITY COLORS */
@@ -362,29 +467,48 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 [data-theme="light"] .rar-5 { --rc: #9e4308; }
 @keyframes shine { to { background-position: -200% 0; } }
 
-/* TABS (SOULS MENU BAR) */
-.tabs { display: flex; gap: 6px; margin: 0 0 16px; flex-wrap: wrap; }
+/* ==========================================================================
+   STICKY HORIZONTAL SWIPEABLE TABS BAR
+   ========================================================================== */
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  display: flex;
+  gap: 6px;
+  margin: 0 -12px 14px;
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
 .tab {
-  flex: 1;
-  min-width: 108px;
-  padding: 10px 10px;
+  flex: 0 0 auto;
+  padding: 8px 13px;
   background: linear-gradient(180deg, var(--card2), var(--card));
   color: var(--mut);
   border: 1px solid var(--line);
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
+  transition: all 0.18s ease;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 .tab.on {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--cy) 22%, var(--card2)), var(--card));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--cy) 24%, var(--card2)), var(--card));
   color: var(--ink-strong);
   border-color: var(--cy);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2), inset 0 0 12px color-mix(in srgb, var(--cy) 18%, transparent);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25), inset 0 0 10px color-mix(in srgb, var(--cy) 18%, transparent);
 }
 .tab.on svg { color: var(--cy); }
 .tab:hover:not(.on) {
@@ -395,22 +519,23 @@ h1, h2, h3, .btn, .chip, .tab, .big, .nm, .kv b, .hud b, .st b, .tag, .rk-name, 
 /* CARDS & COMMON UI */
 .card {
   background: linear-gradient(180deg, var(--card2), var(--card) 75%);
-  padding: 22px;
-  margin-bottom: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
   border: 1px solid var(--line);
   border-top: 2px solid var(--line-gold);
   box-shadow: var(--shadow-card);
 }
 .mut { color: var(--mut); }
 h2 {
-  font-size: 25px;
-  margin-bottom: 8px;
+  font-size: 22px;
+  line-height: 1.2;
+  margin-bottom: 6px;
   text-transform: uppercase;
   color: var(--ink-strong);
 }
 h3 {
-  font-size: 18px;
-  margin-bottom: 8px;
+  font-size: 17px;
+  margin-bottom: 6px;
   text-transform: uppercase;
   color: var(--cy);
 }
@@ -418,18 +543,21 @@ h3 {
   background: linear-gradient(180deg, #8f2327, #591215);
   color: #ffffff;
   border: 1px solid #c95156;
-  font-size: 16px;
-  padding: 11px 22px;
+  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.18s ease;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
-.btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
+.btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08); }
+.btn:active:not(:disabled) { transform: translateY(0); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn.cy {
   background: linear-gradient(180deg, #9c6c25, #694410);
@@ -455,24 +583,24 @@ h3 {
   background: var(--surface);
   color: var(--ink-strong);
   border: 1px solid var(--line);
-  font-size: 14px;
-  padding: 8px 15px;
+  font-size: 13.5px;
+  padding: 8px 13px;
   box-shadow: none;
 }
 .btn.gh:hover:not(:disabled) { border-color: var(--cy); color: var(--cy); }
 
-.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.chips { display: flex; gap: 7px; flex-wrap: wrap; margin: 10px 0; }
 .chip {
   background: var(--surface);
   color: var(--ink-strong);
   border: 1px solid var(--line);
-  padding: 8px 15px;
-  font-size: 15px;
+  padding: 7px 13px;
+  font-size: 14px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   transition: all 0.16s ease;
 }
 .chip:hover { border-color: var(--line-gold); }
@@ -487,22 +615,24 @@ input[type=number], input[type=text], select {
   background: var(--surface);
   border: 1px solid var(--line-gold);
   color: var(--ink-strong);
-  padding: 9px 12px;
+  padding: 9px 11px;
   font: 500 15px 'Inter', sans-serif;
-  border-radius: 2px;
+  border-radius: 4px;
+  max-width: 100%;
 }
-input[type=number] { width: 115px; }
-input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--cy); outline-offset: 2px; }
-.kv { margin: 12px 0; color: var(--mut); font-size: 15px; }
-.kv b { color: var(--cy); font-size: 25px; margin-left: 8px; }
-.hud { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.hud b { display: block; font-size: 24px; color: var(--ink-strong); }
+input[type=number] { width: 110px; }
+input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--cy); outline-offset: 1px; }
+.kv { margin: 10px 0; color: var(--mut); font-size: 14px; }
+.kv b { color: var(--cy); font-size: 22px; margin-left: 6px; }
+.hud { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+.hud b { display: block; font-size: 21px; color: var(--ink-strong); }
 .bar {
   position: relative;
-  height: 14px;
+  height: 12px;
   background: var(--surface);
   border: 1px solid var(--line-gold);
-  margin: 10px 0 18px;
+  margin: 10px 0 16px;
+  border-radius: 3px;
 }
 .bar i {
   display: block;
@@ -522,14 +652,14 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 /* START HUB SCREEN */
 .hero {
   text-align: center;
-  padding: 0 0 24px 0;
+  padding: 0 0 18px 0;
   overflow: hidden;
   border-top: 2px solid var(--cy);
 }
 .souls-scene {
   position: relative;
   width: 100%;
-  height: 290px;
+  height: 210px;
   background: #080605;
   border-bottom: 1px solid var(--line-gold);
   overflow: hidden;
@@ -560,63 +690,64 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   width: 100%;
   height: 100%;
   display: block;
+  object-fit: cover;
 }
 .scene-overlay {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(180deg, transparent 50%, var(--card2) 100%);
+  background: linear-gradient(180deg, transparent 45%, var(--card2) 100%);
   pointer-events: none;
 }
 .scene-caption {
   position: relative;
   z-index: 3;
-  margin-top: -36px;
-  padding: 0 18px;
+  margin-top: -28px;
+  padding: 0 14px;
 }
 .hero-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
-  gap: 12px;
-  margin-top: 18px;
-  padding: 0 20px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+  padding: 0 14px;
   text-align: left;
 }
 .hub-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-left: 3px solid var(--c, var(--cy));
-  padding: 16px;
+  padding: 13px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 .hub-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   border-color: var(--c, var(--cy));
   box-shadow: var(--shadow-card);
 }
-.hub-card h3 { color: var(--c, var(--cy)); margin: 0; font-size: 19px; display: flex; align-items: center; gap: 8px; }
-.hub-card p { font-size: 14px; color: var(--mut); line-height: 1.45; }
+.hub-card h3 { color: var(--c, var(--cy)); margin: 0; font-size: 18px; display: flex; align-items: center; gap: 7px; }
+.hub-card p { font-size: 13px; color: var(--mut); line-height: 1.4; }
 .hub-stat {
-  font: 600 13.5px 'Inter', sans-serif;
+  font: 600 12.5px 'Inter', sans-serif;
   color: var(--ink-strong);
-  padding-top: 8px;
+  padding-top: 7px;
   border-top: 1px solid var(--line);
 }
 
 /* 10 DARK SOULS GOTHIC DOORS & FOG GATES */
-.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .door {
   --c: var(--cy);
   --dc: var(--c);
   background: linear-gradient(180deg, var(--card2), var(--surface));
   border: 1px solid var(--line);
   border-bottom: 3px solid var(--dc);
-  padding: 15px;
+  padding: 13px;
   cursor: pointer;
   color: var(--ink);
   font: inherit;
@@ -626,7 +757,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 [data-theme="light"] .door { --dc: color-mix(in srgb, var(--c) 72%, #1a120b); }
 .door:hover:not(.open) {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
   border-color: var(--dc);
   box-shadow: var(--shadow-card);
 }
@@ -637,34 +768,34 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .door.dim { opacity: 0.35; pointer-events: none; }
 .risk-pill {
   display: inline-block;
-  font-size: 11.5px;
-  padding: 3px 10px;
+  font-size: 11px;
+  padding: 2px 9px;
   background: var(--card);
   color: var(--dc);
   border: 1px solid color-mix(in srgb, var(--dc) 55%, transparent);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   font-weight: 700;
 }
 .scout-badge {
   background: linear-gradient(90deg, #1b4d3e, #2e7d4c);
   color: #fff;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   padding: 4px 8px;
   margin-bottom: 6px;
   border: 1px solid #6bc289;
   display: block;
 }
-.nm { font-size: 19px; color: var(--dc); min-height: 25px; }
+.nm { font-size: 18px; color: var(--dc); min-height: 24px; }
 .frame {
-  height: 152px;
+  height: 136px;
   background: #040303;
   position: relative;
   perspective: 650px;
-  margin: 8px auto 12px;
-  width: 120px;
+  margin: 6px auto 10px;
+  width: 110px;
   border: 5px solid #2e2925;
   border-bottom-width: 6px;
   border-radius: 62px 62px 2px 2px;
@@ -715,7 +846,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     linear-gradient(180deg, #523e27, #24190e);
 }
 .panel.p0:after {
-  left: 50%; top: 34%; width: 40px; height: 40px; margin: -20px;
+  left: 50%; top: 34%; width: 36px; height: 36px; margin: -18px;
   border: 2px solid #e6c165; border-radius: 50%;
   background: radial-gradient(circle, #ffe89e 0 5px, transparent 6px),
               repeating-conic-gradient(#e6c165 0 10deg, transparent 10deg 30deg);
@@ -728,7 +859,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     linear-gradient(180deg, #24382f, #0d1411);
 }
 .panel.p1:after {
-  left: 50%; top: 45%; width: 34px; height: 50px; margin: -25px -17px;
+  left: 50%; top: 45%; width: 32px; height: 46px; margin: -23px -16px;
   border: 2px solid #5ec29e; border-radius: 18px 18px 2px 2px;
   box-shadow: 0 0 14px #5ec29e, inset 0 0 10px #5ec29e;
 }
@@ -738,7 +869,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     repeating-linear-gradient(90deg, #422916 0 14px, #29180b 14px 16px);
 }
 .panel.p2:after {
-  left: 50%; top: 48%; width: 30px; height: 42px; margin: -21px -15px;
+  left: 50%; top: 48%; width: 28px; height: 40px; margin: -20px -14px;
   border: 2px solid #cfa055;
   background: radial-gradient(circle at 50% 50%, #cfa055 0 4px, #382210 5px);
   box-shadow: 0 0 12px rgba(207, 160, 85, 0.5);
@@ -750,7 +881,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     linear-gradient(180deg, #32383e, #16191c);
 }
 .panel.p3:after {
-  left: 50%; top: 48%; width: 42px; height: 42px; margin: -21px;
+  left: 50%; top: 48%; width: 38px; height: 38px; margin: -19px;
   border: 4px dashed #d47a35; border-radius: 50%;
   background: radial-gradient(circle, #ff9947 0 6px, #1a1d20 7px);
   box-shadow: 0 0 14px rgba(212, 122, 53, 0.7);
@@ -761,7 +892,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     repeating-linear-gradient(125deg, #1b2838 0 12px, #24374d 12px 24px);
 }
 .panel.p4:after {
-  left: 50%; top: 46%; width: 36px; height: 56px; margin: -28px -18px;
+  left: 50%; top: 46%; width: 34px; height: 52px; margin: -26px -17px;
   border: 2px solid #99d6ff; border-radius: 50%;
   background: radial-gradient(circle, rgba(255,255,255,0.65), rgba(100,180,255,0.2) 60%, transparent 70%);
   box-shadow: 0 0 18px #66b8ff;
@@ -772,7 +903,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     repeating-linear-gradient(90deg, #1e162b 0 12px, #120d1a 12px 15px);
 }
 .panel.p5:after {
-  left: 50%; top: 48%; width: 38px; height: 38px; margin: -19px;
+  left: 50%; top: 48%; width: 36px; height: 36px; margin: -18px;
   border-radius: 50%; border: 2px solid #b57cff;
   background: radial-gradient(circle, #e0c2ff 0 5px, transparent 6px 11px, #b57cff 12px 13px, transparent 14px);
   box-shadow: 0 0 18px #9a5cff;
@@ -783,7 +914,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     linear-gradient(180deg, #2a2230, #120e16);
 }
 .panel.p6:after {
-  left: 50%; top: 44%; width: 34px; height: 34px; margin: -17px;
+  left: 50%; top: 44%; width: 32px; height: 32px; margin: -16px;
   transform: rotate(45deg); border: 2px solid #d9669f;
   background: radial-gradient(circle, #ffcce6 0 4px, #b83d7a 5px 10px, transparent 11px);
   box-shadow: 0 0 18px #d9669f;
@@ -794,9 +925,9 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     radial-gradient(ellipse at 50% 88%, #ff5e1a, #4a1404 58%, #0d0806);
 }
 .panel.p7:after {
-  left: 50%; bottom: 18px; width: 32px; height: 32px; margin-left: -16px;
+  left: 50%; bottom: 16px; width: 30px; height: 30px; margin-left: -15px;
   border-radius: 50%; border: 3px solid #ff7b29;
-  background: radial-gradient(circle, #000 0 10px, #ff5500 11px 14px, transparent 15px);
+  background: radial-gradient(circle, #000 0 9px, #ff5500 10px 13px, transparent 14px);
   box-shadow: 0 0 20px #ff5500;
 }
 .panel.p8 {
@@ -805,7 +936,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     repeating-linear-gradient(45deg, #12090b 0 9px, #1f0e13 9px 18px);
 }
 .panel.p8:after {
-  left: 50%; top: 42%; width: 40px; height: 24px; margin: -12px -20px;
+  left: 50%; top: 42%; width: 38px; height: 22px; margin: -11px -19px;
   border-radius: 50%; border: 2px solid #e62e45;
   background: radial-gradient(circle, #fff 0 3px, #d91c36 4px 9px, #140004 10px);
   box-shadow: 0 0 22px #e62e45;
@@ -815,46 +946,46 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
     radial-gradient(circle at 50% 46%, #000 0 16px, #ff3b14 17px 21px, rgba(184, 29, 47, 0.4) 28px, #080508 65%);
 }
 .panel.p9:after {
-  left: 50%; top: 46%; width: 46px; height: 46px; margin: -23px;
+  left: 50%; top: 46%; width: 42px; height: 42px; margin: -21px;
   border-radius: 50%; border: 2px solid #ff551a;
   box-shadow: 0 0 26px #ff3300, inset 0 0 16px #ff7700;
 }
 
 .od {
   display: grid;
-  grid-template-columns: 62px 1fr 48px;
+  grid-template-columns: 56px 1fr 48px;
   gap: 6px;
   align-items: center;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
-  margin-top: 5px;
+  margin-top: 4px;
   text-align: left;
   color: var(--ink-strong);
 }
-.od u { display: block; height: 7px; background: var(--card); border: 1px solid var(--line); text-decoration: none; }
+.od u { display: block; height: 6px; background: var(--card); border: 1px solid var(--line); text-decoration: none; border-radius: 2px; overflow: hidden; }
 .od u:after { content: ""; display: block; height: 100%; width: var(--w); background: var(--dc); }
-.od b { text-align: right; color: var(--ink-strong); font-weight: 700; }
-.hist { display: flex; align-items: flex-end; gap: 2px; height: 30px; margin: 9px 0 3px; }
+.od b { text-align: right; color: var(--ink-strong); font-weight: 700; font-size: 12px; }
+.hist { display: flex; align-items: flex-end; gap: 2px; height: 26px; margin: 8px 0 3px; }
 .hist i { flex: 1; background: var(--dc); opacity: 0.85; min-height: 2px; }
-.hs { font-size: 12px; color: var(--mut); text-align: left; }
+.hs { font-size: 11.5px; color: var(--mut); text-align: left; }
 
 /* DARKSIGN ECLIPSE TIMER & REVEAL */
 .ring {
   --p: 0;
   --c: var(--ember);
-  width: 244px;
-  height: 244px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
-  margin: 14px auto;
+  margin: 12px auto;
   display: grid;
   place-items: center;
   background: conic-gradient(var(--c) calc(var(--p) * 1%), var(--line) 0);
-  box-shadow: 0 0 32px color-mix(in srgb, var(--c) 40%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--c) 40%, transparent);
   animation: pulse 2.4s ease-in-out infinite;
 }
 .ring > div {
-  width: 210px;
-  height: 210px;
+  width: 190px;
+  height: 190px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--card) 60%, var(--surface) 100%);
   border: 1px solid var(--line-gold);
@@ -863,10 +994,10 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   align-content: center;
   text-align: center;
 }
-.big { font-size: 56px; line-height: 1; font-weight: 700; color: var(--ink-strong); }
+.big { font-size: 48px; line-height: 1; font-weight: 700; color: var(--ink-strong); }
 .center { text-align: center; }
 @keyframes pulse {
-  50% { box-shadow: 0 0 46px color-mix(in srgb, var(--c) 60%, transparent); }
+  50% { box-shadow: 0 0 42px color-mix(in srgb, var(--c) 60%, transparent); }
 }
 .pop { text-align: center; animation: pop 0.45s; position: relative; overflow: hidden; }
 .pop > :not(.rays) { position: relative; }
@@ -874,9 +1005,9 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   position: absolute !important;
   left: 50%;
   top: 90px;
-  width: 540px;
-  height: 540px;
-  margin: -270px;
+  width: 480px;
+  height: 480px;
+  margin: -240px;
   background: repeating-conic-gradient(color-mix(in srgb, var(--t) 22%, transparent) 0 8deg, transparent 8deg 20deg);
   -webkit-mask-image: radial-gradient(circle, #000 5%, transparent 62%);
   mask-image: radial-gradient(circle, #000 5%, transparent 62%);
@@ -887,14 +1018,15 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 @keyframes pop { from { transform: scale(0.86); opacity: 0; } to { transform: none; opacity: 1; } }
 .tag {
   display: inline-block;
-  padding: 5px 18px;
-  font-size: 13.5px;
-  letter-spacing: 0.12em;
+  padding: 4px 14px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #ffffff;
   background: var(--t, var(--cy));
   border: 1px solid rgba(255, 255, 255, 0.35);
-  margin: 4px 0 10px;
+  border-radius: 3px;
+  margin: 4px 0 8px;
 }
 .tag.gold {
   background: linear-gradient(100deg, #8a5a10, #d49b4b, #9c6b19);
@@ -904,15 +1036,16 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 
 /* STATS, LOGS & GRIDS */
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
 .st {
   background: var(--surface);
-  padding: 14px;
+  padding: 11px 12px;
   border: 1px solid var(--line);
   border-left: 3px solid var(--cy);
+  border-radius: 4px;
 }
-.st span { display: block; color: var(--mut); font-size: 13px; font-weight: 500; margin-bottom: 2px; }
-.st b { font-size: 24px; color: var(--ink-strong); }
+.st span { display: block; color: var(--mut); font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+.st b { font-size: 20px; color: var(--ink-strong); }
 .st.r { border-left-color: var(--ye); }
 .st.v { border-left-color: var(--vi); }
 .st.d { border-left-color: var(--red); }
@@ -923,41 +1056,41 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  padding: 10px 6px;
+  padding: 10px 4px;
   border-bottom: 1px solid var(--line);
-  font-size: 14.5px;
+  font-size: 13.5px;
   align-items: center;
 }
-.log small { color: var(--mut); font-size: 12.5px; }
-.plus { color: var(--gr); font-weight: 700; }
-.minus { color: var(--red); font-weight: 700; }
+.log small { color: var(--mut); font-size: 12px; }
+.plus { color: var(--gr); font-weight: 700; white-space: nowrap; }
+.minus { color: var(--red); font-weight: 700; white-space: nowrap; }
 
 .muscle-bars {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 8px;
   margin-top: 10px;
 }
 .m-row {
   background: var(--surface);
-  padding: 10px 13px;
+  padding: 9px 11px;
   border: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
-.m-top { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; color: var(--ink-strong); }
-.m-bar { height: 7px; background: var(--card); overflow: hidden; border: 1px solid var(--line); }
+.m-top { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; color: var(--ink-strong); }
+.m-bar { height: 6px; background: var(--card); overflow: hidden; border: 1px solid var(--line); border-radius: 3px; }
 .m-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--red), var(--cy)); }
 
 /* ACHIEVEMENTS */
-.ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+.ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
 .ach {
   background: var(--surface);
   border: 1px solid var(--line);
-  padding: 15px;
+  padding: 12px;
   display: flex;
-  gap: 13px;
+  gap: 11px;
   align-items: center;
   position: relative;
   transition: all 0.2s ease;
@@ -966,8 +1099,8 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .ach.t2 { border-color: #8c52b5; box-shadow: inset 0 0 20px rgba(140, 82, 181, 0.16); }
 .ach.t3 { border-color: #c9971c; box-shadow: 0 0 16px rgba(212, 175, 55, 0.22), inset 0 0 24px rgba(212, 175, 55, 0.15); }
 .ach-ic {
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: var(--card);
   display: grid;
@@ -981,9 +1114,9 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .ach.t2 .ach-ic { --ac: #8244bd; color: #8244bd; }
 .ach.t3 .ach-ic { --ac: #b8860b; color: #b8860b; }
 .ach-body { flex: 1; min-width: 0; }
-.ach-lvl { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mut); }
-.ach-ttl { font-size: 17.5px; color: var(--ink-strong); margin: 2px 0; text-transform: uppercase; }
-.ach-desc { font-size: 13px; color: var(--mut); margin-bottom: 7px; line-height: 1.4; }
+.ach-lvl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--mut); }
+.ach-ttl { font-size: 16.5px; color: var(--ink-strong); margin: 2px 0; text-transform: uppercase; }
+.ach-desc { font-size: 12.5px; color: var(--mut); margin-bottom: 6px; line-height: 1.35; }
 
 /* ==========================================================================
    CS2 CASE ROULETTE & SHOP STYLES
@@ -991,19 +1124,19 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .case-box {
   background: var(--surface);
   border: 2px solid var(--line-gold);
-  padding: 18px;
-  margin: 14px 0;
+  padding: 14px;
+  margin: 12px 0;
   position: relative;
   overflow: hidden;
 }
 .roulette-viewport {
   position: relative;
   width: 100%;
-  height: 124px;
+  height: 118px;
   background: #070605;
   border: 2px solid var(--line-gold);
   overflow: hidden;
-  margin: 12px 0;
+  margin: 10px 0;
   box-shadow: inset 0 0 28px #000;
 }
 .roulette-marker {
@@ -1038,7 +1171,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 .r-card {
   width: 128px;
-  height: 100px;
+  height: 94px;
   flex-shrink: 0;
   background: linear-gradient(180deg, #1e1916, #0e0c0a);
   border: 1px solid #3a3128;
@@ -1051,18 +1184,18 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   text-align: center;
   color: #f4ece1;
 }
-.r-card b { font-size: 13px; margin-top: 6px; line-height: 1.15; }
+.r-card b { font-size: 12.5px; margin-top: 5px; line-height: 1.15; }
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
   margin-top: 12px;
 }
 .shop-item {
   background: var(--surface);
   border: 1px solid var(--line);
   border-top: 3px solid var(--rc, var(--cy));
-  padding: 14px;
+  padding: 13px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1071,11 +1204,11 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .inv-bar {
   background: var(--surface);
   border: 1px solid var(--line-gold);
-  padding: 12px 14px;
-  margin-bottom: 14px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
@@ -1085,6 +1218,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .heatmap-wrap {
   overflow-x: auto;
   padding: 8px 0;
+  -webkit-overflow-scrolling: touch;
 }
 .heatmap {
   display: grid;
@@ -1113,15 +1247,16 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .chart-bars {
   display: flex;
   align-items: flex-end;
-  gap: 10px;
-  height: 170px;
-  padding: 18px 10px 6px;
+  gap: 6px;
+  height: 155px;
+  padding: 16px 8px 6px;
   background: var(--surface);
   border: 1px solid var(--line);
   margin-top: 10px;
 }
 .c-col {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1131,26 +1266,26 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 .c-bar {
   width: 100%;
-  max-width: 44px;
+  max-width: 38px;
   background: linear-gradient(180deg, var(--cy), var(--red));
   border-radius: 2px 2px 0 0;
   min-height: 3px;
   transition: height 0.35s ease;
 }
-.c-lbl { font-size: 11.5px; color: var(--mut); text-align: center; }
-.c-val { font-size: 11.5px; font-weight: 700; color: var(--ink-strong); }
+.c-lbl { font-size: 10.5px; color: var(--mut); text-align: center; white-space: nowrap; }
+.c-val { font-size: 10.5px; font-weight: 700; color: var(--ink-strong); text-align: center; white-space: nowrap; }
 
 .quest-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
   margin-top: 10px;
 }
 .quest-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-left: 3px solid var(--cy);
-  padding: 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1161,37 +1296,38 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 /* EXERCISE JOURNAL & PR TABLE */
 .pr-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
   margin-top: 10px;
 }
 .pr-card {
   background: var(--surface);
   border: 1px solid var(--line-gold);
-  padding: 12px;
+  padding: 11px;
 }
 .set-pill {
   display: inline-block;
-  padding: 3px 9px;
+  padding: 4px 9px;
   background: var(--card);
   border: 1px solid var(--line);
-  font-size: 13px;
+  font-size: 12.5px;
   margin: 2px 4px 2px 0;
 }
 
 /* SETTINGS & CHANCES TABLE */
-.cfg { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
-.cfg label { display: flex; flex-direction: column; gap: 5px; color: var(--mut); font-size: 14px; font-weight: 500; }
+.cfg { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.cfg label { display: flex; flex-direction: column; gap: 5px; color: var(--mut); font-size: 13.5px; font-weight: 500; }
+.cfg label input { width: 100%; }
 .door-cfg-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
 .door-cfg-item {
   background: var(--surface);
   border: 1px solid var(--line);
-  padding: 11px 13px;
+  padding: 11px 12px;
   display: grid;
-  grid-template-columns: 185px repeat(5, 1fr);
+  grid-template-columns: 170px repeat(5, 1fr);
   gap: 8px;
   align-items: center;
-  font-size: 13.5px;
+  font-size: 13px;
 }
 .door-cfg-item input { width: 100% !important; padding: 6px 8px; }
 
@@ -1201,30 +1337,30 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   inset: 0;
   background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(5px);
-  z-index: 50;
+  z-index: 90;
   display: grid;
   place-items: center;
-  padding: 16px;
+  padding: 14px;
 }
 .modal {
-  max-width: 480px;
+  max-width: 440px;
   width: 100%;
   background: var(--card);
   border: 1px solid var(--line-gold);
   border-top: 2px solid var(--cy);
   border-bottom: 2px solid var(--cy);
-  padding: 24px;
+  padding: 20px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
   animation: pop 0.25s;
 }
 
 /* CAREER LADDER LIST */
-.ladder { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 12px; }
+.ladder { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 12px; }
 .lad-col {
   background: var(--surface);
   border: 1px solid var(--line);
-  padding: 12px;
-  max-height: 420px;
+  padding: 10px;
+  max-height: 380px;
   overflow-y: auto;
 }
 .lad-row {
@@ -1233,7 +1369,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   align-items: center;
   padding: 8px 10px;
   border-bottom: 1px solid var(--line);
-  font-size: 14px;
+  font-size: 13.5px;
   border-left: 3px solid var(--rc, #666);
   margin-bottom: 4px;
   background: var(--card);
@@ -1249,14 +1385,34 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   60% { transform: translate(-4px, -2px); }
   80% { transform: translate(3px, 3px); }
 }
+
+/* ==========================================================================
+   MOBILE OPTIMIZATIONS (TELEGRAM MINI APP NARROW SCREENS)
+   ========================================================================== */
 @media (max-width: 720px) {
+  .logo-sub { display: none; }
+  .logo-txt { font-size: 19px; }
+  .brand-ic { width: 32px; height: 32px; }
+  .icon-btn span { display: none; }
+  .icon-btn { padding: 7px 9px; }
+  .res-pill { padding: 6px 8px; font-size: 11.5px; }
   .doors { grid-template-columns: 1fr; }
-  .prof-bar { grid-template-columns: auto 1fr; }
-  .medals-row { grid-column: 1 / -1; }
-  .door-cfg-item { grid-template-columns: 1fr 1fr; gap: 6px; }
-  .door-cfg-item strong { grid-column: 1 / -1; }
-  .souls-scene { height: 235px; }
-  .top-grp-sys { border-left: 0; padding-left: 0; margin-left: auto; }
+  .door { padding: 12px; }
+  .frame { height: 120px; width: 98px; }
+  .door-cfg-head { display: none !important; }
+  .door-cfg-item { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .door-cfg-item strong { grid-column: 1 / -1; font-size: 15px; }
+  .souls-scene { height: 165px; }
+  .hero-grid { grid-template-columns: 1fr; padding: 0 10px; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .row > .btn { flex: 1 1 auto; }
+  .row label { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .row label input[type="text"], .row label input[type="number"] { flex: 1; max-width: 170px; }
+  .inv-bar .btn { flex: 1 1 calc(50% - 6px); justify-content: center; }
+}
+@media (max-width: 390px) {
+  .stats { grid-template-columns: 1fr; }
+  .prof-nick { max-width: 115px; font-size: 16px; }
 }
 [hidden] { display: none !important; }
 </style>
@@ -1409,38 +1565,44 @@ const DEF=()=>({
   theme:'dark'
 });
 
+function normalizeState(rawObj){
+  const b=DEF();
+  const s=Object.assign(b,rawObj||{});
+  s.profile=Object.assign(b.profile,s.profile||{});
+  s.cfg=Object.assign(b.cfg,s.cfg||{});
+  if(!s.cfg.doors||s.cfg.doors.length!==10)s.cfg.doors=JSON.parse(JSON.stringify(DEF_DOORS));
+  s.bank=Object.assign(b.bank,s.bank||{});
+  s.stats=Object.assign(b.stats,s.stats||{});
+  s.stats.muscles=Object.assign({},s.stats.muscles||{});
+  s.stats.customActs=Object.assign({},s.stats.customActs||{});
+  s.inv=Object.assign(b.inv,s.inv||{});
+  s.buffs=Object.assign(b.buffs,s.buffs||{});
+  s.shop=Object.assign(b.shop,s.shop||{});
+  s.streak=Object.assign(b.streak,s.streak||{});
+  s.daily=Object.assign({},s.daily||{});
+  if(!Array.isArray(s.hours)||s.hours.length!==24)s.hours=Array(24).fill(0);
+  s.quests=Object.assign(b.quests,s.quests||{});
+  s.quests.claimed=Object.assign({},s.quests.claimed||{});
+  s.weeklyPlan=Object.assign(b.weeklyPlan,s.weeklyPlan||{});
+  s.gym=Object.assign(b.gym,s.gym||{});
+  s.gym.prs=Object.assign({},s.gym.prs||{});
+  s.gym.draft=Object.assign(b.gym.draft,(s.gym&&s.gym.draft)||{});
+  if(!Array.isArray(s.gym.draft.sets))s.gym.draft.sets=[];
+  if(!Array.isArray(s.bodyMetrics))s.bodyMetrics=[];
+  s.wkForm=Object.assign(b.wkForm,s.wkForm||{});
+  if(!s.theme)s.theme='dark';
+  return s;
+}
+
 let S=null;
 try{
   const raw=localStorage.getItem(K);
   if(raw)S=JSON.parse(raw);
 }catch(e){}
-const base=DEF();
-S=Object.assign(base,S||{});
-S.profile=Object.assign(base.profile,S.profile||{});
-S.cfg=Object.assign(base.cfg,S.cfg||{});
-if(!S.cfg.doors||S.cfg.doors.length!==10)S.cfg.doors=JSON.parse(JSON.stringify(DEF_DOORS));
-S.bank=Object.assign(base.bank,S.bank||{});
-S.stats=Object.assign(base.stats,S.stats||{});
-S.stats.muscles=Object.assign({},S.stats.muscles||{});
-S.stats.customActs=Object.assign({},S.stats.customActs||{});
-S.inv=Object.assign(base.inv,S.inv||{});
-S.buffs=Object.assign(base.buffs,S.buffs||{});
-S.shop=Object.assign(base.shop,S.shop||{});
-S.streak=Object.assign(base.streak,S.streak||{});
-S.daily=Object.assign({},S.daily||{});
-if(!Array.isArray(S.hours)||S.hours.length!==24)S.hours=Array(24).fill(0);
-S.quests=Object.assign(base.quests,S.quests||{});
-S.quests.claimed=Object.assign({},S.quests.claimed||{});
-S.weeklyPlan=Object.assign(base.weeklyPlan,S.weeklyPlan||{});
-S.gym=Object.assign(base.gym,S.gym||{});
-S.gym.prs=Object.assign({},S.gym.prs||{});
-S.gym.draft=Object.assign(base.gym.draft,(S.gym&&S.gym.draft)||{});
-if(!Array.isArray(S.gym.draft.sets))S.gym.draft.sets=[];
-if(!Array.isArray(S.bodyMetrics))S.bodyMetrics=[];
-S.wkForm=Object.assign(base.wkForm,S.wkForm||{});
-if(!S.theme)S.theme='dark';
+S=normalizeState(S);
 
 let modalState=null;
+let profDrawerOpen=false;
 let restTimer={left:0,total:0,end:0,running:false};
 let caseSpinning=false;
 
@@ -1798,22 +1960,22 @@ const creditMoney=(amt,applyStreak=true)=>{
   return a;
 };
 
-/* HEADER & PROFILE BAR RENDER (NO DUPLICATE MEDALS BUTTON; GEAR & MUTE SEPARATED ON RIGHT) */
+/* COMPACT MOBILE HEADER & COLLAPSIBLE PROFILE DRAWER */
 function renderHeader(){
-  $('#brand-ic').innerHTML=icon('logo',26);
+  $('#brand-ic').innerHTML=icon('logo',22);
   const isLight=S.theme==='light';
   $('#top-actions').innerHTML=`
     <div class="top-grp-main">
       <div class="res-pill cut-sm" data-a="tab" data-v="shop" title="Твои ключи и сундуки для Магазина и Кейсов">
-        ${icon('key',16)} <b>${S.stats.keyBalance||0}</b> ключ.
-        ${(S.stats.chests||0)>0?` • 📦 <b>${S.stats.chests}</b> сунд.`:''}
+        ${icon('key',14)} <b>${S.stats.keyBalance||0}</b>
+        ${(S.stats.chests||0)>0?` • 📦<b>${S.stats.chests}</b>`:''}
       </div>
-      <button class="icon-btn cut-sm ${S.tab==='profile'?'on':''}" data-a="tab" data-v="profile" title="Профиль">${icon('user',18)} <span>Профиль</span></button>
-      <button class="icon-btn cut-sm" data-a="theme" title="Переключить облик: Чёрный Рыцарь / Белый Рыцарь">${icon(isLight?'moon':'sun',18)} <span>${isLight?'Чёрный Рыцарь':'Белый Рыцарь'}</span></button>
+      <button class="icon-btn cut-sm ${S.tab==='profile'?'on':''}" data-a="tab" data-v="profile" title="Профиль">${icon('user',16)} <span>Профиль</span></button>
+      <button class="icon-btn cut-sm" data-a="theme" title="Переключить облик: Чёрный Рыцарь / Белый Рыцарь">${icon(isLight?'moon':'sun',16)} <span>${isLight?'Тёмная':'Светлая'}</span></button>
     </div>
     <div class="top-grp-sys">
-      <button class="icon-btn cut-sm ${S.tab==='settings'?'on':''}" data-a="tab" data-v="settings" title="Настройки и шансы">${icon('gear',18)}</button>
-      <button class="icon-btn cut-sm" data-a="mute" title="Звук">${icon(S.mute?'mute':'snd',18)}</button>
+      <button class="icon-btn cut-sm ${S.tab==='settings'?'on':''}" data-a="tab" data-v="settings" title="Настройки и шансы">${icon('gear',16)}</button>
+      <button class="icon-btn cut-sm" data-a="mute" title="Звук">${icon(S.mute?'mute':'snd',16)}</button>
     </div>
   `;
 
@@ -1824,35 +1986,55 @@ function renderHeader(){
     const a=ACHS.find(x=>x.id===id);if(!a)return '';
     const st=getAchState(a);
     const col=st.lvl===3?'#b8860b':st.lvl===2?'#8244bd':st.lvl===1?'#b86b23':'#665e54';
-    return `<div class="medal-mini" style="border-color:${col};color:${col}" title="${a.n} (Ур. ${st.lvl}/3)">${achIconSvg(a.ic,st.lvl,20)}</div>`;
+    return `<div class="medal-mini" style="border-color:${col};color:${col}" title="${a.n} (Ур. ${st.lvl}/3)">${achIconSvg(a.ic,st.lvl,18)}</div>`;
   }).join('');
 
   $('#prof-header').innerHTML=`
-    <div class="prof-bar cut" style="--accent:${S.profile.accent}" data-a="tab" data-v="profile" title="Открыть профиль и подробную статистику">
-      <div class="ava">${icon(S.profile.ava||'crown',28)}</div>
-      <div class="prof-info">
-        <div class="prof-top">
-          <span class="prof-nick">${S.profile.nick}</span>
-          <span class="prof-title">${S.profile.title}</span>
-          <span class="streak-badge" title="Непрерывная серия активных дней (бонус +${sBonus}% к рублям)">🔥 Серия: ${S.streak.cur||0} дн. (+${sBonus}%)</span>
-          ${(S.inv.freeze||0)>0?`<span class="prof-title" style="color:#4a8db7;border-color:#4a8db7">❄️ Заморозок: ${S.inv.freeze}</span>`:''}
+    <div class="prof-compact-wrap">
+      <div class="prof-bar cut" style="--accent:${S.profile.accent}">
+        <div class="prof-main-click" data-a="tab" data-v="profile" title="Открыть профиль и кастомизацию">
+          <div class="ava">${icon(S.profile.ava||'crown',22)}</div>
+          <div class="prof-info">
+            <div class="prof-top">
+              <span class="prof-nick">${S.profile.nick}</span>
+              <span class="streak-badge" title="Непрерывная серия активных дней (бонус +${sBonus}% к рублям)">🔥 ${S.streak.cur||0}д (+${sBonus}%)</span>
+              ${(S.inv.freeze||0)>0?`<span class="prof-title" style="color:#4a8db7;border-color:#4a8db7">❄️${S.inv.freeze}</span>`:''}
+            </div>
+            <div class="prof-mini-ranks">
+              <span>📚 Ур.${sr.lvl+1} <b>${sr.name}</b></span>
+              <span>•</span>
+              <span>⚔️ Ур.${wr.lvl+1} <b>${wr.name}</b></span>
+            </div>
+          </div>
         </div>
-        <div class="mut" style="font-size:13px;margin-top:3px">Ключей в запасе: <b>${S.stats.keyBalance||0}</b> • Жетонов: <b>${S.stats.tokens||0}</b> • Отложенных каток: <b>${S.stats.savedGames||0}</b></div>
+        <button class="drawer-toggle-btn ${profDrawerOpen?'open':''}" data-a="toggleProfDrawer" title="Показать/скрыть подробные статусы и медали">
+          <span>Статусы</span>
+          <span class="drawer-chevron">▾</span>
+        </button>
       </div>
-      <div class="medals-row">${medals||'<span class="mut" style="font-size:13px">Нет выбранных медалей</span>'}</div>
-    </div>
-    <div class="rk-grid">
-      <div class="rk-cell cut-sm rar-${sr.rar}" data-a="tab" data-v="profile">
-        <div class="rk-head"><span>Статус учёбы • Ур. ${sr.lvl+1}/20</span><span class="rk-badge">${sr.rarName}</span></div>
-        <div class="rk-name">${icon('study',19)} ${sr.name}</div>
-        <div class="rk-xp"><i style="width:${sr.pct}%"></i></div>
-        <div class="rk-sub"><span>${hrs} ч (с бонусами ${((S.stats.min+(S.stats.bonusRankMin||0))/60).toFixed(1)} ч) из ${sr.nextReq} ч</span><span>${sr.max?'МАКС. РАНГ':'След.: '+sr.nextReq+' ч'}</span></div>
-      </div>
-      <div class="rk-cell cut-sm rar-${wr.rar}" data-a="tab" data-v="profile">
-        <div class="rk-head"><span>Статус спорта • Ур. ${wr.lvl+1}/20</span><span class="rk-badge">${wr.rarName}</span></div>
-        <div class="rk-name">${icon('work',19)} ${wr.name}</div>
-        <div class="rk-xp"><i style="width:${wr.pct}%"></i></div>
-        <div class="rk-sub"><span>${S.stats.wk} из ${wr.nextReq} трен.</span><span>${wr.max?'МАКС. РАНГ':'След.: '+wr.nextReq+' трен.'}</span></div>
+
+      <div class="prof-drawer ${profDrawerOpen?'open':''}">
+        <div class="drawer-meta-row">
+          <div>
+            <span class="prof-title">${S.profile.title}</span>
+            <span class="mut" style="margin-left:6px">🔑 <b>${S.stats.keyBalance||0}</b> • 🪙 <b>${S.stats.tokens||0}</b> • 🎮 <b>${S.stats.savedGames||0}</b></span>
+          </div>
+          <div class="medals-row">${medals||'<span class="mut" style="font-size:12px">Нет медалей</span>'}</div>
+        </div>
+        <div class="rk-grid">
+          <div class="rk-cell cut-sm rar-${sr.rar}" data-a="tab" data-v="profile">
+            <div class="rk-head"><span>Статус учёбы • Ур. ${sr.lvl+1}/20</span><span class="rk-badge">${sr.rarName}</span></div>
+            <div class="rk-name">${icon('study',17)} ${sr.name}</div>
+            <div class="rk-xp"><i style="width:${sr.pct}%"></i></div>
+            <div class="rk-sub"><span>${hrs} ч (с бон. ${((S.stats.min+(S.stats.bonusRankMin||0))/60).toFixed(1)} ч) из ${sr.nextReq} ч</span><span>${sr.max?'МАКС.':'След: '+sr.nextReq+' ч'}</span></div>
+          </div>
+          <div class="rk-cell cut-sm rar-${wr.rar}" data-a="tab" data-v="profile">
+            <div class="rk-head"><span>Статус спорта • Ур. ${wr.lvl+1}/20</span><span class="rk-badge">${wr.rarName}</span></div>
+            <div class="rk-name">${icon('work',17)} ${wr.name}</div>
+            <div class="rk-xp"><i style="width:${wr.pct}%"></i></div>
+            <div class="rk-sub"><span>${S.stats.wk} из ${wr.nextReq} трен.</span><span>${wr.max?'МАКС.':'След: '+wr.nextReq+' тр.'}</span></div>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -1867,7 +2049,12 @@ function renderHeader(){
     ['ach','Достижения','trophy'],
     ['bank','Банк и План','bank']
   ];
-  $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,17)} ${v}</button>`).join('');
+  $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,16)} ${v}</button>`).join('');
+
+  const activeTab=$('#tabs .tab.on');
+  if(activeTab&&activeTab.scrollIntoView){
+    try{activeTab.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}catch(e){}
+  }
 }
 
 /* ==========================================================================
@@ -2274,34 +2461,34 @@ function homeView(){
     </div>
     <div class="scene-caption">
       <div class="tag" style="--t:var(--cy)">${isLight?'Облик: Белый Рыцарь Тумана':'Облик: Чёрный Рыцарь Пепла'}</div>
-      <h2 style="font-size:30px;margin-top:4px">Выбери режим на сегодня</h2>
-      <p class="mut" style="max-width:640px;margin:0 auto">Проходи лабиринт фокуса в учёбе, выполняй ежедневные квесты, открывай кейсы за ключи, веди журнал весов и забирай награду за дисциплину.</p>
+      <h2 style="font-size:24px;margin-top:2px">Выбери режим на сегодня</h2>
+      <p class="mut" style="max-width:640px;margin:0 auto;font-size:13.5px">Проходи лабиринт фокуса в учёбе, выполняй ежедневные квесты, открывай кейсы за ключи, веди журнал весов и забирай награду за дисциплину.</p>
     </div>
     <div class="hero-grid">
       <div class="hub-card cut-sm" style="--c:var(--cy)" data-a="tab" data-v="study">
         <div>
-          <h3>${icon('study',20)} Лабиринт учёбы</h3>
+          <h3>${icon('study',19)} Лабиринт учёбы</h3>
           <p>10 уникальных врат, предметы тактики (Разведка, Щит, Переброс) и поиск ключей.</p>
         </div>
         <div class="hub-stat">${r?`Активный забег: ${r.prog}/${r.target} мин (${fmt(r.earned)})`:`Награда: ${fmt(S.cfg.rs)} / час`}</div>
       </div>
       <div class="hub-card cut-sm" style="--c:var(--gr)" data-a="tab" data-v="work">
         <div>
-          <h3>${icon('work',20)} Спорт и Журнал весов</h3>
+          <h3>${icon('work',19)} Спорт и Журнал весов</h3>
           <p>Отмечай тренировки, засекай отдых между подходами, веди подходы и рекорды.</p>
         </div>
         <div class="hub-stat">Выполнено: ${S.stats.wk} трен. • +${fmt(S.cfg.rw)} за трен.</div>
       </div>
       <div class="hub-card cut-sm" style="--c:var(--ye)" data-a="tab" data-v="shop">
         <div>
-          <h3>${icon('shop',20)} Магазин и Кейсы CS2</h3>
+          <h3>${icon('shop',19)} Магазин и Кейсы CS2</h3>
           <p>Трать ключи на крутку рулетки кейсов или покупай предметы для лабиринта.</p>
         </div>
         <div class="hub-stat">Ключей: ${S.stats.keyBalance||0} шт. • Сундуков: ${S.stats.chests||0} шт.</div>
       </div>
       <div class="hub-card cut-sm" style="--c:var(--vi)" data-a="tab" data-v="progress">
         <div>
-          <h3>${icon('chart',20)} Графики и GitHub-карта</h3>
+          <h3>${icon('chart',19)} Графики и GitHub-карта</h3>
           <p>Тепловая карта дней, часы по неделям, лучшее время суток и бэкап данных.</p>
         </div>
         <div class="hub-stat">Серия: ${S.streak.cur||0} дн. (Рекорд: ${S.streak.best||0} дн. • Бонус +${sBonus}%)</div>
@@ -2313,7 +2500,7 @@ function homeView(){
     <div class="hud">
       <div>
         <h2>📜 Ежедневные и недельные квесты</h2>
-        <p class="mut">Выполняй задания, чтобы получать рубли, ключи и бесплатные сундуки (кейсы)!</p>
+        <p class="mut" style="font-size:13.5px">Выполняй задания, чтобы получать рубли, ключи и бесплатные сундуки (кейсы)!</p>
       </div>
       ${(S.stats.savedGames||0)>0?`<button class="btn ye" data-a="playSavedGame">🎮 Сыграть катку из запаса (${S.stats.savedGames})</button>`:''}
     </div>
@@ -2325,17 +2512,17 @@ function homeView(){
         return `<div class="quest-card cut-sm ${claimed?'done':''}">
           <div>
             <div class="ach-lvl">${q.period} • Награда: <b style="color:var(--cy)">${q.rewTxt}</b></div>
-            <div class="ach-ttl" style="font-size:17px">${q.n}</div>
+            <div class="ach-ttl" style="font-size:16.5px">${q.n}</div>
             <div class="ach-desc">${q.d}</div>
             <div class="rk-xp"><i style="width:${pct}%;background:${claimed?'var(--gr)':'var(--cy)'}"></i></div>
           </div>
           <div class="row" style="justify-content:space-between;margin-top:6px">
-            <span class="mut" style="font-size:12.5px">Прогресс: ${pct}%</span>
-            <div style="display:flex;gap:6px">
+            <span class="mut" style="font-size:12px">Прогресс: ${pct}%</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
               ${q.quickBtn?`<button class="btn gh" style="padding:5px 10px;font-size:12px" data-a="doMiniWorkout">⚡ Сделать разминку</button>`:''}
-              ${claimed?`<span style="color:var(--gr);font-weight:700;font-size:13px">✓ Получено</span>`:
-                ready?`<button class="btn gr" style="padding:6px 14px;font-size:13px" data-a="claimQuest" data-v="${q.id}">Забрать награду</button>`:
-                `<span class="mut" style="font-size:12.5px">В процессе</span>`}
+              ${claimed?`<span style="color:var(--gr);font-weight:700;font-size:12.5px">✓ Получено</span>`:
+                ready?`<button class="btn gr" style="padding:6px 12px;font-size:12.5px" data-a="claimQuest" data-v="${q.id}">Забрать награду</button>`:
+                `<span class="mut" style="font-size:12px">В процессе</span>`}
             </div>
           </div>
         </div>`;
@@ -2353,7 +2540,7 @@ function studyView(){
     return `<section class="card cut">
       <h2>Лабиринт учёбы</h2>
       <p class="mut">Укажи план на сегодня. В первые 3 хода ключ выпасть не может. Найденные в лабиринте ключи зачисляют деньги и остаются у тебя для покупок в Магазине!</p>
-      ${S.stats.earlyStreak>0?`<p style="color:var(--ye);font-size:14px;margin-top:6px">⚡ В прошлом забеге выпал досрочный ключ (серия: ${S.stats.earlyStreak}). Шанс на ключ в этом забеге снижен до <b>${Math.round(pen*100)}%</b> от базового. Пройди полное время без ключа, чтобы сбросить штраф!</p>`:''}
+      ${S.stats.earlyStreak>0?`<p style="color:var(--ye);font-size:13.5px;margin-top:6px">⚡ В прошлом забеге выпал досрочный ключ (серия: ${S.stats.earlyStreak}). Шанс на ключ в этом забеге снижен до <b>${Math.round(pen*100)}%</b> от базового. Пройди полное время без ключа, чтобы сбросить штраф!</p>`:''}
       <div class="chips">${opts.map(v=>`<button class="chip cut-sm ${t===v?'on':''}" data-a="sel" data-v="${v}">${v/60} ч</button>`).join('')}</div>
       <label class="mut">Свой план (мин): <input type="number" min="10" value="${t}" data-k="selStudy"></label>
       <div class="kv">Награда за полный план (с учётом бонуса серии +${Math.round((getStreakMult()-1)*100)}%)<b>${fmt(money('study',t)*getStreakMult())}</b></div>
@@ -2365,42 +2552,41 @@ function studyView(){
   }
 
   const p=Math.min(100,r.prog/r.target*100);
-  const stepInfo=r.step<3?`Ход ${r.step+1} (защита от ключа первые 3 хода: ${r.step}/3)`:`Ход ${r.step+1} (ключи активны)`;
+  const stepInfo=r.step<3?`Ход ${r.step+1} (защита 1-3: ${r.step}/3)`:`Ход ${r.step+1} (ключи активны)`;
   const hudHtml=`<div class="hud">
-    <div><span class="mut">Прогресс плана • ${stepInfo}</span><b>${r.prog} / ${r.target} мин</b></div>
-    <div><span class="mut">Накоплено в забеге</span><b style="color:var(--ye)">${fmt(r.earned)}</b></div>
+    <div><span class="mut" style="font-size:12.5px">Прогресс • ${stepInfo}</span><b>${r.prog} / ${r.target} мин</b></div>
+    <div><span class="mut" style="font-size:12.5px">Накоплено</span><b style="color:var(--ye)">${fmt(r.earned)}</b></div>
   </div>
-  <div class="bar"><i style="width:${p}%"></i><em>${icon('key',24)}</em></div>`;
+  <div class="bar"><i style="width:${p}%"></i><em>${icon('key',22)}</em></div>`;
 
   /* Tactical Inventory Bar inside the Labyrinth */
   const invBarHtml=`<div class="inv-bar cut-sm">
-    <strong style="color:var(--cy);font-size:14px;margin-right:4px">🎒 Предметы в забеге:</strong>
-    <button class="btn gh" style="padding:5px 10px;font-size:12.5px" data-a="useItem" data-v="reroll" ${(S.inv.reroll||0)<=0||r.usedReroll||r.phase!=='doors'?'disabled':''}>
+    <strong style="color:var(--cy);font-size:13px;width:100%;margin-bottom:2px">🎒 Предметы в забеге (Запас катки: ${S.inv.bank_game||0}):</strong>
+    <button class="btn gh" style="padding:6px 9px;font-size:12px" data-a="useItem" data-v="reroll" ${(S.inv.reroll||0)<=0||r.usedReroll||r.phase!=='doors'?'disabled':''}>
       🔄 Переброс (${S.inv.reroll||0}) ${r.usedReroll?'[исп.]':''}
     </button>
-    <button class="btn gh" style="padding:5px 10px;font-size:12.5px;${r.scouting?'border-color:var(--gr);color:var(--gr)':''}" data-a="useItem" data-v="scout" ${(S.inv.scout||0)<=0||r.phase!=='doors'?'disabled':''}>
-      🔍 Разведка (${S.inv.scout||0}) ${r.scouting?'[выбери дверь!]':''}
+    <button class="btn gh" style="padding:6px 9px;font-size:12px;${r.scouting?'border-color:var(--gr);color:var(--gr)':''}" data-a="useItem" data-v="scout" ${(S.inv.scout||0)<=0||r.phase!=='doors'?'disabled':''}>
+      🔍 Разведка (${S.inv.scout||0}) ${r.scouting?'[выбери!]':''}
     </button>
-    <button class="btn gh" style="padding:5px 10px;font-size:12.5px;${r.shieldArmed?'border-color:var(--cy);color:var(--cy)':''}" data-a="useItem" data-v="shield" ${((S.inv.shield||0)<=0&&!r.shieldArmed)||r.usedShield?'disabled':''}>
-      🛡️ Щит от адского (${S.inv.shield||0}) ${r.usedShield?'[сработал]':r.shieldArmed?'[АКТИВЕН]':''}
+    <button class="btn gh" style="padding:6px 9px;font-size:12px;${r.shieldArmed?'border-color:var(--cy);color:var(--cy)':''}" data-a="useItem" data-v="shield" ${((S.inv.shield||0)<=0&&!r.shieldArmed)||r.usedShield?'disabled':''}>
+      🛡️ Щит (${S.inv.shield||0}) ${r.usedShield?'[сраб.]':r.shieldArmed?'[АКТИВЕН]':''}
     </button>
-    <button class="btn gh" style="padding:5px 10px;font-size:12.5px;${S.buffs.breather?'border-color:var(--gr);color:var(--gr)':''}" data-a="useItem" data-v="breather" ${(S.inv.breather||0)<=0||S.buffs.breather?'disabled':''}>
-      💨 Передышка 15м (${S.inv.breather||0}) ${S.buffs.breather?'[АКТИВНА]':''}
+    <button class="btn gh" style="padding:6px 9px;font-size:12px;${S.buffs.breather?'border-color:var(--gr);color:var(--gr)':''}" data-a="useItem" data-v="breather" ${(S.inv.breather||0)<=0||S.buffs.breather?'disabled':''}>
+      💨 Передышка (${S.inv.breather||0}) ${S.buffs.breather?'[АКТИВНА]':''}
     </button>
-    <button class="btn gh" style="padding:5px 10px;font-size:12.5px;${S.buffs.double_xp?'border-color:var(--vi);color:var(--vi)':''}" data-a="useItem" data-v="double_xp" ${(S.inv.double_xp||0)<=0||S.buffs.double_xp?'disabled':''}>
-      ⚡ Двойные очки ×2 (${S.inv.double_xp||0}) ${S.buffs.double_xp?'[АКТИВНЫ]':''}
+    <button class="btn gh" style="padding:6px 9px;font-size:12px;${S.buffs.double_xp?'border-color:var(--vi);color:var(--vi)':''}" data-a="useItem" data-v="double_xp" ${(S.inv.double_xp||0)<=0||S.buffs.double_xp?'disabled':''}>
+      ⚡ Очки ×2 (${S.inv.double_xp||0}) ${S.buffs.double_xp?'[АКТИВНЫ]':''}
     </button>
-    <span class="mut" style="font-size:12px;margin-left:auto">Запас катки: <b>${S.inv.bank_game||0}</b></span>
   </div>`;
 
-  const runActions=`<div class="row" style="justify-content:space-between;margin-top:16px">
-    ${r.earned>0?`<button class="btn ye" data-a="cashoutAsk">Забрать ${fmt(r.earned)} и выйти</button>`:'<span></span>'}
+  const runActions=`<div class="row" style="justify-content:space-between;margin-top:14px">
+    ${r.earned>0?`<button class="btn ye" data-a="cashoutAsk">Забрать ${fmt(r.earned)} и выйти</button>`:''}
     <button class="btn gh" data-a="resetAsk">Сбросить забег</button>
   </div>`;
 
   if(r.phase==='doors'){
     return `<section class="card cut">${hudHtml}${invBarHtml}
-      <h2>${r.scouting?'🔍 Нажми на любую дверь, чтобы разведать её содержимое':'Выбери врата (отсортированы по риску и шансу)'}</h2>
+      <h2>${r.scouting?'🔍 Нажми на любую дверь, чтобы разведать её содержимое':'Выбери врата (по возрастанию риска)'}</h2>
       <div class="doors">${r.d.map((d,i)=>{
         const od=getDoorOdds(d,r.step);
         const sc=r.scouted&&r.scouted[i];
@@ -2431,20 +2617,20 @@ function studyView(){
     if(game){
       return `<section class="card cut pop" style="--t:${col};border-color:${col}">
         <div class="rays"></div>${hudHtml}
-        <div style="color:${col};margin:10px 0">${icon('game',80)}</div>
+        <div style="color:${col};margin:8px 0">${icon('game',72)}</div>
         <span class="tag gold">КАТКА</span>
         <h2 style="color:${col}">Время сыграть катку!</h2>
-        <p class="mut" style="max-width:460px;margin:8px auto 16px">Тебе выпала законная игровая партия без таймера и ограничений по минутам. Можешь сыграть сейчас или отложить её в запас (если есть предмет «Запас катки»).</p>
+        <p class="mut" style="max-width:460px;margin:8px auto 14px">Тебе выпала законная игровая партия без таймера и ограничений по минутам. Можешь сыграть сейчас или отложить её в запас (если есть предмет «Запас катки»).</p>
         <div class="row" style="justify-content:center">
           <button class="btn ye" data-a="finishRoom">Катка сыграна — идти дальше</button>
-          ${(S.inv.bank_game||0)>0?`<button class="btn cy" data-a="saveGameForLater">📦 Отложить катку в запас (ост. ${S.inv.bank_game})</button>`:''}
+          ${(S.inv.bank_game||0)>0?`<button class="btn cy" data-a="saveGameForLater">📦 Отложить в запас (ост. ${S.inv.bank_game})</button>`:''}
           <button class="btn gh" data-a="cancelRoom">Пропустить</button>
         </div>
       </section>`;
     }
     return `<section class="card cut pop" style="--t:${col};border-color:${col}">
       <div class="rays"></div>${hudHtml}
-      <div style="color:${col};margin:10px 0">${icon(rest?'rest':'study',76)}</div>
+      <div style="color:${col};margin:8px 0">${icon(rest?'rest':'study',68)}</div>
       <span class="tag">${tn}</span>
       <h2 style="color:${col}">${rest?'Отдых до':'Учёба'} ${c.dur} мин</h2>
       ${c.note?`<p style="color:var(--cy);font-weight:700;margin:6px 0">${c.note}</p>`:''}
@@ -2473,7 +2659,7 @@ function studyView(){
   }
 
   return `<section class="card cut center" style="border-color:var(--ye)">
-    <div style="color:var(--ye);margin:8px 0 14px">${icon('key',84)}</div>
+    <div style="color:var(--ye);margin:8px 0 12px">${icon('key',76)}</div>
     <h2 style="color:var(--ye)">${r.early?'Ключ найден! Досрочный побег из лабиринта':'План полностью выполнен! Ключ твой'}</h2>
     <p class="mut">${r.early?'Удача улыбнулась тебе раньше срока. Ключ добавлен в твой инвентарь для Магазина и Кейсов!':'Ты закрыл весь учебный план. Штрафы сброшены, а ключ добавлен в твой инвентарь для Магазина!'}</p>
     <div class="kv">Зачислено в банк (с бонусом серии)<b>${fmt(r.earned)}</b></div>
@@ -2497,24 +2683,24 @@ function workView(){
         <h2>Отметить тренировку</h2>
         <p class="mut">Выбери группы мышц или активность, укажи время и забери награду. Подробные веса и подходы можно расписать во вкладке «Журнал весов».</p>
       </div>
-      <button class="btn cy" data-a="tab" data-v="gym">${icon('gym',18)} Открыть Журнал упражнений и PR</button>
+      <button class="btn cy" data-a="tab" data-v="gym">${icon('gym',17)} Журнал упражнений и PR</button>
     </div>
-    <h3 style="margin-top:14px">1. Какие группы мышц / активности были сегодня?</h3>
+    <h3 style="margin-top:12px">1. Какие группы мышц / активности были сегодня?</h3>
     <div class="chips">
-      ${MUSCLES.map(m=>`<button class="chip cut-sm ${f.sel.includes(m.id)?'on':''}" data-a="toggleMuscle" data-v="${m.id}">${icon('work',15)} ${m.n}</button>`).join('')}
+      ${MUSCLES.map(m=>`<button class="chip cut-sm ${f.sel.includes(m.id)?'on':''}" data-a="toggleMuscle" data-v="${m.id}">${icon('work',14)} ${m.n}</button>`).join('')}
     </div>
     ${f.sel.includes('other')?`
       <div class="row" style="margin-top:8px">
-        <label class="mut">Укажи свою активность: <input type="text" id="custom-act-inp" placeholder="Напр. Бокс, Бег, Растяжка..." value="${f.customName||''}"></label>
+        <label class="mut">Своя активность: <input type="text" id="custom-act-inp" placeholder="Бокс, Бег..." value="${f.customName||''}"></label>
       </div>
     `:''}
-    <div class="row" style="margin-top:14px">
-      <label class="mut">2. Время тренировки, мин (по желанию): <input type="number" id="wk-dur-inp" min="1" max="600" placeholder="Необязательно" value="${f.dur||''}"></label>
+    <div class="row" style="margin-top:10px">
+      <label class="mut">2. Время тренировки (мин): <input type="number" id="wk-dur-inp" min="1" max="600" placeholder="Необязательно" value="${f.dur||''}"></label>
     </div>
     <div class="kv">Награда за тренировку (с бонусом серии)<b>${fmt(S.cfg.rw*getStreakMult())}</b></div>
     <div class="row">
-      <button class="btn gr" data-a="logWorkout">${icon('bolt',18)} Записать тренировку</button>
-      <button class="btn gh" data-a="logWorkoutAndJournal">📝 Записать и сразу расписать подходы в Журнале</button>
+      <button class="btn gr" data-a="logWorkout">${icon('bolt',17)} Записать тренировку</button>
+      <button class="btn gh" data-a="logWorkoutAndJournal">📝 Записать и расписать подходы</button>
     </div>
   </section>
 
@@ -2529,7 +2715,7 @@ function workView(){
         <button class="chip cut-sm" data-a="startRestTimer" data-v="180">3 мин</button>
         <button class="btn gh" data-a="stopRestTimer">Сброс</button>
       </div>
-      <div style="font-size:38px;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--cy)" id="rest-timer-disp">
+      <div style="font-size:34px;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--cy)" id="rest-timer-disp">
         ${restTimer.running?mmss(restTimer.left):'00:00'}
       </div>
     </div>
@@ -2538,18 +2724,18 @@ function workView(){
   <section class="card cut">
     <h2>⚖️ Замеры веса и параметров тела</h2>
     <div class="row">
-      <label class="mut">Вес тела (кг): <input type="number" step="0.1" id="bm-weight" placeholder="Напр. 75.5" value="${lastW||''}"></label>
-      <label class="mut">Талия / заметка (см): <input type="number" step="0.5" id="bm-waist" placeholder="Необязательно"></label>
+      <label class="mut">Вес тела (кг): <input type="number" step="0.1" id="bm-weight" placeholder="75.5" value="${lastW||''}"></label>
+      <label class="mut">Талия (см): <input type="number" step="0.5" id="bm-waist" placeholder="Необяз."></label>
       <button class="btn cy" data-a="addBodyMetric">Сохранить замер</button>
     </div>
     ${metrics.length?`
-      <div class="chart-bars" style="height:145px">
+      <div class="chart-bars" style="height:140px">
         ${metrics.slice(-10).map(m=>{
           const ws=metrics.slice(-10).map(x=>x.w);
           const minW=Math.min(...ws)-2, maxW=Math.max(...ws)+1;
           const hPct=Math.max(12,Math.min(100,Math.round(((m.w-minW)/(maxW-minW||1))*100)));
           return `<div class="c-col">
-            <span class="c-val">${m.w} кг</span>
+            <span class="c-val">${m.w}</span>
             <div class="c-bar" style="height:${hPct}%;background:linear-gradient(180deg,var(--gr),var(--cy))"></div>
             <span class="c-lbl">${m.d.slice(5)}</span>
           </div>`;
@@ -2560,22 +2746,22 @@ function workView(){
 
   <section class="card cut">
     <h2>Статистика спорта по группам мышц</h2>
-    <div class="stats" style="margin-bottom:14px">
+    <div class="stats" style="margin-bottom:12px">
       <div class="st g"><span>Всего тренировок</span><b>${S.stats.wk}</b></div>
       <div class="st"><span>Учтённое время</span><b>${hm(S.stats.wkMin||0)}</b></div>
-      <div class="st r"><span>Текущий статус спорта</span><b style="font-size:19px">${getSportRank().name}</b></div>
+      <div class="st r"><span>Статус спорта</span><b style="font-size:17px">${getSportRank().name}</b></div>
     </div>
     <div class="muscle-bars">
       ${MUSCLES.map(m=>{
         const cnt=S.stats.muscles[m.id]||0;
         const max=Math.max(10,...MUSCLES.map(x=>S.stats.muscles[x.id]||0));
         return `<div class="m-row cut-sm">
-          <div class="m-top"><span>${m.n}</span><b>${cnt} трен.</b></div>
+          <div class="m-top"><span>${m.n}</span><b>${cnt} тр.</b></div>
           <div class="m-bar"><i style="width:${Math.min(100,(cnt/max)*100)}%"></i></div>
         </div>`;
       }).join('')}
     </div>
-    ${customKeys.length?`<h3 style="margin-top:16px">Свои вписанные активности</h3>
+    ${customKeys.length?`<h3 style="margin-top:14px">Свои вписанные активности</h3>
       <div class="chips">${customKeys.map(k=>`<span class="chip cut-sm">${k}: <b style="color:var(--cy)">${S.stats.customActs[k]}</b></span>`).join('')}</div>`:''}
   </section>`;
 }
@@ -2592,7 +2778,7 @@ function gymView(){
         <h2>📓 Журнал упражнений, весов и подходов</h2>
         <p class="mut">Записывай выполненные упражнения с рабочими весами и повторениями. Личные рекорды (PR) обновляются автоматически!</p>
       </div>
-      ${d.workoutRef?`<span class="tag" style="--t:var(--gr)">Привязано к тренировке: ${d.workoutRef}</span>`:''}
+      ${d.workoutRef?`<span class="tag" style="--t:var(--gr)">Привязано: ${d.workoutRef}</span>`:''}
     </div>
 
     <div class="chips" style="margin-top:10px">
@@ -2600,20 +2786,20 @@ function gymView(){
     </div>
 
     <div class="row" style="margin-top:10px">
-      <label class="mut">Упражнение: <input type="text" id="gym-ex-inp" value="${d.exName||''}" placeholder="Название упражнения"></label>
+      <label class="mut">Упражнение: <input type="text" id="gym-ex-inp" value="${d.exName||''}" placeholder="Название"></label>
       <label class="mut">Вес (кг): <input type="number" step="0.5" id="gym-w-inp" value="${d.weight??60}"></label>
       <label class="mut">Повторения: <input type="number" min="1" id="gym-r-inp" value="${d.reps??10}"></label>
       <button class="btn cy" data-a="addGymSet">+ Добавить подход</button>
     </div>
 
     ${d.sets.length?`
-      <div style="margin-top:14px;padding:12px;background:var(--surface);border:1px solid var(--line-gold)">
+      <div style="margin-top:12px;padding:12px;background:var(--surface);border:1px solid var(--line-gold);border-radius:4px">
         <h3>Текущая запись (${d.sets.length} подх.)</h3>
         <div>
           ${d.sets.map((s,idx)=>`<span class="set-pill cut-sm"><b>${s.ex}</b>: ${s.w} кг × ${s.r} повт. <button style="background:none;border:0;color:var(--red);cursor:pointer;margin-left:4px" data-a="delGymSet" data-v="${idx}">×</button></span>`).join('')}
         </div>
         <div class="row" style="margin-top:10px">
-          <input type="text" id="gym-note-inp" placeholder="Заметка к тренировке (самочувствие, техника...)" value="${d.note||''}" style="flex:1;min-width:220px">
+          <input type="text" id="gym-note-inp" placeholder="Заметка к тренировке (самочувствие, техника...)" value="${d.note||''}" style="flex:1;width:100%">
           <button class="btn gr" data-a="saveGymSession">💾 Сохранить в журнал упражнений</button>
         </div>
       </div>
@@ -2626,20 +2812,20 @@ function gymView(){
       <div class="pr-grid">
         ${prs.map(([ex,rec])=>`<div class="pr-card cut-sm">
           <div class="ach-lvl">Личный рекорд</div>
-          <div class="ach-ttl" style="font-size:17px">${ex}</div>
-          <div style="font-size:22px;font-weight:700;color:var(--cy);margin-top:4px">${rec.maxW} кг <span class="mut" style="font-size:13px">× ${rec.reps} повт.</span></div>
-          <div class="mut" style="font-size:11.5px;margin-top:3px">Расчётный 1ПМ: ~${rec.e1rm} кг • ${rec.date}</div>
+          <div class="ach-ttl" style="font-size:16px">${ex}</div>
+          <div style="font-size:20px;font-weight:700;color:var(--cy);margin-top:4px">${rec.maxW} кг <span class="mut" style="font-size:12.5px">× ${rec.reps}</span></div>
+          <div class="mut" style="font-size:11px;margin-top:3px">1ПМ: ~${rec.e1rm} кг • ${rec.date}</div>
         </div>`).join('')}
       </div>
     `:'<p class="mut">Личные рекорды появятся автоматически после сохранения первых подходов.</p>'}
   </section>
 
   <section class="card cut">
-    <h2>История записей журнала упражнений (${(S.gym.sessions||[]).length})</h2>
+    <h2>История записей журнала (${(S.gym.sessions||[]).length})</h2>
     ${(S.gym.sessions||[]).length?`
       <ul class="log">
         ${S.gym.sessions.map(ses=>`<li style="flex-direction:column;align-items:flex-start;gap:6px">
-          <div style="display:flex;justify-content:space-between;width:100%">
+          <div style="display:flex;justify-content:space-between;width:100%;gap:8px">
             <strong>${ses.title||'Тренировка в зале'} ${ses.note?`• <span class="mut">${ses.note}</span>`:''}</strong>
             <small>${new Date(ses.t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small>
           </div>
@@ -2659,11 +2845,11 @@ function shopView(){
     <div class="hud">
       <div>
         <h2>📦 Оружейный Кейс Дисциплины (Рулетка CS2)</h2>
-        <p class="mut">Открой кейс за <b>1 Ключ</b> (или используй бесплатный Сундук из квестов) и выбей тактический предмет для лабиринта или серии!</p>
+        <p class="mut">Открой кейс за <b>1 Ключ</b> (или используй бесплатный Сундук из квестов) и выбей тактический предмет!</p>
       </div>
-      <div style="text-align:right">
-        <span class="mut">Баланс:</span>
-        <b style="color:var(--cy);font-size:24px">🔑 ${S.stats.keyBalance||0} ключ. • 📦 ${S.stats.chests||0} сунд.</b>
+      <div>
+        <span class="mut" style="font-size:12px">Баланс:</span>
+        <b style="color:var(--cy);font-size:20px">🔑 ${S.stats.keyBalance||0} • 📦 ${S.stats.chests||0}</b>
       </div>
     </div>
 
@@ -2672,13 +2858,13 @@ function shopView(){
         <div class="roulette-marker"></div>
         <div class="roulette-track" id="roulette-track">
           ${stripItems.map(it=>`<div class="r-card cut-sm" style="--rc:${it.col}">
-            <div style="color:${it.col}">${icon(it.ic,26)}</div>
+            <div style="color:${it.col}">${icon(it.ic,24)}</div>
             <b>${it.n}</b>
           </div>`).join('')}
         </div>
       </div>
-      <div class="row" style="justify-content:center;margin-top:12px">
-        ${(S.stats.chests||0)>0?`<button class="btn gr" data-a="spinCase" data-free="1">📦 Открыть бесплатный Сундук (ост. ${S.stats.chests})</button>`:''}
+      <div class="row" style="justify-content:center;margin-top:10px">
+        ${(S.stats.chests||0)>0?`<button class="btn gr" data-a="spinCase" data-free="1">📦 Открыть бесплатный Сундук (${S.stats.chests})</button>`:''}
         <button class="btn ye" data-a="spinCase" ${(S.stats.keyBalance||0)<1?'disabled':''}>🔑 Крутить Кейс за 1 Ключ</button>
       </div>
       ${S.shop.lastWon?`<p class="center" style="margin-top:10px;color:var(--cy);font-weight:700">🎉 Последний дроп из кейса: «${S.shop.lastWon}»!</p>`:''}
@@ -2737,25 +2923,25 @@ function progressView(){
 
   /* Best time of day analysis */
   const periods=[
-    {n:'Утро (06:00–11:59)',v:S.hours.slice(6,12).reduce((a,b)=>a+b,0)},
-    {n:'День (12:00–17:59)',v:S.hours.slice(12,18).reduce((a,b)=>a+b,0)},
-    {n:'Вечер (18:00–23:59)',v:S.hours.slice(18,24).reduce((a,b)=>a+b,0)},
-    {n:'Ночь (00:00–05:59)',v:S.hours.slice(0,6).reduce((a,b)=>a+b,0)}
+    {n:'Утро (06–12)',v:S.hours.slice(6,12).reduce((a,b)=>a+b,0)},
+    {n:'День (12–18)',v:S.hours.slice(12,18).reduce((a,b)=>a+b,0)},
+    {n:'Вечер (18–24)',v:S.hours.slice(18,24).reduce((a,b)=>a+b,0)},
+    {n:'Ночь (00–06)',v:S.hours.slice(0,6).reduce((a,b)=>a+b,0)}
   ];
   const bestPeriod=periods.slice().sort((a,b)=>b.v-a.v)[0];
   let peakHr=0;
   S.hours.forEach((v,i)=>{if(v>(S.hours[peakHr]||0))peakHr=i});
 
   return `<section class="card cut" style="border-color:var(--cy)">
-    <h2>🟩 Тепловая карта активности (как на GitHub — за 20 недель)</h2>
-    <p class="mut">Каждая ячейка — один день. Чем ярче золотое свечение костра, тем больше учёбы и тренировок было в этот день.</p>
+    <h2>🟩 Тепловая карта активности (за 20 недель)</h2>
+    <p class="mut">Каждая ячейка — один день (свайпай влево-вправо). Чем ярче свечение костра, тем больше учёбы и тренировок было в этот день.</p>
     <div class="heatmap-wrap">
       <div class="heatmap">
         ${cells.map(c=>`<div class="hm-cell ${c.lvl?'l'+c.lvl:''}" title="${c.k}: Учёба ${c.min} мин, Тренировок: ${c.wk}"></div>`).join('')}
       </div>
     </div>
-    <div class="row" style="justify-content:space-between;margin-top:8px;font-size:13px">
-      <span>🔥 Текущая серия: <b>${S.streak.cur||0} дн.</b> (Лучшая: <b>${S.streak.best||0} дн.</b>)</span>
+    <div class="row" style="justify-content:space-between;margin-top:8px;font-size:12.5px">
+      <span>🔥 Серия: <b>${S.streak.cur||0} дн.</b> (Рекорд: <b>${S.streak.best||0} дн.</b>)</span>
       <span class="mut">Меньше <span class="hm-cell" style="display:inline-block;vertical-align:middle"></span> <span class="hm-cell l2" style="display:inline-block;vertical-align:middle"></span> <span class="hm-cell l4" style="display:inline-block;vertical-align:middle"></span> Больше</span>
     </div>
   </section>
@@ -2764,7 +2950,7 @@ function progressView(){
     <h2>📊 Часы учёбы и тренировки по неделям</h2>
     <div class="chart-bars">
       ${weeks.map(w=>`<div class="c-col">
-        <span class="c-val">${w.hrs}ч ${w.wk?`(${w.wk}тр)`:''}</span>
+        <span class="c-val">${w.hrs}ч${w.wk?`/${w.wk}т`:''}</span>
         <div class="c-bar" style="height:${Math.max(4,Math.round((w.hrs/maxHrs)*100))}%"></div>
         <span class="c-lbl">${w.lbl}</span>
       </div>`).join('')}
@@ -2773,15 +2959,15 @@ function progressView(){
 
   <section class="card cut">
     <h2>🕰️ Лучшее время суток для продуктивности</h2>
-    <p class="mut">Пиковый период: <b style="color:var(--cy)">${bestPeriod.v>0?bestPeriod.n:'Пока мало данных'}</b> • Самый продуктивный час: <b style="color:var(--cy)">${String(peakHr).padStart(2,'0')}:00</b></p>
-    <div class="stats" style="margin-top:12px">
+    <p class="mut">Пиковый период: <b style="color:var(--cy)">${bestPeriod.v>0?bestPeriod.n:'Пока мало данных'}</b> • Пиковый час: <b style="color:var(--cy)">${String(peakHr).padStart(2,'0')}:00</b></p>
+    <div class="stats" style="margin-top:10px">
       ${periods.map(p=>`<div class="st"><span>${p.n}</span><b>${hm(p.v)}</b></div>`).join('')}
     </div>
   </section>
 
   <section class="card cut" style="border-color:var(--gr)">
-    <h2>💾 Сохранность данных (Экспорт и Импорт резервной копии)</h2>
-    <p class="mut">Сохрани файл прогресса на устройство, чтобы никогда не потерять свои часы, ранги, банк и рекорды при смене браузера или телефона.</p>
+    <h2>💾 Сохранность данных (Резервная копия)</h2>
+    <p class="mut">Сохрани файл прогресса на устройство, чтобы никогда не потерять свои часы, ранги, банк и рекорды.</p>
     <div class="row">
       <button class="btn cy" data-a="exportData">⬇️ Скачать резервную копию (.json)</button>
       <button class="btn gh" data-a="importDataAsk">⬆️ Загрузить копию из файла</button>
@@ -2793,21 +2979,21 @@ function progressView(){
 function achView(){
   return `<section class="card cut" style="border-color:var(--ye)">
     <h2>Достижения и Медали (3 уровня у каждого)</h2>
-    <p class="mut">При выполнении цели достижение переходит на следующий уровень (I → II → III), а его иконка эволюционирует. Нажми «На витрину», чтобы прикрепить открытую медаль в свой профиль (до 4 штук).</p>
-    <div class="ach-grid" style="margin-top:14px">
+    <p class="mut">При выполнении цели достижение переходит на следующий уровень (I → II → III), а его иконка эволюционирует. Нажми «На витрину», чтобы прикрепить медаль в профиль (до 4 штук).</p>
+    <div class="ach-grid" style="margin-top:12px">
       ${ACHS.map(a=>{
         const st=getAchState(a);
         const pinned=(S.profile.medals||[]).includes(a.id);
         return `<div class="ach cut-sm t${st.lvl}">
-          <div class="ach-ic">${achIconSvg(a.ic,st.lvl,38)}</div>
+          <div class="ach-ic">${achIconSvg(a.ic,st.lvl,34)}</div>
           <div class="ach-body">
             <div class="ach-lvl">Уровень ${st.lvl}/3 • Цели: ${a.t.join(' / ')} ${a.u}</div>
             <div class="ach-ttl">${a.n}</div>
             <div class="ach-desc">${a.d}</div>
             <div class="rk-xp"><i style="width:${st.pct}%;background:${st.lvl===3?'#b8860b':st.lvl===2?'#8244bd':st.lvl===1?'#b86b23':'var(--cy)'}"></i></div>
             <div class="rk-sub">
-              <span>Прогресс: ${st.v} / ${st.nextTarget} ${a.u}</span>
-              ${st.lvl>0?`<button class="btn gh" style="padding:4px 10px;font-size:12px;background:${pinned?'var(--cy)':'var(--card)'};color:${pinned?'#ffffff':'var(--ink-strong)'}" data-a="pinMedal" data-v="${a.id}">${pinned?'★ В профиле':'На витрину'}</button>`:'<span>Закрыто</span>'}
+              <span>${st.v} / ${st.nextTarget} ${a.u}</span>
+              ${st.lvl>0?`<button class="btn gh" style="padding:3px 9px;font-size:11.5px;background:${pinned?'var(--cy)':'var(--card)'};color:${pinned?'#ffffff':'var(--ink-strong)'}" data-a="pinMedal" data-v="${a.id}">${pinned?'★ В профиле':'На витрину'}</button>`:'<span>Закрыто</span>'}
             </div>
           </div>
         </div>`;
@@ -2840,31 +3026,31 @@ function profileView(){
         <input type="text" id="prof-title-inp" value="${S.profile.title}" maxlength="36">
       </label>
     </div>
-    <div style="margin-top:14px">
-      <span class="mut" style="font-size:14px">Выбери символ профиля:</span>
-      <div class="chips">${avas.map(av=>`<button class="chip cut-sm ${S.profile.ava===av?'on':''}" data-a="setAva" data-v="${av}">${icon(av,20)}</button>`).join('')}</div>
+    <div style="margin-top:12px">
+      <span class="mut" style="font-size:13.5px">Выбери символ профиля:</span>
+      <div class="chips">${avas.map(av=>`<button class="chip cut-sm ${S.profile.ava===av?'on':''}" data-a="setAva" data-v="${av}">${icon(av,18)}</button>`).join('')}</div>
     </div>
     <div style="margin-top:10px">
-      <span class="mut" style="font-size:14px">Цвет печати профиля:</span>
+      <span class="mut" style="font-size:13.5px">Цвет печати профиля:</span>
       <div class="chips">${colors.map(([c,label])=>`<button class="chip cut-sm ${S.profile.accent===c?'on':''}" style="border-color:${c};${S.profile.accent===c?'box-shadow:0 0 12px '+c:''}" data-a="setAccent" data-v="${c}"><span style="width:12px;height:12px;border-radius:50%;background:${c};display:inline-block"></span> ${label}</button>`).join('')}</div>
     </div>
-    <button class="btn cy" data-a="saveProfile">Сохранить профиль</button>
+    <button class="btn cy" style="margin-top:8px" data-a="saveProfile">Сохранить профиль</button>
   </section>
 
   <section class="card cut">
     <h2>Развёрнутая статистика аккаунта</h2>
     <div class="stats">
-      <div class="st"><span>Всего часов учёбы</span><b>${hrs} ч (${S.stats.min} мин)</b></div>
-      <div class="st g"><span>Всего тренировок</span><b>${S.stats.wk} шт. (${hm(S.stats.wkMin||0)})</b></div>
-      <div class="st r"><span>Ключей всего (в инвентаре)</span><b>${S.stats.keys} (${S.stats.keyBalance||0})</b></div>
-      <div class="st v"><span>Полных забегов учёбы</span><b>${S.stats.fullRuns||0}</b></div>
-      <div class="st d"><span>Каток сыграно (в запасе)</span><b>${S.stats.games||0} (${S.stats.savedGames||0})</b></div>
-      <div class="st r"><span>Всего заработано</span><b>${fmt(S.stats.totalEarned||0)}</b></div>
+      <div class="st"><span>Часов учёбы</span><b>${hrs} ч (${S.stats.min} м)</b></div>
+      <div class="st g"><span>Тренировок</span><b>${S.stats.wk} шт. (${hm(S.stats.wkMin||0)})</b></div>
+      <div class="st r"><span>Ключей (в зап.)</span><b>${S.stats.keys} (${S.stats.keyBalance||0})</b></div>
+      <div class="st v"><span>Полных забегов</span><b>${S.stats.fullRuns||0}</b></div>
+      <div class="st d"><span>Каток (в зап.)</span><b>${S.stats.games||0} (${S.stats.savedGames||0})</b></div>
+      <div class="st r"><span>Заработано</span><b>${fmt(S.stats.totalEarned||0)}</b></div>
     </div>
   </section>
 
   <section class="card cut">
-    <h2>Карьерная лестница статусов (20 уровней Учёбы и 20 уровней Спорта)</h2>
+    <h2>Карьерная лестница статусов (20 уровней Учёбы и 20 Спорта)</h2>
     <p class="mut">С каждым уровнем требования растут, а ячейка получает более высокую редкость и свечение.</p>
     <div class="ladder">
       <div class="lad-col">
@@ -2905,32 +3091,32 @@ function bankView(){
     <div class="stats">
       <div class="st r"><span>Депозит на карте</span><b>${fmt(b.card)}</b></div>
       <div class="st g"><span>Доступно к выплате</span><b>${fmt(b.pend)}</b></div>
-      <div class="st v"><span>Всего выплачено мне</span><b>${fmt(b.paid)}</b></div>
-      <div class="st d"><span>Заблокировано на карте</span><b>${fmt(Math.max(0,b.card-b.pend))}</b></div>
+      <div class="st v"><span>Всего выплачено</span><b>${fmt(b.paid)}</b></div>
+      <div class="st d"><span>Заблокировано</span><b>${fmt(Math.max(0,b.card-b.pend))}</b></div>
     </div>
     <div class="row">
-      <label class="mut">Пополнить баланс карты <input type="number" id="am" min="0" placeholder="₽"></label>
+      <label class="mut">Пополнить карту <input type="number" id="am" min="0" placeholder="₽"></label>
       <button class="btn cy" data-a="topup">Пополнить</button>
     </div>
     <div class="row">
-      <label class="mut">Переведено / Выплачено мне <input type="number" id="pm" min="0" value="${b.pend}"></label>
+      <label class="mut">Выплачено мне <input type="number" id="pm" min="0" value="${b.pend}"></label>
       <button class="btn vi" data-a="payout">Получить выплату</button>
     </div>
   </section>
 
   <section class="card cut" style="border-color:var(--gr)">
     <h2>📅 Недельный финансовый план дисциплины</h2>
-    <p class="mut">Составь план на текущую неделю: за само составление плана ты сразу получаешь бонус <b>+300 ₽ и 1 жетон</b>, а за полное его выполнение — ещё <b>+1 500 ₽ и 1 Ключ</b>!</p>
+    <p class="mut">Составь план на текущую неделю: за составление сразу <b>+300 ₽ и 1 жетон</b>, а за полное выполнение — ещё <b>+1 500 ₽ и 1 Ключ</b>!</p>
     <div class="row">
-      <label class="mut">Цель учёбы на неделю (ч): <input type="number" min="1" max="100" id="wp-hrs-inp" value="${wp.studyHrs}" ${wp.created?'disabled':''}></label>
-      <label class="mut">Цель тренировок на неделю: <input type="number" min="1" max="20" id="wp-wk-inp" value="${wp.workouts}" ${wp.created?'disabled':''}></label>
+      <label class="mut">Учёба на неделю (ч): <input type="number" min="1" max="100" id="wp-hrs-inp" value="${wp.studyHrs}" ${wp.created?'disabled':''}></label>
+      <label class="mut">Тренировок на неделю: <input type="number" min="1" max="20" id="wp-wk-inp" value="${wp.workouts}" ${wp.created?'disabled':''}></label>
       ${!wp.created?`<button class="btn gr" data-a="createWeeklyPlan">Утвердить план недели (+300 ₽)</button>`:
-        `<span style="color:var(--gr);font-weight:700">${wp.completedPaid?'🏆 План недели выполнен (+1500 ₽ и Ключ получены)!':'✓ План активен на эту неделю'}</span>`}
+        `<span style="color:var(--gr);font-weight:700">${wp.completedPaid?'🏆 План недели выполнен (+1500 ₽ и Ключ)!':'✓ План активен на эту неделю'}</span>`}
     </div>
     ${wp.created?`
-      <div class="stats" style="margin-top:12px">
-        <div class="st"><span>Прогресс учёбы за неделю</span><b>${(wProg.min/60).toFixed(1)} / ${wp.studyHrs} ч</b></div>
-        <div class="st g"><span>Прогресс тренировок за неделю</span><b>${wProg.wk} / ${wp.workouts} трен.</b></div>
+      <div class="stats" style="margin-top:10px">
+        <div class="st"><span>Учёба за неделю</span><b>${(wProg.min/60).toFixed(1)} / ${wp.studyHrs} ч</b></div>
+        <div class="st g"><span>Тренировки за неделю</span><b>${wProg.wk} / ${wp.workouts} трен.</b></div>
       </div>
     `:''}
   </section>
@@ -2938,15 +3124,15 @@ function bankView(){
   <section class="card cut">
     <h2>Раздельная история активности</h2>
     <div class="chips">
-      <button class="chip cut-sm ${ht==='study'?'on':''}" data-a="histTab" data-v="study">${icon('study',16)} История учёбы (${S.logStudy.length})</button>
-      <button class="chip cut-sm ${ht==='work'?'on':''}" data-a="histTab" data-v="work">${icon('work',16)} История тренировок (${S.logWork.length})</button>
-      <button class="chip cut-sm ${ht==='bank'?'on':''}" data-a="histTab" data-v="bank">${icon('bank',16)} Операции банка (${S.logBank.length})</button>
+      <button class="chip cut-sm ${ht==='study'?'on':''}" data-a="histTab" data-v="study">${icon('study',15)} Учёба (${S.logStudy.length})</button>
+      <button class="chip cut-sm ${ht==='work'?'on':''}" data-a="histTab" data-v="work">${icon('work',15)} Спорт (${S.logWork.length})</button>
+      <button class="chip cut-sm ${ht==='bank'?'on':''}" data-a="histTab" data-v="bank">${icon('bank',15)} Банк (${S.logBank.length})</button>
     </div>
     ${curLogs.length?`<ul class="log">${curLogs.map(l=>`<li>
       <span>
         ${l.txt}<br>
         <small>${new Date(l.t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small>
-        ${ht==='work'?`<button class="btn gh" style="padding:3px 9px;font-size:11.5px;margin-left:8px" data-a="openGymForWorkout" data-v="${l.txt}">📝 Расписать подходы и веса</button>`:''}
+        ${ht==='work'?`<button class="btn gh" style="padding:3px 8px;font-size:11px;margin-top:4px" data-a="openGymForWorkout" data-v="${l.txt}">📝 Расписать подходы</button>`:''}
       </span>
       <b class="${l.amt<0?'minus':'plus'}">${l.amt>0?'+':''}${fmt(l.amt)}</b>
     </li>`).join('')}</ul>`:'<p class="mut">В этом разделе пока нет записей.</p>'}
@@ -2965,15 +3151,15 @@ function settingsView(){
         <input type="number" min="0" data-k="rw" value="${S.cfg.rw}">
       </label>
       <label style="justify-content:center">
-        <span><input type="checkbox" data-k="full" ${S.cfg.full?'checked':''}> Досрочный ключ оплачивает остаток плана</span>
+        <span style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-k="full" ${S.cfg.full?'checked':''} style="width:auto"> Досрочный ключ оплачивает остаток плана</span>
       </label>
     </div>
   </section>
 
   <section class="card cut" style="border-color:var(--ye)">
-    <h2>🎲 Панель шансов выпадения предметов и настройка 10 дверей</h2>
-    <p class="mut">Здесь можно изменить глобальные множители шансов или настроить проценты для каждой из 10 дверей вручную. Чем выше риск комнаты, тем выше базовый шанс на Ключ и Катку.</p>
-    <div class="cfg" style="margin-top:12px">
+    <h2>🎲 Шансы выпадения и настройка 10 дверей</h2>
+    <p class="mut">Здесь можно изменить глобальные множители шансов или настроить проценты для каждой из 10 дверей вручную.</p>
+    <div class="cfg" style="margin-top:10px">
       <label>Глобальный множитель Ключей (×)
         <input type="number" step="0.1" min="0" max="5" data-k="kMult" value="${S.cfg.kMult??1}">
       </label>
@@ -2986,8 +3172,8 @@ function settingsView(){
     </div>
 
     <div class="door-cfg-list">
-      <div class="door-cfg-item" style="background:transparent;border:0;color:var(--mut);font-size:13px">
-        <strong>Дверь (постоянное имя)</strong>
+      <div class="door-cfg-item door-cfg-head" style="background:transparent;border:0;color:var(--mut);font-size:12.5px">
+        <strong>Дверь</strong>
         <span>Отдых %</span><span>Катка %</span><span>Ключ %</span><span>Сред. мин</span><span>Учёба %</span>
       </div>
       ${S.cfg.doors.map((d,idx)=>`
@@ -3002,8 +3188,8 @@ function settingsView(){
       `).join('')}
     </div>
     <div class="row">
-      <button class="btn gh" data-a="resetDoorsCfg">Вернуть стандартные шансы дверей</button>
-      <button class="btn gh" style="color:var(--red)" data-a="wipeAsk">Сбросить все данные приложения</button>
+      <button class="btn gh" data-a="resetDoorsCfg">Вернуть стандартные шансы</button>
+      <button class="btn gh" style="color:var(--red)" data-a="wipeAsk">Сбросить все данные</button>
     </div>
   </section>`;
 }
@@ -3015,11 +3201,11 @@ function renderModal(){
     const r=S.run.study;
     $('#modal-root').innerHTML=`<div class="modal-bg">
       <div class="modal cut">
-        <h2 style="color:var(--ye)">⚠️ Дисклеймер: Забрать деньги?</h2>
+        <h2 style="color:var(--ye)">⚠️ Забрать деньги?</h2>
         <p class="mut" style="margin:10px 0">Если ты заберёшь накопленные <b>${fmt(r?r.earned:0)}</b> сейчас, текущий забег в лабиринте <b>досрочно завершится</b> (без получения ключа и без бонуса за полный план).</p>
         <div class="row">
-          <button class="btn ye" data-a="cashoutConfirm">Да, забрать ${fmt(r?r.earned:0)} и закончить</button>
-          <button class="btn gh" data-a="closeModal">Отмена (продолжить забег)</button>
+          <button class="btn ye" data-a="cashoutConfirm">Да, забрать ${fmt(r?r.earned:0)}</button>
+          <button class="btn gh" data-a="closeModal">Отмена</button>
         </div>
       </div>
     </div>`;
@@ -3145,7 +3331,20 @@ function finishStudyRoom(){
 
 /* ACTIONS */
 const A={
-  tab:d=>{S.tab=d.v;modalState=null;save();render();snd('tick')},
+  tab:d=>{
+    S.tab=d.v;
+    modalState=null;
+    profDrawerOpen=false;
+    save();
+    render();
+    snd('tick');
+    window.scrollTo({top:0,behavior:'smooth'});
+  },
+  toggleProfDrawer:()=>{
+    profDrawerOpen=!profDrawerOpen;
+    snd('tick');
+    renderHeader();
+  },
   histTab:d=>{S.histTab=d.v;save();render();snd('tick')},
   mute:()=>{S.mute=!S.mute;save();render();snd('tick')},
   theme:()=>{
@@ -3294,7 +3493,7 @@ const A={
     const cards=track.querySelectorAll('.r-card');
     if(cards[winIdx]){
       cards[winIdx].style.setProperty('--rc',winItem.col);
-      cards[winIdx].innerHTML=`<div style="color:${winItem.col}">${icon(winItem.ic,26)}</div><b>${winItem.n}</b>`;
+      cards[winIdx].innerHTML=`<div style="color:${winItem.col}">${icon(winItem.ic,24)}</div><b>${winItem.n}</b>`;
     }
 
     const viewportW=track.parentElement.clientWidth;
@@ -3535,7 +3734,7 @@ $('#import-file-inp')?.addEventListener('change',e=>{
     try{
       const parsed=JSON.parse(ev.target.result);
       if(parsed&&parsed.stats&&parsed.bank){
-        S=Object.assign(DEF(),parsed);
+        S=normalizeState(parsed);
         save();render();snd('key');
       }
     }catch(err){}
