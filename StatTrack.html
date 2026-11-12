@@ -1734,10 +1734,30 @@ const BACKEND_URL='https://stattrack-backend.onrender.com';
 const tg=window.Telegram?.WebApp;
 if(tg){try{tg.ready();tg.expand();}catch(e){}}
 
+// Флаг блокировки перезаписи облака до окончания первичной загрузки
+let cloudLoaded=false;
 let saveTimer=null;
+
+// Оценка «веса» прогресса, чтобы пустое устройство никогда не затёрло прокачанный профиль
+function getStateScore(st){
+  if(!st||!st.stats)return 0;
+  return (st.stats.min||0)+(st.stats.wk||0)*60+(st.stats.totalEarned||0)+(st.bank?.card||0)+(st.bank?.paid||0);
+}
+
 const save=()=>{
-  try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
-  // Отправка в облако MongoDB, если открыто внутри Telegram
+  S.updatedAt=Date.now();
+  const rawJson=JSON.stringify(S);
+  try{localStorage.setItem(K,rawJson)}catch(e){}
+
+  // Не отправляем данные в облако, пока не завершилась первичная загрузка!
+  if(!cloudLoaded)return;
+
+  // 1. Мгновенное резервное сохранение в Telegram CloudStorage (общее для телефона и ПК)
+  if(tg?.CloudStorage){
+    try{tg.CloudStorage.setItem(K,rawJson)}catch(e){}
+  }
+
+  // 2. Отправка в облако MongoDB на Render, если открыто внутри Telegram
   if(tg&&tg.initData&&tg.initDataUnsafe?.user?.id){
     clearTimeout(saveTimer);
     saveTimer=setTimeout(()=>{
@@ -1750,40 +1770,68 @@ const save=()=>{
           state:S
         })
       }).catch(err=>console.error('Ошибка облака:',err));
-    },1000);
+    },800);
   }
 };
 
-// Загрузка профиля из базы данных при входе
+// Промис-обёртка для чтения из Telegram CloudStorage
+function getTgCloudState(){
+  return new Promise(resolve=>{
+    if(!tg?.CloudStorage)return resolve(null);
+    try{
+      tg.CloudStorage.getItem(K,(err,val)=>{
+        if(err||!val)return resolve(null);
+        try{resolve(JSON.parse(val));}catch(e){resolve(null);}
+      });
+    }catch(e){resolve(null);}
+  });
+}
+
+// Загрузка и выбор самого прокачанного профиля при входе
 async function loadCloudProfile(){
-  if(!tg||!tg.initData||!tg.initDataUnsafe?.user?.id)return;
   try{
-    const res=await fetch(`${BACKEND_URL}/api/load`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        initData:tg.initData,
-        user_id:tg.initDataUnsafe.user.id
-      })
-    });
-    if(!res.ok)return;
-    const cloudData=await res.json();
-    if(cloudData&&cloudData.stats){
+    // Сначала мгновенно проверяем быстрое облако Telegram
+    const tgState=await getTgCloudState();
+    if(tgState&&getStateScore(tgState)>=getStateScore(S)){
       const curTab=S.tab||'home';
-      S=normalizeState(cloudData);
+      S=normalizeState(tgState);
       S.tab=curTab;
       try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
-    }else{
-      if(tg.initDataUnsafe.user.first_name){
-        S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
-      }
-      save();
+      render();
     }
+
+    // Затем проверяем основную базу данных MongoDB на Render
+    if(tg&&tg.initData&&tg.initDataUnsafe?.user?.id){
+      const res=await fetch(`${BACKEND_URL}/api/load`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          initData:tg.initData,
+          user_id:tg.initDataUnsafe.user.id
+        })
+      });
+      if(res.ok){
+        const cloudData=await res.json();
+        if(cloudData&&cloudData.stats){
+          if(getStateScore(cloudData)>=getStateScore(S)||getStateScore(S)===0){
+            const curTab=S.tab||'home';
+            S=normalizeState(cloudData);
+            S.tab=curTab;
+            try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
+          }
+        }else if(tg.initDataUnsafe.user.first_name&&S.profile.nick==='Негорящий'){
+          S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
+        }
+      }
+    }
+  }catch(e){
+    console.error('Ошибка загрузки профиля:',e);
+  }finally{
+    cloudLoaded=true;
     syncCalendarState();
     applyTheme();
     render();
-  }catch(e){
-    console.error('Ошибка загрузки профиля:',e);
+    save();
   }
 }
 loadCloudProfile();
@@ -3822,8 +3870,18 @@ const A={
   },
 
   /* PROFILE & MEDALS */
-  setAva:d=>{S.profile.ava=d.v;snd('tick');save();render()},
-  setAccent:d=>{S.profile.accent=d.v;snd('tick');save();render()},
+  setAva:d=>{
+    const n=$('#prof-nick-inp')?.value.trim(),t=$('#prof-title-inp')?.value.trim();
+    if(n)S.profile.nick=n;
+    if(t)S.profile.title=t;
+    S.profile.ava=d.v;snd('tick');save();render();
+  },
+  setAccent:d=>{
+    const n=$('#prof-nick-inp')?.value.trim(),t=$('#prof-title-inp')?.value.trim();
+    if(n)S.profile.nick=n;
+    if(t)S.profile.title=t;
+    S.profile.accent=d.v;snd('tick');save();render();
+  },
   saveProfile:()=>{
     const n=$('#prof-nick-inp')?.value.trim(),t=$('#prof-title-inp')?.value.trim();
     if(n)S.profile.nick=n;
@@ -3918,6 +3976,8 @@ document.addEventListener('click',e=>{
 });
 
 document.addEventListener('input',e=>{
+  if(e.target.id==='prof-nick-inp')S.profile.nick=e.target.value;
+  if(e.target.id==='prof-title-inp')S.profile.title=e.target.value;
   if(e.target.id==='wk-dur-inp')S.wkForm.dur=e.target.value;
   if(e.target.id==='custom-act-inp')S.wkForm.customName=e.target.value;
   if(e.target.id==='gym-ex-inp')S.gym.draft.exName=e.target.value;
