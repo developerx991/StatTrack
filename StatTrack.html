@@ -40,30 +40,6 @@
 }
 
 /* HIGH-CONTRAST READABLE LIGHT THEME ("WHITE KNIGHT OF MIST") */
-[data-theme="light"] {
-  --bg: #e6e2da;
-  --bg-alt: #dcd7cd;
-  --card: #ffffff;
-  --card2: #f7f4ee;
-  --surface: #ede9e0;
-  --ink: #1e1b18;
-  --ink-strong: #0a0908;
-  --mut: #4a4238;
-  --line: #b5ac9e;
-  --line-gold: #80602a;
-  --red: #9e1b20;
-  --cy: #875512;
-  --gr: #1b6938;
-  --vi: #56267d;
-  --ye: #8f5106;
-  --or: #9e3d12;
-  --ember: #2d3748;
-  --accent: #4a433b;
-  --shadow-card: 0 8px 22px rgba(25, 20, 15, 0.08), inset 0 1px 0 #ffffff;
-  --glow-ambient: radial-gradient(650px 420px at 50% 0%, rgba(255, 255, 255, 0.8), transparent 70%),
-                  radial-gradient(550px 400px at 90% 85%, rgba(140, 130, 115, 0.15), transparent 70%);
-  color-scheme: light;
-}
 
 html {
   scroll-padding-top: env(safe-area-inset-top, 0px);
@@ -488,13 +464,6 @@ button:active:not(:disabled), .hub-card:active, .rk-cell:active, .res-pill:activ
   color: #fff;
 }
 [data-theme="dark"] .rar-6 .rk-name { color: #f5d061; text-shadow: 0 0 12px rgba(212, 175, 55, 0.5); }
-[data-theme="light"] .rar-6 .rk-name { color: #8a5a00; }
-[data-theme="light"] .rar-0 { --rc: #5c5349; }
-[data-theme="light"] .rar-1 { --rc: #1e6b3a; }
-[data-theme="light"] .rar-2 { --rc: #1c5882; }
-[data-theme="light"] .rar-3 { --rc: #5e2594; }
-[data-theme="light"] .rar-4 { --rc: #9c1920; }
-[data-theme="light"] .rar-5 { --rc: #9e4308; }
 @keyframes shine { to { background-position: -200% 0; } }
 
 /* ==========================================================================
@@ -692,7 +661,6 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   border-bottom: 1px solid var(--line-gold);
   overflow: hidden;
 }
-[data-theme="light"] .souls-scene { background: #d8d5ce; }
 .souls-scene-photo {
   position: absolute;
   inset: 0;
@@ -705,12 +673,6 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 [data-theme="dark"] .souls-scene-photo {
   background-image: url('https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=1400&q=80');
-}
-[data-theme="light"] .souls-scene-photo {
-  background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=80');
-  mix-blend-mode: multiply;
-  opacity: 0.22;
-  filter: grayscale(1) contrast(1.2);
 }
 #hero-canvas {
   position: relative;
@@ -781,7 +743,6 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   text-align: center;
   position: relative;
 }
-[data-theme="light"] .door { --dc: color-mix(in srgb, var(--c) 72%, #1a120b); }
 .door:hover:not(.open) {
   transform: translateY(-3px);
   border-color: var(--dc);
@@ -1296,10 +1257,6 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .hm-cell.l2, .hm-legend-cell.l2 { background: #7d5722; border-color: #9e6e2b; }
 .hm-cell.l3, .hm-legend-cell.l3 { background: #b57c29; border-color: #d49b4b; }
 .hm-cell.l4, .hm-legend-cell.l4 { background: #f2aa3c; border-color: #ffd27d; box-shadow: 0 0 5px rgba(242, 170, 60, 0.45); }
-[data-theme="light"] .hm-cell.l1, [data-theme="light"] .hm-legend-cell.l1 { background: #d6c4a5; }
-[data-theme="light"] .hm-cell.l2, [data-theme="light"] .hm-legend-cell.l2 { background: #b89760; }
-[data-theme="light"] .hm-cell.l3, [data-theme="light"] .hm-legend-cell.l3 { background: #966c28; }
-[data-theme="light"] .hm-cell.l4, [data-theme="light"] .hm-legend-cell.l4 { background: #694408; }
 
 .chart-bars {
   display: flex;
@@ -1517,6 +1474,75 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   .streak-chain-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
 }
 [hidden] { display: none !important; }
+:root{--top-inset:max(env(safe-area-inset-top,0px),calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px)))}
+html{padding-top:var(--top-inset)}
+.topbar{position:sticky;top:var(--top-inset);z-index:15;background:var(--bg);padding-top:6px}
+.modal-bg{padding-top:max(12px,var(--top-inset));padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+.modal{max-height:100%;overflow-y:auto;overscroll-behavior:contain}
+.modal .hud{align-items:center}.modal p,.editor,.goal-row,.budget-grid,.volume,.modal progress{margin:10px 0}
+.modal progress{width:100%;accent-color:var(--cy)}
+.editor summary{cursor:pointer;color:var(--cy);font-weight:600}
+.goal-row,.quota-grid label{display:flex;justify-content:space-between;align-items:center;gap:8px;overflow-wrap:anywhere}
+.goal-row input,.quota-grid input{width:68px!important;flex:none}
+.goal-row small,.budget-grid span{display:block;color:var(--mut)}
+.budget-grid,.quota-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.budget-grid>div,.quota-grid label{padding:8px;border:1px solid var(--line);border-radius:4px}
+.budget-grid strong,.volume output{color:var(--cy)}
+.volume{display:grid;grid-template-columns:1fr auto;gap:6px}.volume input{grid-column:span 2;width:100%}
+.form-msg{color:var(--or)}.form-msg:empty{display:none}
+#main .row input,.modal .row input{min-width:0;max-width:100%}
+@media(max-width:600px){
+ .top-actions .icon-btn{min-height:36px;padding:5px 7px}.top-grp-main,.top-grp-sys{gap:2px}
+ .top-actions .icon-btn span{display:none}.top-grp-sys{margin:0;padding-left:3px}
+ .brand .logo-sub{display:none}.quota-grid{grid-template-columns:1fr}.quota-grid label{padding:4px 8px}
+ .card .hud{flex-wrap:wrap}.goal-row .btn{white-space:normal}.log li{overflow-wrap:anywhere}
+ .modal input:not([type=range]),.card input:not([type=checkbox]){font-size:16px}
+}
+@media(max-width:375px){.brand-ic{display:none}.wrap{padding-left:8px;padding-right:8px}.top-actions{gap:2px}}
+.modal-bg{grid-template-rows:minmax(0,1fr)}.modal{min-height:0}
+
+select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:9px;font:inherit;max-width:100%}
+.pick-list{display:grid;gap:6px;margin:12px 0}.pick,.task-check{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;gap:10px;padding:11px 12px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:5px;font:inherit;cursor:pointer;overflow-wrap:anywhere}.pick small{display:block}.pick span,.pick small,.entry-row small,.time-task small{color:var(--mut)}
+.entry-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.set-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.set-fields input,.journal .cfg input{width:100%;min-width:0}.journal h3{margin-top:10px}
+.goal-card{border-left:4px solid var(--goal-color)}.goal-card h3,.task-check span{color:var(--goal-color)}
+.goal-card h3,.time-task,.task-check{overflow-wrap:anywhere}.goal-card .hud{gap:8px}
+.task-check,.time-task{margin:7px 0}.task-check{justify-content:flex-start}.task-check small,.time-task small{margin-left:auto;flex-shrink:0}
+.time-task>div{display:flex;gap:8px;justify-content:space-between}.time-task progress{width:100%;accent-color:var(--goal-color)}.goal-card .btn{padding:6px 10px}
+details.card>summary{cursor:pointer;font-weight:700}#goal-archive .goal-card{margin:8px 0}
+@media(max-width:600px){.cfg{grid-template-columns:1fr}.set-fields label{font-size:13px}.goal-card .row{gap:5px}.pick{min-height:44px}}
+/* Profile and goal forms */
+.modal-bg{grid-template-columns:minmax(0,1fr)}
+.entry-form{--form-accent:var(--cy);display:grid;grid-template-columns:minmax(0,1fr);gap:18px;margin-top:17px}
+.entry-field{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;min-width:0;color:var(--mut);font-size:14px;font-weight:600}
+.entry-form .entry-field input,.entry-form .entry-field select{width:100%;min-width:0;min-height:44px;margin:0}
+.entry-primary{font-size:15px;color:var(--ink-strong)}
+.modal .entry-primary input[type=text]{font-size:clamp(18px,4vw,22px);line-height:1.35;font-weight:600;padding:12px 14px;
+  border:1px solid var(--form-accent);border-left-width:3px;border-radius:6px;background:var(--surface);color:var(--ink-strong)}
+.entry-primary input::placeholder{color:var(--mut);font-weight:400}
+.goal-options{display:grid;grid-template-columns:minmax(0,1fr) minmax(80px,0.45fr);gap:14px}
+.entry-field input[type=color]{background:var(--surface);border:1px solid var(--line-gold);border-radius:5px;padding:6px;cursor:pointer}
+.entry-field input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.entry-field input[type=color]::-webkit-color-swatch{border:0;border-radius:3px}
+.entry-field input[type=color]::-moz-color-swatch{border:0;border-radius:3px}
+.entry-actions{border-top:1px solid var(--line);padding-top:17px}
+.entry-actions .btn{width:100%;min-height:44px}
+.entry-actions .form-msg:not(:empty){margin:0 0 10px}
+.remove-goal{overflow-wrap:anywhere}
+.remove-goal summary{width:fit-content;color:#ef8d90;cursor:pointer}
+.remove-goal[open] .btn{min-height:40px}
+#goal-archive,.goal-card{min-inline-size:0;max-inline-size:100%}
+#goal-archive .goal-card{padding:clamp(10px,3vw,15px)}
+.goal-card .hud>div,.goal-card .editor,.goal-card .chips{min-width:0;max-width:100%}
+.goal-card .task-check{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:start;
+  min-width:0;max-width:100%;white-space:normal;box-sizing:border-box}
+.goal-card .task-mark{color:var(--goal-color);text-align:center}
+.goal-card .task-name{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:break-word;color:var(--ink)}
+.goal-card .chip,.goal-card .row>.btn{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.goal-card .time-task>div{flex-wrap:wrap}
+@media(max-width:375px){.goal-options{gap:10px}.entry-form{gap:16px}#goal-archive{padding-inline:10px}}
+
 </style>
 </head>
 <body>
@@ -1535,7 +1561,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 
   <div id="prof-header"></div>
   <div class="tabs" id="tabs"></div>
-  <main id="main"></main>
+  <div id="sync-state" class="mut" role="status" hidden></div><main id="main"></main>
 </div>
 <div id="modal-root"></div>
 <input type="file" id="import-file-inp" accept=".json" hidden>
@@ -1548,22 +1574,22 @@ const K='stattrack_v2';
 
 /* 10 PERMANENT DOORS ORDERED BY RISK & CHANCE (Easy -> Hard) */
 const DEF_DOORS=[
-  {id:0,n:'Солнечная терраса',s:52,r:45,g:2,k:1,c:15,col:'#c9a252',risk:'Риск I • Очень лёгкая'},
-  {id:1,n:'Сад безмятежности',s:58,r:38,g:2.5,k:1.5,c:20,col:'#52a888',risk:'Риск II • Лёгкая'},
-  {id:2,n:'Библиотечный зал',s:64,r:30.5,g:3.5,k:2,c:25,col:'#d49b4b',risk:'Риск III • Спокойная'},
-  {id:3,n:'Механический шлюз',s:68,r:25,g:4.5,k:2.5,c:30,col:'#d97b38',risk:'Риск IV • Умеренная'},
-  {id:4,n:'Зеркальная галерея',s:71,r:20,g:5.5,k:3.5,c:35,col:'#64a6d1',risk:'Риск V • Средняя'},
-  {id:5,n:'Алхимическая лаборатория',s:73,r:16,g:6.5,k:4.5,c:38,col:'#9a6fe0',risk:'Риск VI • Опасная'},
-  {id:6,n:'Крипта древних рун',s:75,r:12,g:7.5,k:5.5,c:42,col:'#cc5894',risk:'Риск VII • Тяжёлая'},
-  {id:7,n:'Кузница титанов',s:76,r:9,g:8.5,k:6.5,c:46,col:'#e85d24',risk:'Риск VIII • Суровая'},
-  {id:8,n:'Обсидиановый бастион',s:77,r:6,g:9.5,k:7.5,c:50,col:'#cc293d',risk:'Риск IX • Кошмарная'},
-  {id:9,n:'Врата Бездны',s:77,r:4,g:10.5,k:8.5,c:55,col:'#e62200',risk:'Риск X • Адская'}
+  {id:0,n:'Солнечная терраса',s:70.0,r:29.2,g:0.6,k:0.2,c:15,col:'#c9a252',risk:'Риск I • Очень лёгкая'},
+  {id:1,n:'Сад безмятежности',s:74.1,r:24.7,g:0.8,k:0.4,c:20,col:'#52a888',risk:'Риск II • Лёгкая'},
+  {id:2,n:'Библиотечный зал',s:78.6,r:19.8,g:1.1,k:0.5,c:25,col:'#d49b4b',risk:'Риск III • Спокойная'},
+  {id:3,n:'Механический шлюз',s:81.8,r:16.2,g:1.4,k:0.6,c:30,col:'#d97b38',risk:'Риск IV • Умеренная'},
+  {id:4,n:'Зеркальная галерея',s:84.3,r:13.0,g:1.8,k:0.9,c:35,col:'#64a6d1',risk:'Риск V • Средняя'},
+  {id:5,n:'Алхимическая лаборатория',s:86.4,r:10.4,g:2.1,k:1.1,c:38,col:'#9a6fe0',risk:'Риск VI • Опасная'},
+  {id:6,n:'Крипта древних рун',s:88.4,r:7.8,g:2.4,k:1.4,c:42,col:'#cc5894',risk:'Риск VII • Тяжёлая'},
+  {id:7,n:'Кузница титанов',s:89.8,r:5.9,g:2.7,k:1.6,c:46,col:'#e85d24',risk:'Риск VIII • Суровая'},
+  {id:8,n:'Обсидиановый бастион',s:91.2,r:3.9,g:3.0,k:1.9,c:50,col:'#cc293d',risk:'Риск IX • Кошмарная'},
+  {id:9,n:'Врата Бездны',s:91.9,r:2.6,g:3.4,k:2.1,c:55,col:'#e62200',risk:'Риск X • Адская'}
 ];
 
 /* 7 ITEMS FOR SHOP & CS2 CASE ROULETTE */
 const SHOP_ITEMS=[
   {id:'reroll',n:'Переброс дверей',d:'Меняет тройку дверей на новую. Один раз за забег, цена при прямой покупке растёт.',baseCost:1,grow:true,col:'#64a6d1',ic:'refresh',w:22},
-  {id:'scout',n:'Разведка',d:'Показывает, что лежит за одной выбранной дверью (учёба, отдых, катка или ключ). Ничего не пропускает.',baseCost:1,grow:false,col:'#52a86f',ic:'eye',w:20},
+  {id:'scout',n:'Разведка',d:'Показывает, что лежит за одной выбранной дверью (учёба, отдых, катка или выход). Ничего не пропускает.',baseCost:1,grow:false,col:'#52a86f',ic:'eye',w:20},
   {id:'shield',n:'Щит от «адского»',d:'Если выпал блок на 50+ минут, он автоматически сокращается до 40 мин. Один раз за забег.',baseCost:1,grow:false,col:'#d49b4b',ic:'shield',w:18},
   {id:'breather',n:'Передышка',d:'Следующий выпавший отдых в лабиринте гарантированно будет долгим — на 15 минут.',baseCost:1,grow:false,col:'#52a888',ic:'rest',w:16},
   {id:'double_xp',n:'Двойные очки',d:'Следующий блок учёбы даёт ×2 очков к рангу и жетонам. На деньги не влияет.',baseCost:2,grow:false,col:'#9b62c7',ic:'bolt',w:10},
@@ -1602,10 +1628,11 @@ const MUSCLES=[
 /* 20 ACHIEVEMENTS (3 TIERS EACH) */
 const ACHS=[
   {id:'st_hrs',n:'Покоритель времени',d:'Провести за учёбой указанное число часов',u:'ч',t:[3,25,100],ic:'book',val:s=>+(s.stats.min/60).toFixed(1)},
-  {id:'keys',n:'Взломщик лабиринта',d:'Найти ключи в лабиринте учёбы',u:'ключ.',t:[5,15,40],ic:'key',val:s=>s.stats.keys||0},
-  {id:'early_k',n:'Любимчик фортуны',d:'Выбить ключ досрочно до конца плана',u:'раз',t:[1,5,15],ic:'clover',val:s=>s.stats.earlyKeys||0},
+  {id:'keys',n:'Хранитель времени',d:'Заработать ключи за каждые 90 минут учёбы',u:'ключ.',t:[5,15,40],ic:'key',val:s=>s.stats.studyKeys||0},
+  {id:'early_k',n:'Тайный проход',d:'Найти случайный выход до конца плана',u:'раз',t:[1,5,15],ic:'exit',val:s=>s.stats.earlyKeys||0},
+  {id:'escape_doors',n:'Картограф лабиринта',d:'Найти тайный выход за разными вратами',u:'врат',t:[2,5,10],ic:'exit',val:s=>(s.stats.escapeDoors||[]).length},
   {id:'games',n:'Киберспортсмен',d:'Сыграть выпавшие в дверях катки',u:'кат.',t:[5,15,35],ic:'game',val:s=>s.stats.games||0},
-  {id:'full_runs',n:'Железная выдержка',d:'Пройти план учёбы до конца без раннего ключа',u:'заб.',t:[3,10,25],ic:'shield',val:s=>s.stats.fullRuns||0},
+  {id:'full_runs',n:'Железная выдержка',d:'Пройти план учёбы до конца без досрочного побега',u:'заб.',t:[3,10,25],ic:'shield',val:s=>s.stats.fullRuns||0},
   {id:'earn_tot',n:'Капиталист',d:'Заработать суммарно рублей за дисциплину',u:'₽',t:[2000,10000,50000],ic:'coin',val:s=>s.stats.totalEarned||0},
   {id:'wk_tot',n:'Марафонец спорта',d:'Выполнить и отметить тренировки',u:'трен.',t:[5,25,75],ic:'bolt',val:s=>s.stats.wk||0},
   {id:'wk_min',n:'Машина выносливости',d:'Набрать суммарное время тренировок',u:'мин',t:[180,600,1800],ic:'flame',val:s=>s.stats.wkMin||0},
@@ -1652,7 +1679,68 @@ const toWeekKey=ts=>{
   return toDayKey(mon.getTime());
 };
 
+const DEFAULT_EXERCISES=['Жим лёжа','Приседания со штангой','Становая тяга','Жим гантелей сидя','Подтягивания','Тяга штанги в наклоне','Подъём на бицепс','Французский жим','Жим ногами'];
+const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>globalThis.crypto?.randomUUID?.()||('id_'+Date.now().toString(36)+Math.random().toString(36).slice(2));
+const FORTNIGHT=14*86400000;
+const SPORTS=[
+  {id:'gym',n:'Зал'},{id:'pool',n:'Бассейн'},{id:'home',n:'Домашняя тренировка'},
+  {id:'yoga',n:'Йога'},{id:'other',n:'Другая активность'}
+];
+const GROUPS=[
+  ['chest','Грудь',['Жим лёжа','Жим гантелей','Отжимания']],
+  ['biceps','Бицепс',['Подъём на бицепс','Молотки']],
+  ['triceps','Трицепс',['Французский жим','Разгибание рук на блоке']],
+  ['legs','Ноги',['Приседания со штангой','Жим ногами','Выпады']],
+  ['shoulders','Плечи',['Жим гантелей сидя','Подъём гантелей в стороны']],
+  ['back','Спина',['Становая тяга','Подтягивания','Тяга штанги в наклоне']],
+  ['abs','Пресс',['Скручивания','Подъём ног']]
+];
+const defaultGroups=()=>GROUPS.map(([id,n,ex])=>({id,n,ex:[...ex]}));
+const GOAL_COLORS=['#d49b4b','#54ae83','#70a5df','#bd87d5','#e08369','#63bbbc'];
+const goalColor=c=>/^#[0-9a-f]{6}$/i.test(c)?c:GOAL_COLORS[0];
+function migrateTracker(s,old){
+  s.theme='dark';
+  delete s.bank.sportCard;delete s.bank.sportPend;delete s.rules.sportPct;
+  if(!old?.trainingVersion){
+    const oldSports=old?.activities||[];
+    const migratedId=id=>GROUPS.some(([g])=>g===id)?'gym':id==='bars'?'other':id;
+    const activities=SPORTS.map(x=>({...x}));
+    for(const a of oldSports){
+      if(!activities.some(x=>x.id===migratedId(a.id)))activities.push({...a});
+    }
+    const requirements={},counts={};
+    for(const [id,n] of Object.entries(s.rules.requirements||{})){
+      const key=migratedId(id);
+      if(!activities.some(a=>a.id===key))activities.push({id:key,n:oldSports.find(a=>a.id===id)?.n||id});
+      requirements[key]=(requirements[key]||0)+n;
+      counts[key]=(counts[key]||0)+Math.min(n,s.rules.counts?.[id]||0);
+    }
+    Object.assign(s.rules,{requirements,counts});
+    s.activities=activities;
+    s.gym.groups=defaultGroups();
+    if(Array.isArray(old?.exercises)){
+      for(const g of s.gym.groups)g.ex=g.ex.filter(n=>!DEFAULT_EXERCISES.includes(n)||old.exercises.includes(n));
+      const custom=old.exercises.filter(n=>!s.gym.groups.some(g=>g.ex.includes(n)));
+      if(custom.length)s.gym.groups.push({id:'legacy-custom',n:'Мои упражнения',ex:custom});
+    }
+  }
+  delete s.exercises;delete s.wkForm;
+  s.trainingVersion=2;
+  if(!Array.isArray(s.gym.groups))s.gym.groups=defaultGroups();
+  s.logWork.forEach((w,i)=>{if(!w.id)w.id='old_'+w.t+'_'+i;});
+  for(const g of s.goals){
+    if(!Array.isArray(g.tasks)){
+      g.color=GOAL_COLORS[0];g.area='Учёба';
+      g.tasks=[{id:g.id,n:'Учебное время',type:'time',target:0}];
+    }
+  }
+}
+
 const DEF=()=>({
+  doorRevision:1,trainingVersion:2,setupDone:false,profileStepDone:false,activities:SPORTS.map(x=>({...x})),goals:[],
+  rules:{requirements:{},counts:{},changed:0},
+  audio:{effects:75,timer:100},
   profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',medals:['st_hrs','wk_tot','keys']},
   cfg:{rs:500,rw:500,full:true,kMult:1,gMult:1,rMult:1,doors:JSON.parse(JSON.stringify(DEF_DOORS))},
   bank:{card:0,pend:0,paid:0},
@@ -1670,7 +1758,7 @@ const DEF=()=>({
   quests:{dayKey:'',weekKey:'',claimed:{},miniDone:false},
   weeklyPlan:{weekKey:'',studyHrs:10,workouts:3,created:false,creationBonusPaid:false,completedPaid:false},
   gym:{
-    sessions:[],
+    groups:defaultGroups(),current:null,    sessions:[],
     prs:{},
     draft:{workoutRef:'',note:'',sets:[],exName:'Жим лёжа',weight:60,reps:10}
   },
@@ -1680,7 +1768,6 @@ const DEF=()=>({
   logBank:[],
   run:{study:null},
   sel:{study:180},
-  wkForm:{sel:['chest','biceps','triceps'],dur:'',customName:''},
   tab:'home',
   histTab:'study',
   mute:false,
@@ -1689,10 +1776,20 @@ const DEF=()=>({
 
 function normalizeState(rawObj){
   const b=DEF();
-  const s=Object.assign(b,rawObj||{});
+  const s=Object.assign({},b,rawObj||{});
+  const gymDraftDefaults={...b.gym.draft};
   s.profile=Object.assign(b.profile,s.profile||{});
   s.cfg=Object.assign(b.cfg,s.cfg||{});
   if(!s.cfg.doors||s.cfg.doors.length!==10)s.cfg.doors=JSON.parse(JSON.stringify(DEF_DOORS));
+  if(rawObj&&!rawObj.doorRevision){
+    const oldOdds=[[45.0, 2.0, 1.0], [38.0, 2.5, 1.5], [30.5, 3.5, 2.0], [25.0, 4.5, 2.5], [20.0, 5.5, 3.5], [16.0, 6.5, 4.5], [12.0, 7.5, 5.5], [9.0, 8.5, 6.5], [6.0, 9.5, 7.5], [4.0, 10.5, 8.5]];
+    s.cfg.doors=s.cfg.doors.map((door,i)=>{
+      const d={...door};
+      ['r','g','k'].forEach((field,j)=>{if(d[field]===oldOdds[i][j])d[field]=DEF_DOORS[i][field];});
+      return d;
+    });
+  }
+  s.doorRevision=1;
   s.bank=Object.assign(b.bank,s.bank||{});
   s.stats=Object.assign(b.stats,s.stats||{});
   s.stats.muscles=Object.assign({},s.stats.muscles||{});
@@ -1708,11 +1805,15 @@ function normalizeState(rawObj){
   s.weeklyPlan=Object.assign(b.weeklyPlan,s.weeklyPlan||{});
   s.gym=Object.assign(b.gym,s.gym||{});
   s.gym.prs=Object.assign({},s.gym.prs||{});
-  s.gym.draft=Object.assign(b.gym.draft,(s.gym&&s.gym.draft)||{});
+  s.gym.draft=Object.assign(gymDraftDefaults,(s.gym&&s.gym.draft)||{});
   if(!Array.isArray(s.gym.draft.sets))s.gym.draft.sets=[];
   if(!Array.isArray(s.bodyMetrics))s.bodyMetrics=[];
-  s.wkForm=Object.assign(b.wkForm,s.wkForm||{});
-  if(!s.theme)s.theme='dark';
+  for(const k of ['rules','audio','run','sel'])s[k]={...b[k],...s[k]};
+  for(const k of ['activities','goals','logStudy','logWork','logBank'])if(!Array.isArray(s[k]))s[k]=b[k];
+  s.stats.keyMinutes??=Math.floor(s.stats.min||0)%90;
+  s.stats.studyKeys??=0;
+  migrateTracker(s,rawObj);
+  if(s.run.study?.phase==='doors')s.run.study.op=-1;
   return s;
 }
 
@@ -1734,114 +1835,168 @@ const BACKEND_URL='https://stattrack-backend.onrender.com';
 const tg=window.Telegram?.WebApp;
 if(tg){try{tg.ready();tg.expand();}catch(e){}}
 
-// Флаг блокировки перезаписи облака до окончания первичной загрузки
-let cloudLoaded=false;
-let saveTimer=null;
-
-// Оценка «веса» прогресса, чтобы пустое устройство никогда не затёрло прокачанный профиль
-function getStateScore(st){
-  if(!st||!st.stats)return 0;
-  return (st.stats.min||0)+(st.stats.wk||0)*60+(st.stats.totalEarned||0)+(st.bank?.card||0)+(st.bank?.paid||0);
+// Render remains the primary store. Telegram keeps a second copy, including long histories.
+const onlineProfile=Boolean(tg?.initData&&tg.initDataUnsafe?.user?.id);
+const localKey=onlineProfile?K+'_'+tg.initDataUnsafe.user.id:K;
+const pendingKey=localKey+'_pending';
+let cloudLoaded=false,syncError=false,loading=false,flushing=false,saveTimer=null,retryTimer=null;
+let hasScopedCopy=false,serverReady=!onlineProfile;
+if(onlineProfile){
+  try{
+    const saved=localStorage.getItem(localKey);
+    if(saved){S=normalizeState(JSON.parse(saved));hasScopedCopy=true;}
+    S.tab='home';
+  }catch{}
 }
-
-const save=()=>{
-  S.updatedAt=Date.now();
-  const rawJson=JSON.stringify(S);
-  try{localStorage.setItem(K,rawJson)}catch(e){}
-
-  // Не отправляем данные в облако, пока не завершилась первичная загрузка!
+function setSyncMessage(msg){
+  const el=$('#sync-state');if(el){el.hidden=!msg;el.textContent=msg;}
+}
+function laterWrite(delay=400){
+  clearTimeout(saveTimer);saveTimer=setTimeout(flushSave,delay);
+}
+function storeLocal(raw){
+  try{localStorage.setItem(localKey,raw);return true;}
+  catch{setSyncMessage('На устройстве недостаточно места для копии.');return false;}
+}
+function save(){
   if(!cloudLoaded)return;
-
-  // 1. Мгновенное резервное сохранение в Telegram CloudStorage (общее для телефона и ПК)
-  if(tg?.CloudStorage){
-    try{tg.CloudStorage.setItem(K,rawJson)}catch(e){}
+  S.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);
+  storeLocal(JSON.stringify(S));
+  if(onlineProfile){
+    try{localStorage.setItem(pendingKey,String(S.updatedAt));}catch{}
+    laterWrite();
   }
-
-  // 2. Отправка в облако MongoDB на Render, если открыто внутри Telegram
-  if(tg&&tg.initData&&tg.initDataUnsafe?.user?.id){
-    clearTimeout(saveTimer);
-    saveTimer=setTimeout(()=>{
-      fetch(`${BACKEND_URL}/api/save`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          initData:tg.initData,
-          user_id:tg.initDataUnsafe.user.id,
-          state:S
-        })
-      }).catch(err=>console.error('Ошибка облака:',err));
-    },800);
-  }
-};
-
-// Промис-обёртка для чтения из Telegram CloudStorage
-function getTgCloudState(){
-  return new Promise(resolve=>{
-    if(!tg?.CloudStorage)return resolve(null);
-    try{
-      tg.CloudStorage.getItem(K,(err,val)=>{
-        if(err||!val)return resolve(null);
-        try{resolve(JSON.parse(val));}catch(e){resolve(null);}
-      });
-    }catch(e){resolve(null);}
+}
+async function backend(path,payload){
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),65000);
+  try{
+    const response=await fetch(BACKEND_URL+'/api/'+path,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({initData:tg.initData,user_id:tg.initDataUnsafe.user.id,...payload}),signal:controller.signal});
+    if(path==='load'&&response.status===404){
+      const data=await response.json().catch(()=>null);
+      if(data&&/user|profile|профиль|пользователь/i.test(String(data.message||data.error||'')))return null;
+    }
+    if(!response.ok)throw Error('HTTP '+response.status);
+    return path==='load'?await response.json():null;
+  }finally{clearTimeout(timeout);}
+}
+function telegramStore(method,...args){
+  return new Promise((resolve,reject)=>{
+    const timeout=setTimeout(()=>reject(Error('Telegram timeout')),4500);
+    try{tg.CloudStorage[method](...args,(err,value)=>{
+      clearTimeout(timeout);if(err)reject(Error(String(err)));else resolve(value);
+    });}catch(err){clearTimeout(timeout);reject(err);}
   });
 }
-
-// Загрузка и выбор самого прокачанного профиля при входе
-async function loadCloudProfile(){
-  try{
-    // Сначала мгновенно проверяем быстрое облако Telegram
-    const tgState=await getTgCloudState();
-    if(tgState&&getStateScore(tgState)>=getStateScore(S)){
-      const curTab=S.tab||'home';
-      S=normalizeState(tgState);
-      S.tab=curTab;
-      try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
-      render();
-    }
-
-    // Затем проверяем основную базу данных MongoDB на Render
-    if(tg&&tg.initData&&tg.initDataUnsafe?.user?.id){
-      const res=await fetch(`${BACKEND_URL}/api/load`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          initData:tg.initData,
-          user_id:tg.initDataUnsafe.user.id
-        })
-      });
-      if(res.ok){
-        const cloudData=await res.json();
-        if(cloudData&&cloudData.stats){
-          if(getStateScore(cloudData)>=getStateScore(S)||getStateScore(S)===0){
-            const curTab=S.tab||'home';
-            S=normalizeState(cloudData);
-            S.tab=curTab;
-            try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}
-          }
-        }else if(tg.initDataUnsafe.user.first_name&&S.profile.nick==='Негорящий'){
-          S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
-        }
-      }
-    }
-  }catch(e){
-    console.error('Ошибка загрузки профиля:',e);
-  }finally{
-    cloudLoaded=true;
-    syncCalendarState();
-    applyTheme();
-    render();
-    save();
-  }
+function chunkKeys(meta){
+  if(!meta||!Number.isInteger(meta.count)||meta.count<1||meta.count>450||!/^st_[a-z0-9_]+$/.test(meta.prefix))return [];
+  return Array.from({length:meta.count},(_,i)=>meta.prefix+'_'+i);
 }
-loadCloudProfile();
-const applyTheme=()=>{document.documentElement.setAttribute('data-theme',S.theme||'dark')};
-applyTheme();
+let previousBackup=null,backupBusy=false,nextBackup=null;
+async function readBackup(){
+  if(!onlineProfile||!tg.CloudStorage)return null;
+  try{
+    const head=JSON.parse(await telegramStore('getItem',K)||'null');
+    if(!head||head.stats)return head;
+    const keys=chunkKeys(head);if(!keys.length)return null;
+    const parts=await telegramStore('getItems',keys);
+    if(keys.some(k=>typeof parts[k]!=='string'))return null;
+    const state=JSON.parse(keys.map(k=>parts[k]).join(''));
+    if(state.updatedAt!==head.updatedAt)return null;
+    previousBackup=head;return state;
+  }catch{return null;}
+}
+async function queueBackup(raw){
+  if(!tg?.CloudStorage)return;
+  nextBackup=raw;
+  if(backupBusy)return;
+  backupBusy=true;
+  try{
+    while(nextBackup){
+      const body=nextBackup;nextBackup=null;
+      let meta=null;
+      if(body.length>3900){
+        const parts=[];
+        for(let start=0;start<body.length;){
+          let end=Math.min(body.length,start+3800);
+          if(end<body.length&&body.charCodeAt(end-1)>=0xD800&&body.charCodeAt(end-1)<=0xDBFF)end--;
+          parts.push(body.slice(start,end));start=end;
+        }
+        meta={prefix:'st_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9),count:parts.length,updatedAt:JSON.parse(body).updatedAt};
+        const keys=chunkKeys(meta);if(!keys.length)continue;
+        try{
+          for(let i=0;i<parts.length;i++)await telegramStore('setItem',keys[i],parts[i]);
+          await telegramStore('setItem',K,JSON.stringify(meta));
+        }catch{await telegramStore('removeItems',keys).catch(()=>{});continue;}
+      }else await telegramStore('setItem',K,body);
+      const obsolete=chunkKeys(previousBackup);previousBackup=meta;
+      if(obsolete.length)await telegramStore('removeItems',obsolete).catch(()=>{});
+    }
+  }catch{}finally{backupBusy=false;}
+}
+async function flushSave(){
+  if(!cloudLoaded||!onlineProfile||!serverReady||flushing)return;
+  flushing=true;
+  const raw=JSON.stringify(S),version=S.updatedAt;
+  queueBackup(raw);
+  try{
+    await backend('save',{state:JSON.parse(raw)});
+    if(S.updatedAt===version){
+      try{localStorage.removeItem(pendingKey);}catch{}
+      setSyncMessage('');
+    }else laterWrite(0);
+  }catch{
+    setSyncMessage('Синхронизация с сервером ожидает подключения.');
+    laterWrite(7000);
+  }finally{flushing=false;}
+}
+function score(st){return (st.stats?.min||0)+(st.stats?.wk||0)*60+(st.stats?.totalEarned||0)+(st.bank?.card||0)+(st.bank?.paid||0);}
+function moreRecent(candidate,current){
+  if(!candidate?.stats)return false;
+  if(candidate.updatedAt||current.updatedAt)return (candidate.updatedAt||0)>=(current.updatedAt||0);
+  return score(candidate)>=score(current);
+}
+async function loadCloudProfile(){
+  if(loading||cloudLoaded&&serverReady)return;
+  loading=true;clearTimeout(retryTimer);
+  try{
+    if(onlineProfile){
+      const [loadResult,backup]=await Promise.all([backend('load',{}).then(value=>({value}),error=>({error})),readBackup()]);
+      if(!hasScopedCopy&&backup?.stats){S=normalizeState(backup);hasScopedCopy=true;}
+      if(loadResult.error){
+        if((hasScopedCopy||backup?.stats)&&S.setupDone){
+          cloudLoaded=true;
+          setSyncMessage('Открыта сохранённая копия. Изменения синхронизируются после подключения.');
+        }
+        throw loadResult.error;
+      }
+      const remote=loadResult.value;
+      const server=remote?.state?.stats?remote.state:remote;
+      if(moreRecent(backup,S))S=normalizeState(backup);
+      if((!hasScopedCopy&&!backup?.stats&&server?.stats)||moreRecent(server,S))S=normalizeState(server);
+      serverReady=true;setSyncMessage('');
+      if(!S.setupDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name)S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
+      S.tab='home';storeLocal(JSON.stringify(S));
+      if(S.updatedAt&&(!server?.stats||S.updatedAt>(server.updatedAt||0)))laterWrite(100);
+      else try{localStorage.removeItem(pendingKey);}catch{}
+    }
+    cloudLoaded=true;syncError=false;syncCalendarState();
+  }catch{
+    syncError=true;retryTimer=setTimeout(loadCloudProfile,8000);
+  }finally{loading=false;render();}
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'&&onlineProfile){
+    try{if(localStorage.getItem(pendingKey))flushSave();}catch{}
+  }
+});
+
 
 /* CHECK & UPDATE STREAK AND QUEST RESETS */
 function syncCalendarState(){
   const today=toDayKey();
   const curWeek=toWeekKey();
+  if(S.shop.day!==today){S.shop.day=today;S.shop.purchases={};}
   if(S.quests.dayKey!==today){
     S.quests.dayKey=today;
     S.quests.miniDone=false;
@@ -1926,9 +2081,7 @@ function checkWeeklyPlanCompletion(){
   const prog=getWeekProgress(wp.weekKey);
   if(prog.min>=wp.studyHrs*60&&prog.wk>=wp.workouts){
     wp.completedPaid=true;
-    const bonus=1500;
-    S.bank.pend+=bonus;
-    S.stats.totalEarned=(S.stats.totalEarned||0)+bonus;
+    const bonus=creditMoney(planReward(true),false);
     S.stats.keyBalance=(S.stats.keyBalance||0)+1;
     addBankLog('Бонус за полное выполнение недельного плана! (+1 Ключ)',bonus);
   }
@@ -1944,6 +2097,7 @@ const P={
   shop:'<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 13h18M12 8v13M8 8V6a4 4 0 0 1 8 0v2"/>',
   chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   rest:'<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-9z"/>',
+  exit:'<path d="M3 21h12M5 20V3h10v5M10 12h11m-4-4 4 4-4 4"/>',
   key:'<circle cx="8" cy="8" r="4"/><path d="M11 11l9 9M16 16l3-3M13 13l2-2"/>',
   snd:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9c2 2 2 4 0 6M19 6c4 4 4 8 0 12"/>',
   mute:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/>',
@@ -1991,7 +2145,7 @@ function getAchState(a){
 }
 
 /* DARK SOULS ATMOSPHERIC SOUND ENGINE */
-let AC=null;
+let AC=null,audioBus=null;
 const tone=(f,t,d,ty='sine',v=.16,f2)=>{
   const c=AC,o=c.createOscillator(),g=c.createGain(),n=c.currentTime+t;
   o.type=ty;o.frequency.setValueAtTime(f,n);
@@ -1999,7 +2153,7 @@ const tone=(f,t,d,ty='sine',v=.16,f2)=>{
   g.gain.setValueAtTime(0.0001,n);
   g.gain.linearRampToValueAtTime(v,n+.025);
   g.gain.exponentialRampToValueAtTime(.0008,n+d);
-  o.connect(g);g.connect(c.destination);
+  o.connect(g);g.connect(audioBus);
   o.start(n);o.stop(n+d+.06);
 };
 const bell=(f,t,d,v=.12)=>{
@@ -2014,9 +2168,10 @@ const noise=(t,d,f,q,v,ty='bandpass')=>{
   const s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain();
   s.buffer=b;fl.type=ty;fl.frequency.value=f;fl.Q.value=q;
   g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);
-  s.connect(fl);fl.connect(g);g.connect(c.destination);s.start(n);
+  s.connect(fl);fl.connect(g);g.connect(audioBus);s.start(n);
 };
 const SND={
+  alarm:()=>{[0,.45,.9].forEach(t=>bell(660,t,.65,.2))},
   open0:()=>{noise(0,.55,140,.9,.38,'lowpass');tone(68,0,.65,'sawtooth',.12,38);bell(146.83,.08,.9,.08)},
   open1:()=>{noise(0,.85,220,1.2,.42,'lowpass');tone(55,0,.9,'sine',.32,29);bell(110,.1,1.1,.09)},
   open2:()=>{noise(0,.14,2400,3.5,.24);[0.16,0.3,0.44].forEach(t=>noise(t,.08,3200,2.5,.12));tone(82.4,.1,.75,'triangle',.16,45)},
@@ -2044,7 +2199,7 @@ const SND={
     [220,277.18,329.63,440,554.37].forEach((f,i)=>bell(f,i*.08,1.8,.085));
   }
 };
-const snd=n=>{if(S.mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();(SND[n]||SND.tick)()}catch(e){}};
+const snd=n=>{if(S.mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume().catch(()=>{});audioBus=AC.createGain();audioBus.gain.value=(S.audio[n==='alarm'?'timer':'effects']??100)/100;audioBus.connect(AC.destination);const bus=audioBus;setTimeout(()=>bus.disconnect(),5000);(SND[n]||SND.tick)()}catch(e){}};
 
 /* HELPERS */
 const DUR=[10,15,20,25,30,35,40,45,50,55,60];
@@ -2065,7 +2220,7 @@ function pickDur(c,rem){
 
 const TC={g:'#2e7d4c',l:'#5c8a32',y:'#b87d28',o:'#c9561e',r:'#a82026',au:'#b8860b'};
 function tier(t,d){
-  if(t==='key')return[TC.au,'Ключ','au'];
+  if(t==='key')return[TC.au,'Выход','au'];
   if(t==='game')return[TC.au,'Катка','au'];
   if(t==='rest')return d>=15?[TC.g,'Долгий отдых','g']:d>=10?[TC.l,'Отдых','l']:[TC.y,'Передышка','y'];
   return d>=50?[TC.r,'Адская','r']:d>=40?[TC.o,'Тяжёлая','o']:d>=25?[TC.y,'Обычная','y']:[TC.l,'Лёгкая','l'];
@@ -2076,17 +2231,21 @@ const TIPS=['Выпей глоток Эстуса (воды)','Сделай 15 �
 function getDoorOdds(door,step=0){
   const canKey=step>=3;
   const streakPen=Math.pow(0.5,S.stats.earlyStreak||0);
-  let k=canKey?+(door.k*(S.cfg.kMult||1)*streakPen).toFixed(2):0;
-  let g=+(door.g*(S.cfg.gMult||1)).toFixed(2);
-  let r=+(door.r*(S.cfg.rMult||1)).toFixed(1);
+  let k=canKey?+(door.k*(S.cfg.kMult??1)*streakPen).toFixed(2):0;
+  let g=+(door.g*(S.cfg.gMult??1)).toFixed(2);
+  let r=+(door.r*(S.cfg.rMult??1)).toFixed(1);
   if(k+g+r>95){const sc=95/(k+g+r);k=+(k*sc).toFixed(2);g=+(g*sc).toFixed(2);r=+(r*sc).toFixed(1);}
   const s=+(100-k-g-r).toFixed(1);
   return {s,r,g,k,canKey,streakPen};
 }
 
 function pickDoors(){
-  const pool=S.cfg.doors.slice().sort(()=>Math.random()-.5).slice(0,3);
-  return pool.sort((a,b)=>(a.k+a.g)-(b.k+b.g)||a.c-b.c);
+  const pool=S.cfg.doors.slice();
+  for(let i=0;i<3;i++){
+    const j=rnd(i,pool.length-1);
+    [pool[i],pool[j]]=[pool[j],pool[i]];
+  }
+  return pool.slice(0,3);
 }
 
 /* ROLL A SINGLE DOOR OUTCOME (USED BY BOTH SCOUT & OPEN DOOR) */
@@ -2095,20 +2254,13 @@ function rollDoorOutcome(d,step,rem){
   const x=Math.random()*100;
   const type=x<od.k?'key':x<od.k+od.g?'game':x<od.k+od.g+od.r?'rest':'focus';
   let dur=0;
-  let note='';
   if(type==='rest'){
-    if(S.buffs.breather){
-      dur=15;
-      S.buffs.breather=false;
-      note='💨 Сработала «Передышка»: гарантированный отдых 15 минут!';
-    }else{
-      dur=5*rnd(1,3);
-    }
+    dur=5*rnd(1,3);
   }else if(type==='focus'){
     dur=pickDur(d.c,rem);
   }
   const t=tier(type,dur);
-  return {type,dur,t,note};
+  return {type,dur,t,note:''};
 }
 
 function calcRank(list,val){
@@ -2128,9 +2280,8 @@ function getStudyRank(){
 function getSportRank(){return calcRank(SPORT_RANKS,S.stats.wk||0);}
 
 /* LOGGING & EARNING */
-const addStudyLog=(txt,amt)=>{S.logStudy.unshift({t:Date.now(),txt,amt});S.logStudy=S.logStudy.slice(0,50)};
-const addWorkLog=(txt,amt,wId)=>{S.logWork.unshift({id:wId||('w_'+Date.now()),t:Date.now(),txt,amt});S.logWork=S.logWork.slice(0,50)};
-const addBankLog=(txt,amt)=>{S.logBank.unshift({t:Date.now(),txt,amt});S.logBank=S.logBank.slice(0,50)};
+const addStudyLog=(txt,amt)=>{S.logStudy.unshift({t:Date.now(),txt,amt})};
+const addBankLog=(txt,amt)=>{S.logBank.unshift({t:Date.now(),txt,amt})};
 const creditMoney=(amt,applyStreak=true)=>{
   const mult=applyStreak?getStreakMult():1;
   const a=Math.round(amt*mult);
@@ -2142,19 +2293,18 @@ const creditMoney=(amt,applyStreak=true)=>{
 /* COMPACT MOBILE HEADER, STREAK BUTTON NEXT TO NICK & COLLAPSIBLE PROFILE DRAWER */
 function renderHeader(){
   $('#brand-ic').innerHTML=icon('logo',20);
-  const isLight=S.theme==='light';
   $('#top-actions').innerHTML=`
     <div class="top-grp-main">
-      <div class="res-pill cut-sm" data-a="tab" data-v="shop" title="Твои ключи и сундуки для Магазина и Кейсов">
+      <button class="icon-btn cut-sm" data-a="tab" data-v="bank" aria-label="Банк" title="Банк">${icon('coin',17)}</button>
+      <button class="res-pill cut-sm" data-a="showModal" data-v="keys" aria-label="Прогресс ключей" title="До следующего ключа">
         ${icon('key',13)} <b>${S.stats.keyBalance||0}</b>
         ${(S.stats.chests||0)>0?` • 📦<b>${S.stats.chests}</b>`:''}
-      </div>
+      </button>
       <button class="icon-btn cut-sm ${S.tab==='profile'?'on':''}" data-a="tab" data-v="profile" title="Профиль">${icon('user',15)} <span>Профиль</span></button>
-      <button class="icon-btn cut-sm" data-a="theme" title="Переключить облик: Чёрный Рыцарь / Белый Рыцарь">${icon(isLight?'moon':'sun',15)} <span>${isLight?'Тёмная':'Светлая'}</span></button>
     </div>
     <div class="top-grp-sys">
       <button class="icon-btn cut-sm ${S.tab==='settings'?'on':''}" data-a="tab" data-v="settings" title="Настройки и шансы">${icon('gear',15)}</button>
-      <button class="icon-btn cut-sm" data-a="mute" title="Звук">${icon(S.mute?'mute':'snd',15)}</button>
+      <button class="icon-btn cut-sm" data-a="showModal" data-v="audio" title="Громкость" aria-label="Микшер громкости">${icon(S.mute?'mute':'snd',15)}</button>
     </div>
   `;
 
@@ -2175,7 +2325,7 @@ function renderHeader(){
           <div class="ava" data-a="tab" data-v="profile" title="Открыть профиль">${icon(S.profile.ava||'crown',20)}</div>
           <div class="prof-info">
             <div class="prof-top">
-              <span class="prof-nick" data-a="tab" data-v="profile" title="Открыть профиль">${S.profile.nick}</span>
+              <span class="prof-nick" data-a="tab" data-v="profile" title="Открыть профиль">${esc(S.profile.nick)}</span>
               <button class="streak-btn" data-a="openStreakModal" title="Посмотреть серию дней и цепочку бонусов">
                 🔥 ${S.streak.cur||0} дн. • +${sBonus}% ℹ️
               </button>
@@ -2197,7 +2347,7 @@ function renderHeader(){
       <div class="prof-drawer ${profDrawerOpen?'open':''}">
         <div class="drawer-meta-row">
           <div>
-            <span class="prof-title">${S.profile.title}</span>
+            <span class="prof-title">${esc(S.profile.title)}</span>
             <span class="mut" style="margin-left:6px">🔑 <b>${S.stats.keyBalance||0}</b> • 🪙 <b>${S.stats.tokens||0}</b> • 🎮 <b>${S.stats.savedGames||0}</b></span>
           </div>
           <div class="medals-row">${medals||'<span class="mut" style="font-size:12px">Нет медалей</span>'}</div>
@@ -2228,7 +2378,8 @@ function renderHeader(){
     ['shop','Магазин','shop'],
     ['progress','Прогресс','chart'],
     ['ach','Достижения','trophy'],
-    ['bank','Банк и План','bank']
+    ['goals','Цели','book'],
+    ['history','История','chart']
   ];
   $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,15)} ${v}</button>`).join('');
 
@@ -2246,18 +2397,12 @@ function drawHeroArt(){
   if(!cv)return;
   const ctx=cv.getContext('2d');
   const W=cv.width=1200, H=cv.height=360;
-  const isLight=S.theme==='light';
 
   let seed=1337;
   const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
 
   const sky=ctx.createLinearGradient(0,0,0,H);
-  if(isLight){
-    sky.addColorStop(0,'#8c8982');
-    sky.addColorStop(0.45,'#c4c1ba');
-    sky.addColorStop(0.82,'#e2dfd9');
-    sky.addColorStop(1,'#f7f4ee');
-  }else{
+  {
     sky.addColorStop(0,'#040304');
     sky.addColorStop(0.38,'#1c0905');
     sky.addColorStop(0.72,'#4a1608');
@@ -2269,11 +2414,7 @@ function drawHeroArt(){
   for(let i=0;i<75;i++){
     const cx=rand()*W, cy=rand()*H*0.82, rx=90+rand()*220, ry=24+rand()*55;
     const cg=ctx.createRadialGradient(cx,cy,5,cx,cy,rx);
-    if(isLight){
-      const v=i%2===0?250:155;
-      cg.addColorStop(0,`rgba(${v},${v-2},${v-5},${0.11+rand()*0.12})`);
-      cg.addColorStop(1,'rgba(210,206,198,0)');
-    }else{
+    {
       const dist=Math.hypot(cx-560,cy-105);
       const warm=dist<340;
       cg.addColorStop(0,warm?`rgba(255,${95+Math.floor(rand()*70)},20,${0.08+rand()*0.11})`:`rgba(18,10,9,${0.25+rand()*0.25})`);
@@ -2288,7 +2429,7 @@ function drawHeroArt(){
   }
 
   const ex=560, ey=96, er=44;
-  if(!isLight){
+  {
     const blaze=ctx.createRadialGradient(ex,ey+85,10,ex,ey+40,360);
     blaze.addColorStop(0,'rgba(255,165,60,0.55)');
     blaze.addColorStop(0.3,'rgba(235,68,15,0.32)');
@@ -2329,31 +2470,6 @@ function drawHeroArt(){
     core.addColorStop(1,'#2e0902');
     ctx.fillStyle=core;
     ctx.beginPath();ctx.arc(ex,ey,er,0,Math.PI*2);ctx.fill();
-  }else{
-    const halo=ctx.createRadialGradient(ex-80,ey+15,er*0.5,ex-80,ey+15,er*4.5);
-    halo.addColorStop(0,'rgba(255,255,255,0.95)');
-    halo.addColorStop(0.35,'rgba(240,238,232,0.55)');
-    halo.addColorStop(1,'rgba(200,196,188,0)');
-    ctx.fillStyle=halo;
-    ctx.beginPath();ctx.arc(ex-80,ey+15,er*4.5,0,Math.PI*2);ctx.fill();
-
-    ctx.strokeStyle='rgba(90,85,78,0.28)';
-    ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.arc(ex-80,ey+15,er*1.05,0,Math.PI*2);ctx.stroke();
-
-    ctx.fillStyle='rgba(150,146,138,0.42)';
-    const bx=980, by=245;
-    const spires=[[0,75,16],[22,105,20],[48,142,24],[78,95,18],[102,68,14],[-26,60,15]];
-    spires.forEach(([dx,h,w])=>{
-      ctx.beginPath();
-      ctx.moveTo(bx+dx,by);
-      ctx.lineTo(bx+dx,by-h*0.65);
-      ctx.lineTo(bx+dx+w/2,by-h);
-      ctx.lineTo(bx+dx+w,by-h*0.65);
-      ctx.lineTo(bx+dx+w,by);
-      ctx.closePath();
-      ctx.fill();
-    });
   }
 
   function drawMountainLayer(yBase,amp,roughness,colTop,colBot,rimCol){
@@ -2383,12 +2499,9 @@ function drawHeroArt(){
     }
   }
 
-  if(!isLight){
+  {
     drawMountainLayer(215,95,1.2,'#240e08','#0a0605','rgba(255,115,40,0.28)');
     drawMountainLayer(255,75,2.7,'#170a07','#060404','rgba(255,90,25,0.18)');
-  }else{
-    drawMountainLayer(225,70,1.5,'rgba(165,160,152,0.55)','rgba(215,212,205,0.85)',null);
-    drawMountainLayer(265,55,3.1,'rgba(125,120,112,0.65)','rgba(195,190,182,0.9)',null);
   }
 
   function drawTreeBranch(x,y,len,ang,w,depth){
@@ -2398,7 +2511,7 @@ function drawHeroArt(){
     const cx=(x+nx)/2+(rand()-0.5)*len*0.28;
     const cy=(y+ny)/2+(rand()-0.5)*len*0.28;
 
-    ctx.strokeStyle=isLight?`rgba(42,39,36,${0.55+depth*0.05})`:'#090605';
+    ctx.strokeStyle='#090605';
     ctx.lineWidth=w;
     ctx.lineCap='round';
     ctx.beginPath();
@@ -2406,7 +2519,7 @@ function drawHeroArt(){
     ctx.quadraticCurveTo(cx,cy,nx,ny);
     ctx.stroke();
 
-    if(!isLight&&depth>3){
+    if(depth>3){
       ctx.strokeStyle='rgba(255,110,35,0.22)';
       ctx.lineWidth=Math.max(0.8,w*0.22);
       ctx.beginPath();
@@ -2426,10 +2539,7 @@ function drawHeroArt(){
   drawTreeBranch(192,315,48,Math.PI*0.22,12,4);
 
   const fg=ctx.createLinearGradient(0,275,0,H);
-  if(isLight){
-    fg.addColorStop(0,'rgba(95,90,82,0.75)');
-    fg.addColorStop(1,'#f7f4ee');
-  }else{
+  {
     fg.addColorStop(0,'#120a07');
     fg.addColorStop(1,'#080605');
   }
@@ -2441,7 +2551,7 @@ function drawHeroArt(){
   }
   ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
 
-  if(!isLight){
+  {
     for(let i=0;i<28;i++){
       const lx=45+rand()*260, ly=292+rand()*45, lr=2+rand()*6;
       const lg=ctx.createRadialGradient(lx,ly,0.5,lx,ly,lr*3);
@@ -2454,28 +2564,28 @@ function drawHeroArt(){
   }
 
   ctx.save();
-  const kx=isLight?735:585, ky=168;
+  const kx=585, ky=168;
   ctx.translate(kx,ky);
 
-  const armorBase=isLight?'#2b2927':'#110e0d';
-  const armorMid=isLight?'#4a4744':'#1f1917';
-  const armorRim=isLight?'#d8d5ce':'#ff8533';
-  const armorSubRim=isLight?'#9e9a92':'#b84a1b';
+  const armorBase='#110e0d';
+  const armorMid='#1f1917';
+  const armorRim='#ff8533';
+  const armorSubRim='#b84a1b';
 
   for(let i=0;i<85;i++){
     const px=-25-rand()*150, py=15+rand()*125, pr=3+rand()*18;
-    ctx.fillStyle=isLight?`rgba(45,42,38,${0.04+rand()*0.18})`:`rgba(25,16,14,${0.12+rand()*0.25})`;
+    ctx.fillStyle=`rgba(25,16,14,${0.12+rand()*0.25})`;
     ctx.beginPath();ctx.arc(px,py,pr,0,Math.PI*2);ctx.fill();
   }
   for(let i=0;i<160;i++){
     const px=-10-rand()*175, py=5+rand()*135, pr=0.8+rand()*2.4;
-    ctx.fillStyle=isLight?`rgba(30,28,25,${0.25+rand()*0.55})`:`rgba(255,120,40,${0.15+rand()*0.45})`;
+    ctx.fillStyle=`rgba(255,120,40,${0.15+rand()*0.45})`;
     ctx.beginPath();ctx.arc(px,py,pr,0,Math.PI*2);ctx.fill();
   }
 
   ctx.save();
-  ctx.translate(isLight?58:-52, 48);
-  ctx.rotate(isLight?0.18:-0.28);
+  ctx.translate(-52, 48);
+  ctx.rotate(-0.28);
   const blG=ctx.createLinearGradient(-4,0,4,0);
   blG.addColorStop(0,armorRim);blG.addColorStop(0.5,armorMid);blG.addColorStop(1,'#090808');
   ctx.fillStyle=blG;
@@ -2522,7 +2632,7 @@ function drawHeroArt(){
     ctx.stroke();
   }
 
-  ctx.fillStyle=isLight?'rgba(38,35,32,0.88)':'rgba(20,12,11,0.94)';
+  ctx.fillStyle='rgba(20,12,11,0.94)';
   ctx.beginPath();
   ctx.moveTo(-25,42);
   ctx.quadraticCurveTo(-78,85,-115,155);
@@ -2545,7 +2655,7 @@ function drawHeroArt(){
   ctx.save();
   ctx.translate(4, 8);
   ctx.rotate(0.24);
-  ctx.fillStyle=isLight?'#3b3734':'#381412';
+  ctx.fillStyle='#381412';
   ctx.beginPath();ctx.moveTo(-8,-16);ctx.quadraticCurveTo(-42,-28,-64,-4);ctx.quadraticCurveTo(-32,-2,-6,-2);ctx.fill();
   drawArmorPlate([[-18,-10],[2,-22],[22,-8],[20,14],[-18,14]],'both');
   drawArmorPlate([[-14,6],[24,2],[28,18],[4,28],[-16,18]],'both');
@@ -2568,6 +2678,7 @@ function getQuestsList(){
   const td=S.daily[today]||{min:0,wk:0,doors:0};
   const wp=getWeekProgress(S.quests.weekKey);
 
+  const rs=S.cfg.rs,rw=S.cfg.rw;
   return [
     {
       id:'d_1h',
@@ -2575,8 +2686,7 @@ function getQuestsList(){
       n:'Час знаний: 1 час учёбы',
       d:'60 минут учёбы за сегодня',
       cur:td.min,target:60,u:'мин',
-      rewTxt:'1 000 ₽',
-      money:1000,chests:0,keys:0
+      money:Math.round(rs*.15),chests:0,keys:0
     },
     {
       id:'d_mini',
@@ -2584,8 +2694,7 @@ function getQuestsList(){
       n:'Внезапная разминка',
       d:'Быстрая разминка или тренировка',
       cur:(td.wk>0||S.quests.miniDone)?1:0,target:1,u:'вып.',
-      rewTxt:'300 ₽',
-      money:300,chests:0,keys:0,
+      money:Math.round(rw*.08),chests:0,keys:0,
       quickBtn:!S.quests.miniDone&&td.wk===0
     },
     {
@@ -2594,8 +2703,7 @@ function getQuestsList(){
       n:'Комбо: 2 ч учёбы + 1 трен.',
       d:`Учёба: ${td.min}/120м • Спорт: ${td.wk}/1`,
       cur:Math.min(120,td.min)+(td.wk>=1?60:0),target:180,u:'очк.',
-      rewTxt:'500 ₽ + 📦 1 Сундук',
-      money:500,chests:1,keys:0
+      money:Math.round((rs*2+rw)*.12),chests:1,keys:0
     },
     {
       id:'d_doors',
@@ -2603,8 +2711,7 @@ function getQuestsList(){
       n:'Искатель: 3 двери лабиринта',
       d:'Пройти 3 комнаты в лабиринте за сегодня',
       cur:td.doors||0,target:3,u:'комн.',
-      rewTxt:'400 ₽ + 🔑 1 Ключ',
-      money:400,chests:0,keys:1
+      money:Math.round(rs*.08),chests:0,keys:1
     },
     {
       id:'w_combo',
@@ -2612,8 +2719,7 @@ function getQuestsList(){
       n:'Поход недели: 10 ч + 3 трен.',
       d:`Учёба: ${hm(wp.min)}/10ч • Спорт: ${wp.wk}/3`,
       cur:Math.min(600,wp.min)+Math.min(3,wp.wk)*100,target:900,u:'очк.',
-      rewTxt:'3 000 ₽ + 📦 2 Сунд. + 🔑 1 Ключ',
-      money:3000,chests:2,keys:1
+      money:Math.round((rs*10+rw*3)*.15),chests:2,keys:1
     },
     {
       id:'w_days',
@@ -2621,10 +2727,9 @@ function getQuestsList(){
       n:'Пламя: 5 активных дней',
       d:'Заниматься минимум 5 дней за неделю',
       cur:wp.days,target:5,u:'дн.',
-      rewTxt:'2 000 ₽ + 📦 1 Сундук',
-      money:2000,chests:1,keys:0
+      money:Math.round((rs+rw)*.25),chests:1,keys:0
     }
-  ];
+  ].map(q=>({...q,money:q.money*2})).map(q=>({...q,rewTxt:[fmt(q.money),q.chests?'📦 '+q.chests:'',q.keys?'🔑 '+q.keys:''].filter(Boolean).join(' + ')}));
 }
 
 /* 1. CLEAN, UNCLUTTERED HOME / START SCREEN */
@@ -2725,8 +2830,8 @@ function studyView(){
     const sBonus=getStreakBonusPctForDay(S.streak.cur||0);
     return `<section class="card cut">
       <h2>Лабиринт учёбы</h2>
-      <p class="mut">Укажи план на сегодня. В первые 3 хода ключ выпасть не может. Найденные в лабиринте ключи зачисляют деньги и остаются у тебя для покупок в Магазине!</p>
-      ${S.stats.earlyStreak>0?`<p style="color:var(--ye);font-size:13.5px;margin-top:6px">⚡ В прошлом забеге выпал досрочный ключ (серия: ${S.stats.earlyStreak}). Шанс на ключ в этом забеге снижен до <b>${Math.round(pen*100)}%</b> от базового. Пройди полное время без ключа, чтобы сбросить штраф!</p>`:''}
+      <p class="mut">Укажи план на сегодня. Один ключ начисляется за каждые 90 минут учёбы. Начиная с четвёртой двери можно случайно найти выход раньше срока.</p>
+      ${S.stats.earlyStreak>0?`<p style="color:var(--ye);font-size:13.5px;margin-top:6px">⚡ В прошлом забеге нашёлся тайный выход (серия: ${S.stats.earlyStreak}). Шанс побега в этом забеге снижен до <b>${Math.round(pen*100)}%</b> от базового. Пройди полное время без побега, чтобы сбросить штраф!</p>`:''}
       <div class="chips">${opts.map(v=>`<button class="chip cut-sm ${t===v?'on':''}" data-a="sel" data-v="${v}">${v/60} ч</button>`).join('')}</div>
       <label class="mut">Свой план (мин): <input type="number" min="10" value="${t}" data-k="selStudy"></label>
       <div class="kv">Награда за полный план (с учётом бонуса серии +${sBonus}%)<b>${fmt(money('study',t)*getStreakMult())}</b></div>
@@ -2738,12 +2843,12 @@ function studyView(){
   }
 
   const p=Math.min(100,r.prog/r.target*100);
-  const stepInfo=r.step<3?`Ход ${r.step+1} (защита 1-3: ${r.step}/3)`:`Ход ${r.step+1} (ключи активны)`;
+  const stepInfo=r.step<3?`Ход ${r.step+1} (защита 1-3: ${r.step}/3)`:`Ход ${r.step+1} (можно найти выход)`;
   const hudHtml=`<div class="hud">
     <div><span class="mut" style="font-size:12.5px">Прогресс • ${stepInfo}</span><b>${r.prog} / ${r.target} мин</b></div>
     <div><span class="mut" style="font-size:12.5px">Накоплено</span><b style="color:var(--ye)">${fmt(r.earned)}</b></div>
   </div>
-  <div class="bar"><i style="width:${p}%"></i><em>${icon('key',22)}</em></div>`;
+  <div class="bar"><i style="width:${p}%"></i><em>${icon('exit',22)}</em></div>`;
 
   /* Tactical Inventory Bar inside the Labyrinth */
   const invBarHtml=`<div class="inv-bar cut-sm">
@@ -2766,19 +2871,19 @@ function studyView(){
   </div>`;
 
   const runActions=`<div class="row" style="justify-content:space-between;margin-top:14px">
-    ${r.earned>0?`<button class="btn ye" data-a="cashoutAsk">Забрать ${fmt(r.earned)} и выйти</button>`:''}
+    ${r.prog>0?`<button class="btn ye" data-a="cashoutAsk">Забрать ${fmt(r.earned)} и выйти</button>`:''}
     <button class="btn gh" data-a="resetAsk">Сбросить забег</button>
   </div>`;
 
   if(r.phase==='doors'){
     return `<section class="card cut">${hudHtml}${invBarHtml}
-      <h2>${r.scouting?'🔍 Нажми на любую дверь, чтобы разведать её содержимое':'Выбери врата (по возрастанию риска)'}</h2>
+      <h2>${r.scouting?'🔍 Нажми на любую дверь, чтобы разведать её содержимое':'Выбери врата'}</h2>
       <div class="doors">${r.d.map((d,i)=>{
         const od=getDoorOdds(d,r.step);
         const sc=r.scouted&&r.scouted[i];
         let scTxt='';
         if(sc){
-          scTxt=sc.type==='key'?'🔑 КЛЮЧ!':sc.type==='game'?'🎮 КАТКА!':sc.type==='rest'?`🔥 Отдых ${sc.dur} мин`:`📖 Учёба ${sc.dur} мин (${sc.t[1]})`;
+          scTxt=sc.type==='key'?'🚪 ВЫХОД!':sc.type==='game'?'🎮 КАТКА!':sc.type==='rest'?`🔥 Отдых ${S.buffs.breather?15:sc.dur} мин`:`📖 Учёба ${sc.dur} мин (${sc.t[1]})`;
         }
         return `<button class="door cut ${r.op===i?'open':''} ${r.op>=0&&r.op!==i?'dim':''} ${r.scouting&&!sc?'scout-target':''}" style="--c:${d.col}" data-a="openDoor" data-v="${i}">
           <span class="risk-pill">${d.risk}</span>
@@ -2788,9 +2893,9 @@ function studyView(){
           <div class="od"><span>Учёба</span><u style="--w:${od.s}%"></u><b>${od.s}%</b></div>
           <div class="od"><span>Отдых</span><u style="--w:${od.r}%"></u><b>${od.r}%</b></div>
           <div class="od" style="--c:#c98218"><span>Катка</span><u style="--w:${Math.min(100,od.g*5)}%"></u><b>${od.g}%</b></div>
-          <div class="od" style="--c:#b8860b"><span>Ключ</span><u style="--w:${Math.min(100,od.k*6)}%"></u><b>${od.canKey?od.k+'%':'0% (1-3)'}</b></div>
+          <div class="od" style="--c:#b8860b"><span>Побег</span><u style="--w:${Math.min(100,od.k*6)}%"></u><b>${od.canKey?od.k+'%':'0% (1-3)'}</b></div>
           <div class="hist">${DUR.map(x=>`<i style="height:${Math.round(dw(d.c,x)*100)}%;background:${tier('focus',x)[0]}"></i>`).join('')}</div>
-          <div class="hs">Таймер 10–60 мин, чаще около ${d.c} мин</div>
+          <div class="hs">Учёба: чаще около ${d.c} мин</div>
         </button>`;
       }).join('')}</div>
       ${runActions}
@@ -2810,7 +2915,7 @@ function studyView(){
         <div class="row" style="justify-content:center">
           <button class="btn ye" data-a="finishRoom">Катка сыграна — идти дальше</button>
           ${(S.inv.bank_game||0)>0?`<button class="btn cy" data-a="saveGameForLater">📦 Отложить в запас (ост. ${S.inv.bank_game})</button>`:''}
-          <button class="btn gh" data-a="cancelRoom">Пропустить</button>
+
         </div>
       </section>`;
     }
@@ -2836,8 +2941,8 @@ function studyView(){
         </div>
         <div class="row" style="justify-content:center">
           <button class="btn ${rest?'gr':'cy'}" data-a="pauseTimer">${c.paused?'Продолжить':'Пауза'}</button>
-          <button class="btn vi" data-a="finishRoom">${rest?'Закончить отдых':'Отметить: отзанимался'}</button>
-          <button class="btn gh" data-a="cancelRoom">Отменить комнату</button>
+          <button class="btn vi" data-a="finishRoom">${rest?'Закончить отдых':'Завершено'}</button>
+
         </div>
       </div>
       ${runActions}
@@ -2845,9 +2950,9 @@ function studyView(){
   }
 
   return `<section class="card cut center" style="border-color:var(--ye)">
-    <div style="color:var(--ye);margin:8px 0 12px">${icon('key',76)}</div>
-    <h2 style="color:var(--ye)">${r.early?'Ключ найден! Досрочный побег из лабиринта':'План полностью выполнен! Ключ твой'}</h2>
-    <p class="mut">${r.early?'Удача улыбнулась тебе раньше срока. Ключ добавлен в твой инвентарь для Магазина и Кейсов!':'Ты закрыл весь учебный план. Штрафы сброшены, а ключ добавлен в твой инвентарь для Магазина!'}</p>
+    <div style="color:var(--ye);margin:8px 0 12px">${icon(r.early?'exit':'trophy',76)}</div>
+    <h2 style="color:var(--ye)">${r.early?'Найден тайный выход!':'Учебный план выполнен!'}</h2>
+    <p class="mut">${r.early?'Ты случайно нашёл выход раньше срока.':'Ты прошёл все запланированные минуты.'}</p>
     <div class="kv">Зачислено в банк (с бонусом серии)<b>${fmt(r.earned)}</b></div>
     <div class="row" style="justify-content:center">
       <button class="btn cy" data-a="endStudyRun">Новый забег</button>
@@ -2858,40 +2963,16 @@ function studyView(){
 
 /* 3. WORKOUTS & BODY WEIGHT TRACKER (REST TIMER REMOVED AS REQUESTED) */
 function workView(){
-  const f=S.wkForm;
   const customKeys=Object.keys(S.stats.customActs||{});
   const metrics=S.bodyMetrics||[];
   const lastW=metrics.length?metrics[metrics.length-1].w:null;
 
   return `<section class="card cut" style="border-color:var(--gr)">
-    <div class="hud">
-      <div>
-        <h2>Отметить тренировку</h2>
-        <p class="mut">Выбери группы мышц или активность, укажи время и забери награду. Подробные веса и подходы можно расписать во вкладке «Журнал весов».</p>
-      </div>
-      <button class="btn cy" data-a="tab" data-v="gym">${icon('gym',17)} Журнал упражнений и PR</button>
-    </div>
-    <h3 style="margin-top:12px">1. Какие группы мышц / активности были сегодня?</h3>
-    <div class="chips">
-      ${MUSCLES.map(m=>`<button class="chip cut-sm ${f.sel.includes(m.id)?'on':''}" data-a="toggleMuscle" data-v="${m.id}">${icon('work',14)} ${m.n}</button>`).join('')}
-    </div>
-    ${f.sel.includes('other')?`
-      <div class="row" style="margin-top:8px">
-        <label class="mut">Своя активность: <input type="text" id="custom-act-inp" placeholder="Бокс, Бег..." value="${f.customName||''}"></label>
-      </div>
-    `:''}
-    <div class="row" style="margin-top:10px">
-      <label class="mut">2. Время тренировки (мин): <input type="number" id="wk-dur-inp" min="1" max="600" placeholder="Необязательно" value="${f.dur||''}"></label>
-    </div>
-    <div class="kv">Награда за тренировку (с бонусом серии)<b>${fmt(S.cfg.rw*getStreakMult())}</b></div>
-    <div class="row">
-      <button class="btn gr" data-a="logWorkout">${icon('bolt',17)} Записать тренировку</button>
-      <button class="btn gh" data-a="logWorkoutAndJournal">📝 Записать и расписать подходы</button>
-    </div>
-  </section>
-
-  <section class="card cut">
-    <h2>⚖️ Замеры веса и параметров тела</h2>
+    <h2>Записать тренировку</h2><p class="mut">Выбери вид завершённой тренировки. Награда начислится сразу, а детали можно заполнить в журнале.</p>
+    <div class="pick-list">${S.activities.map(a=>`<button class="pick" data-a="recordWorkout" data-v="${esc(a.id)}"><strong>${esc(a.n)}</strong><span>${fmt(a.id==='yoga'?200:S.cfg.rw*getStreakMult())} ›</span></button>`).join('')}</div>
+    ${editList('sport',S.activities.map(a=>a.n))}
+    <button class="btn gh" data-a="tab" data-v="gym">Открыть журнал тренировок</button></section>
+    <details class="card cut"><summary>Замеры веса и параметров тела</summary>
     <div class="row">
       <label class="mut">Вес тела (кг): <input type="number" step="0.1" id="bm-weight" placeholder="75.5" value="${lastW||''}"></label>
       <label class="mut">Талия (см): <input type="number" step="0.5" id="bm-waist" placeholder="Необяз."></label>
@@ -2911,103 +2992,112 @@ function workView(){
         }).join('')}
       </div>
     `:'<p class="mut" style="margin-top:10px">Пока нет замеров веса. Добавь первый замер выше, чтобы построить график динамики.</p>'}
-  </section>
-
-  <section class="card cut">
-    <h2>Статистика спорта по группам мышц</h2>
+  </details>
+  <details class="card cut"><summary>Статистика спорта</summary>
     <div class="stats" style="margin-bottom:12px">
       <div class="st g"><span>Всего тренировок</span><b>${S.stats.wk}</b></div>
       <div class="st"><span>Учтённое время</span><b>${hm(S.stats.wkMin||0)}</b></div>
       <div class="st r"><span>Статус спорта</span><b style="font-size:17px">${getSportRank().name}</b></div>
     </div>
     <div class="muscle-bars">
-      ${MUSCLES.map(m=>{
+      ${S.activities.map(m=>{
         const cnt=S.stats.muscles[m.id]||0;
-        const max=Math.max(10,...MUSCLES.map(x=>S.stats.muscles[x.id]||0));
+        const max=Math.max(10,...S.activities.map(x=>S.stats.muscles[x.id]||0));
         return `<div class="m-row cut-sm">
-          <div class="m-top"><span>${m.n}</span><b>${cnt} тр.</b></div>
+          <div class="m-top"><span>${esc(m.n)}</span><b>${cnt} тр.</b></div>
           <div class="m-bar"><i style="width:${Math.min(100,(cnt/max)*100)}%"></i></div>
         </div>`;
       }).join('')}
     </div>
     ${customKeys.length?`<h3 style="margin-top:14px">Свои вписанные активности</h3>
-      <div class="chips">${customKeys.map(k=>`<span class="chip cut-sm">${k}: <b style="color:var(--cy)">${S.stats.customActs[k]}</b></span>`).join('')}</div>`:''}
-  </section>`;
+      <div class="chips">${customKeys.map(k=>`<span class="chip cut-sm">${esc(k)}: <b style="color:var(--cy)">${S.stats.customActs[k]}</b></span>`).join('')}</div>`:''}
+  </details>`;
 }
 
 /* 4. DEDICATED EXERCISE JOURNAL TAB (SETS, WEIGHTS, REPS & PERSONAL RECORDS) */
+let selectedGroup='',selectedExercise='';
+function currentWorkout(){return S.logWork.find(w=>w.id===S.gym.current);}
+function prepareWorkout(w){
+  if(!w.kind){
+    const text=(w.txt||'').toLowerCase();
+    w.kind=['pool','yoga','home','other'].find(id=>text.includes(SPORTS.find(x=>x.id===id).n.toLowerCase()))||'gym';
+  }
+  if(!w.detail){
+    const m=String(w.txt||'').match(/\((\d+) мин\)\s*$/);
+    w.detail={minutes:m?Number(m[1]):0,lanes:0,note:'',sets:[],done:false};
+  }
+}
+function workoutSummary(w){
+  const d=w.detail;if(!d)return 'Заполнить журнал';
+  const items=[d.minutes?hm(d.minutes):'',d.lanes?d.lanes+' дор.':'',d.sets.length?d.sets.length+' подх.':''];
+  return items.filter(Boolean).join(' · ')||(d.done?'Заполнено':'Заполнить позже');
+}
+function journalEditor(w){
+  const d=w.detail,kind=w.kind,strength=kind==='gym'||kind==='home';
+  const group=S.gym.groups.find(g=>g.id===selectedGroup);
+  const setRows=d.sets.map((s,i)=>`<div class="entry-row"><span>${esc(s.ex)} · ${s.w} кг × ${s.r}</span><button class="icon-btn" data-a="deleteSet" data-v="${i}" aria-label="Удалить подход">×</button></div>`).join('');
+  const choice=(action,id,n)=>`<button class="pick" data-a="${action}" data-v="${esc(id)}">${esc(n)} <span>›</span></button>`;
+  let content='';
+  if(strength&&!group){
+    content=`<h3>Какие группы мышц тренировались?</h3><div class="pick-list">${S.gym.groups.map(g=>choice('groupPick',g.id,g.n)).join('')}</div>${editList('group',S.gym.groups.map(g=>g.n))}`;
+  }else if(strength&&!selectedExercise){
+    content=`<button class="btn gh" data-a="groupsBack">‹ Группы мышц</button><h3>${esc(group.n)}</h3><div class="pick-list">${group.ex.map(n=>choice('exercisePick',n,n)).join('')}</div>${editList('exercise',group.ex)}`;
+  }else if(strength){
+    content=`<button class="btn gh" data-a="exercisesBack">‹ ${esc(group.n)}</button><h3>${esc(selectedExercise)}</h3>
+    <div class="set-fields"><label>Подходы<input id="set-count" type="number" value="1" min="1" max="50"></label>
+    <label>Вес, кг<input id="set-weight" type="number" inputmode="decimal" step="0.1" min="0" value="${w.lastW??0}"></label>
+    <label>Повторения<input id="set-reps" type="number" value="${w.lastR??10}" min="1" max="999"></label></div>
+    <button class="btn cy" data-a="recordSets">Добавить подходы</button>`;
+  }
+  return `<section class="card cut journal"><div class="hud"><div><small class="mut">${new Date(w.t).toLocaleDateString('ru-RU')} · ${fmt(w.amt)} начислено</small><h2>${esc(w.txt)}</h2></div></div>
+    ${content}
+    ${setRows?`<details class="editor"><summary>Записанные подходы · ${d.sets.length}</summary>${setRows}</details>`:''}
+    <div class="cfg"><label>Длительность, мин<input data-detail="minutes" type="number" inputmode="numeric" min="0" max="1440" value="${d.minutes||''}" placeholder="0"></label>
+    ${kind==='pool'?`<label>Количество дорожек<input data-detail="lanes" type="number" inputmode="numeric" min="0" max="9999" value="${d.lanes||''}" placeholder="0"></label>`:''}
+    ${kind!=='yoga'?`<label>Заметка<input data-detail="note" maxlength="240" value="${esc(d.note)}" placeholder="По желанию"></label>`:''}</div>
+    <div class="row"><button class="btn gr" data-a="finishJournal">Готово</button><button class="btn gh" data-a="deferJournal">Заполнить позже</button></div></section>`;
+}
+function editList(kind,names){
+  const label={sport:'категорию спорта',group:'группу мышц',exercise:'упражнение'}[kind];
+  return `<details class="editor"><summary>Добавить ${label} / изменить список</summary>
+  <div class="row"><input id="catalog-name" maxlength="48" placeholder="Название"><button class="btn cy" data-a="catalogAdd" data-v="${kind}">Добавить</button></div>
+  <div class="chips">${names.map((n,i)=>`<button class="chip" data-a="catalogRemove" data-v="${kind}" data-index="${i}">Убрать «${esc(n)}»</button>`).join('')}</div></details>`;
+}
 function gymView(){
-  const d=S.gym.draft;
-  const prs=Object.entries(S.gym.prs||{});
-  const commonEx=['Жим лёжа','Приседания со штангой','Становая тяга','Жим гантелей сидя','Подтягивания','Тяга штанги в наклоне','Подъём на бицепс','Французский жим','Жим ногами'];
-
-  return `<section class="card cut" style="border-color:var(--cy)">
-    <div class="hud">
-      <div>
-        <h2>📓 Журнал упражнений, весов и подходов</h2>
-        <p class="mut">Записывай выполненные упражнения с рабочими весами и повторениями. Личные рекорды (PR) обновляются автоматически!</p>
-      </div>
-      ${d.workoutRef?`<span class="tag" style="--t:var(--gr)">Привязано: ${d.workoutRef}</span>`:''}
-    </div>
-
-    <div class="chips" style="margin-top:10px">
-      ${commonEx.map(ex=>`<button class="chip cut-sm ${d.exName===ex?'on':''}" data-a="pickExName" data-v="${ex}">${ex}</button>`).join('')}
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <label class="mut">Упражнение: <input type="text" id="gym-ex-inp" value="${d.exName||''}" placeholder="Название"></label>
-      <label class="mut">Вес (кг): <input type="number" step="0.5" id="gym-w-inp" value="${d.weight??60}"></label>
-      <label class="mut">Повторения: <input type="number" min="1" id="gym-r-inp" value="${d.reps??10}"></label>
-      <button class="btn cy" data-a="addGymSet">+ Добавить подход</button>
-    </div>
-
-    ${d.sets.length?`
-      <div style="margin-top:12px;padding:12px;background:var(--surface);border:1px solid var(--line-gold);border-radius:4px">
-        <h3>Текущая запись (${d.sets.length} подх.)</h3>
-        <div>
-          ${d.sets.map((s,idx)=>`<span class="set-pill cut-sm"><b>${s.ex}</b>: ${s.w} кг × ${s.r} повт. <button style="background:none;border:0;color:var(--red);cursor:pointer;margin-left:4px" data-a="delGymSet" data-v="${idx}">×</button></span>`).join('')}
-        </div>
-        <div class="row" style="margin-top:10px">
-          <input type="text" id="gym-note-inp" placeholder="Заметка к тренировке (самочувствие, техника...)" value="${d.note||''}" style="flex:1;width:100%">
-          <button class="btn gr" data-a="saveGymSession">💾 Сохранить в журнал упражнений</button>
-        </div>
-      </div>
-    `:'<p class="mut" style="margin-top:10px">Добавь хотя бы один подход, чтобы сохранить запись в журнал.</p>'}
-  </section>
-
-  <section class="card cut" style="border-color:var(--ye)">
-    <h2>🏆 Твои Личные Рекорды (PR)</h2>
-    ${prs.length?`
-      <div class="pr-grid">
-        ${prs.map(([ex,rec])=>`<div class="pr-card cut-sm">
-          <div class="ach-lvl">Личный рекорд</div>
-          <div class="ach-ttl" style="font-size:16px">${ex}</div>
-          <div style="font-size:20px;font-weight:700;color:var(--cy);margin-top:4px">${rec.maxW} кг <span class="mut" style="font-size:12.5px">× ${rec.reps}</span></div>
-          <div class="mut" style="font-size:11px;margin-top:3px">1ПМ: ~${rec.e1rm} кг • ${rec.date}</div>
-        </div>`).join('')}
-      </div>
-    `:'<p class="mut">Личные рекорды появятся автоматически после сохранения первых подходов.</p>'}
-  </section>
-
-  <section class="card cut">
-    <h2>История записей журнала (${(S.gym.sessions||[]).length})</h2>
-    ${(S.gym.sessions||[]).length?`
-      <ul class="log">
-        ${S.gym.sessions.map(ses=>`<li style="flex-direction:column;align-items:flex-start;gap:6px">
-          <div style="display:flex;justify-content:space-between;width:100%;gap:8px">
-            <strong>${ses.title||'Тренировка в зале'} ${ses.note?`• <span class="mut">${ses.note}</span>`:''}</strong>
-            <small>${new Date(ses.t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small>
-          </div>
-          <div>${ses.sets.map(s=>`<span class="set-pill cut-sm"><b>${s.ex}</b>: ${s.w} кг × ${s.r}</span>`).join('')}</div>
-        </li>`).join('')}
-      </ul>
-    `:'<p class="mut">В журнале упражнений пока нет записей.</p>'}
-  </section>`;
+  const w=currentWorkout();
+  if(w){prepareWorkout(w);return journalEditor(w);}
+  const records=new Map(Object.entries(S.gym.prs||{}));
+  for(const entry of S.logWork)for(const s of entry.detail?.sets||[]){
+    const old=records.get(s.ex);
+    if(!old||s.w>old.maxW||s.w===old.maxW&&s.r>old.reps)records.set(s.ex,{maxW:s.w,reps:s.r,date:toDayKey(entry.t)});
+  }
+  const legacy=S.gym.sessions||[],draft=S.gym.draft;
+  return `<section class="card cut"><div class="hud"><h2>Журнал тренировок</h2><button class="btn cy" data-a="tab" data-v="work">Записать тренировку</button></div>
+    ${S.logWork.length?`<div class="pick-list">${S.logWork.slice(0,historyLimit).map(w=>`<button class="pick" data-a="openGymForWorkout" data-v="${esc(w.id)}"><div>${esc(w.txt)}<small>${new Date(w.t).toLocaleDateString('ru-RU')} · ${esc(workoutSummary(w))}</small></div><span>›</span></button>`).join('')}</div>
+    ${S.logWork.length>historyLimit?'<button class="btn gh" data-a="moreHistory">Показать ещё</button>':''}`:'<p class="mut">Тренировки появятся здесь после записи в разделе «Спорт».</p>'}</section>
+    ${draft.sets.length?`<section class="card cut"><h3>Сохранённый черновик</h3><p>${draft.sets.map(s=>esc(s.ex)+' · '+s.w+' кг × '+s.r).join(', ')}</p><button class="btn cy" data-a="saveGymSession">Сохранить в журнал</button></section>`:''}
+    <details class="card cut"><summary>Личные рекорды · ${records.size}</summary>${[...records].map(([n,r])=>`<div class="entry-row"><strong>${esc(n)}</strong><span>${r.maxW} кг × ${r.reps} · 1ПМ ≈ ${Math.round(r.maxW*(1+r.reps/30))} кг</span></div>`).join('')||'<p class="mut">Запиши первый подход.</p>'}</details>
+    ${legacy.length?`<details class="card cut"><summary>Прежние записи журнала · ${legacy.length}</summary>${legacy.map(s=>`<div class="goal-row"><div><strong>${esc(s.title)}</strong><small>${new Date(s.t).toLocaleDateString('ru-RU')} · ${esc(s.note||'')}</small>${s.sets.map(x=>`<span class="set-pill">${esc(x.ex)} · ${x.w} кг × ${x.r}</span>`).join('')}</div></div>`).join('')}</details>`:''}`;
+}
+function updateDetail(input,commit=true){
+  const w=currentWorkout();if(!w)return;
+  const key=input.dataset.detail,d=w.detail;
+  if(key==='note'){const value=input.value.trim().slice(0,240);if(d.note===value)return;d.note=value;}
+  else{
+    const value=Number(input.value),limit=key==='minutes'?1440:9999;
+    if(!['minutes','lanes'].includes(key)||!Number.isInteger(value)||value<0||value>limit){
+      if(commit)input.value=d[key]||'';return;
+    }
+    if(d[key]===value)return;
+    if(key==='minutes')S.stats.wkMin+=value-d.minutes;
+    d[key]=value;
+  }
+  save();
 }
 
 /* 5. SHOP & CS2 CASE ROULETTE VIEW (WITH GUARDIAN SHOP ITEM ICONS) */
 function shopView(){
-  const rerollPrice=1+(S.shop.rerollBuys||0);
+  syncCalendarState();
   const stripItems=Array.from({length:45},(_,idx)=>SHOP_ITEMS[idx%SHOP_ITEMS.length]);
 
   return `<section class="card cut" style="border-color:var(--ye)">
@@ -3042,10 +3132,11 @@ function shopView(){
 
   <section class="card cut">
     <h2>🛒 Лавка Хранителя (Фиксированные цены за Ключи)</h2>
-    <p class="mut">Покупай нужные предметы напрямую за ключи, полученные в лабиринте и за дни серии.</p>
+    <p class="mut">Кейс стоит 1 ключ. Выбранный предмет стоит от 2 ключей. Каждая покупка повышает его цену на 1 до местной полуночи.</p>
+    <button class="btn ye" data-a="buyGame" ${S.stats.keyBalance<5?'disabled':''}>🎮 Катка в запас · 5 🔑</button>
     <div class="shop-grid">
       ${SHOP_ITEMS.map(it=>{
-        const cost=it.id==='reroll'?rerollPrice:it.baseCost;
+        const cost=shopPrice(it);
         const owned=S.inv[it.id]||0;
         return `<div class="shop-item cut-sm" style="--rc:${it.col}">
           <div class="shop-item-top">
@@ -3194,10 +3285,10 @@ function profileView(){
     <h2>Профиль и Кастомизация</h2>
     <div class="cfg" style="margin-top:10px">
       <label>Никнейм игрока
-        <input type="text" id="prof-nick-inp" value="${S.profile.nick}" maxlength="24">
+        <input type="text" id="prof-nick-inp" value="${esc(S.profile.nick)}" maxlength="24">
       </label>
       <label>Титул / Девиз под ником
-        <input type="text" id="prof-title-inp" value="${S.profile.title}" maxlength="36">
+        <input type="text" id="prof-title-inp" value="${esc(S.profile.title)}" maxlength="36">
       </label>
     </div>
     <div style="margin-top:12px">
@@ -3255,37 +3346,38 @@ function profileView(){
 
 /* 9. BANK, WEEKLY PLAN CREATOR & SPLIT HISTORY (WITH LINK TO EXERCISE JOURNAL) */
 function bankView(){
-  const b=S.bank,ht=S.histTab||'study';
-  const curLogs=ht==='study'?S.logStudy:ht==='work'?S.logWork:S.logBank;
+  const b=S.bank;
   const wp=S.weeklyPlan;
   const wProg=getWeekProgress(wp.weekKey);
 
   return `<section class="card cut" style="border-color:var(--ye)">
     <h2>Банк и Финансы</h2>
+    ${bankRulesView()}
     <div class="stats">
       <div class="st r"><span>Депозит на карте</span><b>${fmt(b.card)}</b></div>
-      <div class="st g"><span>Доступно к выплате</span><b>${fmt(b.pend)}</b></div>
+      <div class="st"><span>Накоплено к выплате</span><b>${fmt(b.pend)}</b></div>
+      <div class="st g"><span>Доступно к выплате</span><b>${fmt(withdrawable())}</b></div>
       <div class="st v"><span>Всего выплачено</span><b>${fmt(b.paid)}</b></div>
-      <div class="st d"><span>Заблокировано</span><b>${fmt(Math.max(0,b.card-b.pend))}</b></div>
+      <div class="st d"><span>Заблокировано</span><b>${fmt(Math.max(0,b.card-withdrawable()))}</b></div>
     </div>
     <div class="row">
       <label class="mut">Пополнить карту <input type="number" id="am" min="0" placeholder="₽"></label>
       <button class="btn cy" data-a="topup">Пополнить</button>
     </div>
     <div class="row">
-      <label class="mut">Выплачено мне <input type="number" id="pm" min="0" value="${b.pend}"></label>
-      <button class="btn vi" data-a="payout">Получить выплату</button>
+      <label class="mut">Выплачено мне <input type="number" id="pm" min="0" value="${withdrawable()}"></label>
+      <button class="btn vi" data-a="payout" ${withdrawable()<=0?'disabled':''}>Получить выплату</button>
     </div>
   </section>
 
   <section class="card cut" style="border-color:var(--gr)">
     <h2>📅 Недельный финансовый план дисциплины</h2>
-    <p class="mut">Составь план на текущую неделю: за составление сразу <b>+300 ₽ и 1 жетон</b>, а за полное выполнение — ещё <b>+1 500 ₽ и 1 Ключ</b>!</p>
+    <p class="mut">Составь план на текущую неделю: за составление сразу <b>+${fmt(planReward(false))} и 1 жетон</b>, а за полное выполнение — ещё <b>+${fmt(planReward(true))} и 1 Ключ</b>!</p>
     <div class="row">
       <label class="mut">Учёба на неделю (ч): <input type="number" min="1" max="100" id="wp-hrs-inp" value="${wp.studyHrs}" ${wp.created?'disabled':''}></label>
       <label class="mut">Тренировок на неделю: <input type="number" min="1" max="20" id="wp-wk-inp" value="${wp.workouts}" ${wp.created?'disabled':''}></label>
-      ${!wp.created?`<button class="btn gr" data-a="createWeeklyPlan">Утвердить план недели (+300 ₽)</button>`:
-        `<span style="color:var(--gr);font-weight:700">${wp.completedPaid?'🏆 План недели выполнен (+1500 ₽ и Ключ)!':'✓ План активен на эту неделю'}</span>`}
+      ${!wp.created?`<button class="btn gr" data-a="createWeeklyPlan">Утвердить план недели (+${fmt(planReward(false))})</button>`:
+        `<span style="color:var(--gr);font-weight:700">${wp.completedPaid?'🏆 План недели выполнен. Бонус получен!':'✓ План активен на эту неделю'}</span>`}
     </div>
     ${wp.created?`
       <div class="stats" style="margin-top:10px">
@@ -3295,27 +3387,44 @@ function bankView(){
     `:''}
   </section>
 
-  <section class="card cut">
+  <section class="card cut"><button class="btn gh" data-a="tab" data-v="history">История учёбы, спорта и выплат</button></section>`;
+}
+
+/* 10. SETTINGS & CHANCES PANEL IN GEAR */
+let historyLimit=40;
+function studyBlocks(blocks){
+  if(!blocks?.length)return '';
+  return `<details class="editor"><summary>Учебные блоки · ${blocks.length}</summary><ul>${blocks.map(b=>`<li>${new Date(b.t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${hm(b.min)}${b.plan>b.min?' · щит, в план '+hm(b.plan):''}</li>`).join('')}</ul></details>`;
+}
+function historyView(){
+  const ht=S.histTab||'study',curLogs=ht==='study'?S.logStudy:ht==='work'?S.logWork:S.logBank;
+  return `  <section class="card cut">
     <h2>Раздельная история активности</h2>
     <div class="chips">
       <button class="chip cut-sm ${ht==='study'?'on':''}" data-a="histTab" data-v="study">${icon('study',15)} Учёба (${S.logStudy.length})</button>
       <button class="chip cut-sm ${ht==='work'?'on':''}" data-a="histTab" data-v="work">${icon('work',15)} Спорт (${S.logWork.length})</button>
       <button class="chip cut-sm ${ht==='bank'?'on':''}" data-a="histTab" data-v="bank">${icon('bank',15)} Банк (${S.logBank.length})</button>
     </div>
-    ${curLogs.length?`<ul class="log">${curLogs.map(l=>`<li>
+    ${ht==='study'&&S.run.study?.phase!=='done'&&S.run.study?.blocks?.length?`<div class="kv">Текущий забег ${studyBlocks(S.run.study.blocks)}</div>`:''}
+    ${curLogs.length?`<ul class="log">${curLogs.slice(0,historyLimit).map(l=>`<li>
       <span>
-        ${l.txt}<br>
-        <small>${new Date(l.t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small>
-        ${ht==='work'?`<button class="btn gh" style="padding:3px 8px;font-size:11px;margin-top:4px" data-a="openGymForWorkout" data-v="${l.txt}">📝 Расписать подходы</button>`:''}
+        ${esc(l.txt)}<br>
+        ${studyBlocks(l.blocks)}
+        ${l.parts?.length?l.parts.map(p=>esc(p.name)+' · '+hm(p.min)).join(' / ')+'<br>':''}
+        ${ht==='study'&&l.minutes>0?`<button class="btn gh" data-a="editAllocation" data-v="${esc(l.id)}">Распределить ${hm(l.minutes)}</button><br>`:''}
+        <small>${new Date(l.t).toLocaleString('ru-RU',{year:'numeric',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small>
+        ${ht==='work'?`<button class="btn gh" style="padding:3px 8px;font-size:11px;margin-top:4px" data-a="openGymForWorkout" data-v="${esc(l.id)}">Журнал · ${esc(workoutSummary(l))}</button>`:''}
       </span>
       <b class="${l.amt<0?'minus':'plus'}">${l.amt>0?'+':''}${fmt(l.amt)}</b>
     </li>`).join('')}</ul>`:'<p class="mut">В этом разделе пока нет записей.</p>'}
+  ${curLogs.length>historyLimit?'<button class="btn gh" data-a="moreHistory">Показать ещё</button>':''}
   </section>`;
 }
-
-/* 10. SETTINGS & CHANCES PANEL IN GEAR */
 function settingsView(){
-  return `<section class="card cut" style="border-color:var(--cy)">
+  return `<section class="card cut"><h2>Экран и звук</h2><div class="row">
+    <button class="btn gh" data-a="fullscreen">Полный экран</button>
+    <button class="btn gh" data-a="showModal" data-v="audio">Громкость</button></div></section>
+  <section class="card cut" style="border-color:var(--cy)">
     <h2>⚙️ Настройки наград и правил</h2>
     <div class="cfg">
       <label>Награда за 1 час учёбы, ₽
@@ -3325,7 +3434,7 @@ function settingsView(){
         <input type="number" min="0" data-k="rw" value="${S.cfg.rw}">
       </label>
       <label style="justify-content:center">
-        <span style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-k="full" ${S.cfg.full?'checked':''} style="width:auto"> Досрочный ключ оплачивает остаток плана</span>
+        <span style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-k="full" ${S.cfg.full?'checked':''} style="width:auto"> Досрочный побег оплачивает остаток плана</span>
       </label>
     </div>
   </section>
@@ -3334,7 +3443,7 @@ function settingsView(){
     <h2>🎲 Шансы выпадения и настройка 10 дверей</h2>
     <p class="mut">Здесь можно изменить глобальные множители шансов или настроить проценты для каждой из 10 дверей вручную.</p>
     <div class="cfg" style="margin-top:10px">
-      <label>Глобальный множитель Ключей (×)
+      <label>Глобальный множитель побегов (×)
         <input type="number" step="0.1" min="0" max="5" data-k="kMult" value="${S.cfg.kMult??1}">
       </label>
       <label>Глобальный множитель Каток (×)
@@ -3348,14 +3457,14 @@ function settingsView(){
     <div class="door-cfg-list">
       <div class="door-cfg-item door-cfg-head" style="background:transparent;border:0;color:var(--mut);font-size:12.5px">
         <strong>Дверь</strong>
-        <span>Отдых %</span><span>Катка %</span><span>Ключ %</span><span>Сред. мин</span><span>Учёба %</span>
+        <span>Отдых %</span><span>Катка %</span><span>Побег %</span><span>Сред. мин</span><span>Учёба %</span>
       </div>
       ${S.cfg.doors.map((d,idx)=>`
         <div class="door-cfg-item cut-sm">
           <strong style="color:color-mix(in srgb, ${d.col} 80%, var(--ink-strong))">${idx+1}. ${d.n}</strong>
           <label class="mut" style="font-size:12px">Отдых %<input type="number" step="0.5" min="0" max="90" data-door="${idx}" data-df="r" value="${d.r}"></label>
           <label class="mut" style="font-size:12px">Катка %<input type="number" step="0.5" min="0" max="50" data-door="${idx}" data-df="g" value="${d.g}"></label>
-          <label class="mut" style="font-size:12px">Ключ %<input type="number" step="0.5" min="0" max="50" data-door="${idx}" data-df="k" value="${d.k}"></label>
+          <label class="mut" style="font-size:12px">Побег %<input type="number" step="0.5" min="0" max="50" data-door="${idx}" data-df="k" value="${d.k}"></label>
           <label class="mut" style="font-size:12px">Ср. мин<input type="number" step="5" min="10" max="60" data-door="${idx}" data-df="c" value="${d.c}"></label>
           <span>Учёба: <b>${+(100-d.r-d.g-d.k).toFixed(1)}%</b></span>
         </div>
@@ -3370,6 +3479,8 @@ function settingsView(){
 
 /* MODAL RENDER (INCLUDING 30-DAY STREAK PROGRESSION WINDOW) */
 function renderModal(){
+  $('.wrap').inert=!cloudLoaded||!S.setupDone||Boolean(modalState);
+  if(renderExtraModal())return;
   if(!modalState){$('#modal-root').innerHTML='';return;}
   if(modalState==='streak'){
     const cur=S.streak.cur||0;
@@ -3418,7 +3529,7 @@ function renderModal(){
     $('#modal-root').innerHTML=`<div class="modal-bg">
       <div class="modal cut">
         <h2 style="color:var(--ye)">⚠️ Забрать деньги?</h2>
-        <p class="mut" style="margin:10px 0">Если ты заберёшь накопленные <b>${fmt(r?r.earned:0)}</b> сейчас, текущий забег в лабиринте <b>досрочно завершится</b> (без получения ключа и без бонуса за полный план).</p>
+        <p class="mut" style="margin:10px 0">Если ты заберёшь накопленные <b>${fmt(r?r.earned:0)}</b> сейчас, текущий забег в лабиринте <b>досрочно завершится</b> с сохранением заработанных за учёбу ключей.</p>
         <div class="row">
           <button class="btn ye" data-a="cashoutConfirm">Да, забрать ${fmt(r?r.earned:0)}</button>
           <button class="btn gh" data-a="closeModal">Отмена</button>
@@ -3451,10 +3562,9 @@ function renderModal(){
 }
 
 function render(){
-  applyTheme();
   renderHeader();
   const views={
-    home:homeView,
+    goals:goalsView, history:historyView, home:homeView,
     study:studyView,
     work:workView,
     gym:gymView,
@@ -3472,21 +3582,25 @@ function render(){
 
 /* LABYRINTH RESOLUTION LOGIC (WITH SCOUT & SHIELD OF THE ABYSS SUPPORT) */
 function resolveDoor(i){
-  const r=S.run.study;if(!r||r.op!==i)return;
+  const r=S.run.study;if(!r||r.phase!=='doors'||r.op!==i)return;
   const d=r.d[i],rem=r.target-r.prog;
   const pre=(r.scouted&&r.scouted[i])?r.scouted[i]:rollDoorOutcome(d,r.step,rem);
   let {type,dur,t,note}=pre;
+  if(type==='rest'&&S.buffs.breather){
+    S.buffs.breather=false;dur=15;t=tier(type,dur);
+    note='💨 Сработала «Передышка»: отдых 15 минут!';
+  }
 
   if(type==='key'){
     r.phase='done';r.early=true;
-    S.stats.keys++;
-    S.stats.keyBalance=(S.stats.keyBalance||0)+1;
+
+    S.stats.escapeDoors=[...new Set([...(S.stats.escapeDoors||[]),d.id])];
     S.stats.earlyKeys=(S.stats.earlyKeys||0)+1;
     S.stats.earlyStreak=(S.stats.earlyStreak||0)+1;
     if(S.cfg.full&&rem>0)r.earned+=Math.round(money('study',rem));
     r.earned=creditMoney(r.earned,true);
     recordDailyActivity(0,0,1);
-    addStudyLog(`Учёба: ${hm(r.prog)} (ключ найден на ходу ${r.step+1}, +1 🔑 в инвентарь)`,r.earned);
+    archiveRun(r,'Тайный выход',r.earned);
     snd('key');burst(TC.au,160);
   }else{
     /* Shield from Hellish >=50 min block */
@@ -3494,11 +3608,11 @@ function resolveDoor(i){
       if(!r.shieldArmed)S.inv.shield--;
       r.shieldArmed=false;
       r.usedShield=true;
-      note=`🛡️ Щит от «адского» смягчил таймер: ${dur} мин → 40 мин!`;
+      note=`🛡️ Щит от «адского» сократил таймер до 40 мин. В план зачтётся ${dur} мин.`;
       dur=40;
       t=tier(type,dur);
     }
-    r.cur={type,dur,left:dur*60000,end:0,paused:true,note,tip:type==='rest'?TIPS[rnd(0,TIPS.length-1)]:''};
+    r.cur={type,planMin:pre.dur,dur,left:dur*60000,end:0,paused:true,note,tip:type==='rest'?TIPS[rnd(0,TIPS.length-1)]:''};
     r.phase='reveal';
     snd('t_'+t[2]);burst(t[0],t[2]==='r'||t[2]==='au'?90:45);
   }
@@ -3511,7 +3625,15 @@ function finishStudyRoom(){
   r.step=(r.step||0)+1;
   if(c.type==='focus'){
     const u=c.dur;
-    r.prog+=u;
+    (r.blocks??=[]).push({t:Date.now(),min:u,plan:c.planMin||u});
+    r.actual=(r.actual??r.prog)+u;
+    r.prog+=c.planMin||u;
+    const minutes=(S.stats.keyMinutes||0)+u;
+    const keys=Math.floor(minutes/90);
+    S.stats.keyMinutes=minutes%90;
+    S.stats.studyKeys=(S.stats.studyKeys||0)+keys;
+    S.stats.keys+=keys;
+    S.stats.keyBalance+=keys;
     S.stats.min+=u;
     let tok=Math.max(1,Math.round(u/15));
     if(S.buffs.double_xp){
@@ -3520,7 +3642,7 @@ function finishStudyRoom(){
       S.buffs.double_xp=false;
     }
     S.stats.tokens=(S.stats.tokens||0)+tok;
-    r.earned+=Math.round(money('study',u));
+    r.earned+=Math.round(money('study',c.planMin||u));
     recordDailyActivity(u,0,1);
   }else if(c.type==='game'){
     S.stats.games=(S.stats.games||0)+1;
@@ -3532,12 +3654,11 @@ function finishStudyRoom(){
   r.scouted={};
   if(r.prog>=r.target){
     r.phase='done';r.early=false;
-    S.stats.keys++;
-    S.stats.keyBalance=(S.stats.keyBalance||0)+1;
+
     S.stats.fullRuns=(S.stats.fullRuns||0)+1;
     S.stats.earlyStreak=0;
     r.earned=creditMoney(r.earned,true);
-    addStudyLog(`Учёба (полный план): ${hm(r.prog)} (+1 🔑 в инвентарь)`,r.earned);
+    archiveRun(r,'План выполнен',r.earned);
     snd('key');burst('#d4af37',140);
   }else{
     r.phase='doors';r.d=pickDoors();r.op=-1;snd('done');
@@ -3545,10 +3666,325 @@ function finishStudyRoom(){
   save();render();
 }
 
+let allocationId=null;
+const planReward=complete=>Math.round((S.cfg.rs+S.cfg.rw)*(complete ? 0.35 : 0.04));
+function shopPrice(it){
+  syncCalendarState();
+  return it.baseCost+1+(S.shop.purchases[it.id]||0);
+}
+function withdrawable(){
+  const rules=Object.entries(S.rules.requirements);
+  if(!S.setupDone||!rules.length||rules.some(([id,n])=>(S.rules.counts[id]||0)<n))return 0;
+  return Math.min(S.bank.pend,S.bank.card);
+}
+function bankRulesView(){
+  const r=S.rules;
+  return `<h3>Тренировки до выплаты</h3><div class="chips">${Object.entries(r.requirements).map(([id,n])=>`<span class="chip">${esc(S.activities.find(x=>x.id===id)?.n||id)} · ${r.counts[id]||0}/${n}</span>`).join('')}</div>
+    <p class="mut">После каждой выплаты счётчик тренировок начинается заново. Доступная сумма ограничена остатком депозита и заработанной суммой.</p>
+    <button class="btn gh" data-a="showModal" data-v="rules" ${Date.now()<r.changed+FORTNIGHT?'disabled':''}>Изменить условия</button>
+    ${Date.now()<r.changed+FORTNIGHT?`<small class="mut">Можно изменить с ${new Date(r.changed+FORTNIGHT).toLocaleString('ru-RU')}</small>`:''}`;
+}
+function goalMinutes(){
+  const totals=new Map();
+  for(const session of S.logStudy)for(const p of session.parts||[])totals.set(p.id,(totals.get(p.id)||0)+p.min);
+  return totals;
+}
+function taskDone(task,minutes){return task.type==='check'?Boolean(task.done):task.target>0&&(minutes.get(task.id)||0)>=task.target;}
+function goalDone(g,minutes){return g.tasks.length>0&&g.tasks.every(t=>taskDone(t,minutes));}
+function taskCard(g,t,minutes){
+  const done=taskDone(t,minutes),n=minutes.get(t.id)||0;
+  if(t.type==='check')return `<button class="task-check" data-a="toggleTask" data-goal="${esc(g.id)}" data-v="${esc(t.id)}" aria-pressed="${done}">
+    <span class="task-mark" aria-hidden="true">${done?'✓':'○'}</span><span class="task-name">${esc(t.n)}</span><small>${done?'1':'0'}/1</small></button>`;
+  return `<div class="time-task"><div><span class="task-name">${esc(t.n)}</span><small>${hm(n)}${t.target?' / '+hm(t.target):''}</small></div>
+    ${t.target?`<progress max="${t.target}" value="${Math.min(n,t.target)}"></progress>`:''}</div>`;
+}
+function goalCard(g,minutes,archived){
+  const id=esc(g.id);
+  return `<article class="card cut goal-card" style="--goal-color:${goalColor(g.color)}"><div class="hud"><div><small class="mut">${esc(g.area||'Личное')}</small><h3>${esc(g.n)}</h3></div><small>${g.tasks.filter(t=>taskDone(t,minutes)).length}/${g.tasks.length}</small></div>
+    ${g.tasks.map(t=>taskCard(g,t,minutes)).join('')}
+    ${!g.tasks.length?'<p class="mut">Добавь первую подцель.</p>':''}
+    ${g.tasks.length?`<details class="editor"><summary>Изменить подцель</summary><div class="chips">${g.tasks.map(t=>`<button class="chip" data-a="taskForm" data-v="${id}" data-task="${esc(t.id)}"><span class="task-name">${esc(t.n)}</span></button>`).join('')}</div></details>`:''}
+    <div class="row"><button class="btn gh" data-a="taskForm" data-v="${id}">+ Подцель</button>
+    <button class="btn gh" data-a="goalForm" data-v="${id}">Настроить</button>
+    ${g.archived?`<button class="btn gh" data-a="archiveGoal" data-v="${id}">Вернуть из архива</button>`:!archived?`<button class="btn gh" data-a="archiveGoal" data-v="${id}">В архив</button>`:''}</div></article>`;
+}
+function goalsView(){
+  const minutes=goalMinutes(),active=[],archived=[];
+  for(const g of S.goals)(g.archived||goalDone(g,minutes)?archived:active).push(g);
+  return `<section class="card cut"><div class="hud"><h2>Мои цели</h2><button class="btn cy" data-a="goalForm">+ Добавить цель</button></div>
+    ${active.length?'':'<p class="mut">Что хочешь сделать? Добавь цель и разбей её на шаги.</p>'}</section>
+    ${active.map(g=>goalCard(g,minutes,false)).join('')}
+    <details class="card cut" id="goal-archive" ${$('#goal-archive')?.open?'open':''}><summary>Архив целей · ${archived.length}</summary>${archived.map(g=>goalCard(g,minutes,true)).join('')||'<p class="mut">Здесь появятся завершённые цели.</p>'}</details>`;
+}
+let goalEditorId=null,taskEditorId=null;
+function goalForm(g){
+  const areas=['Учёба','Спорт','Личное'];
+  return `<div class="entry-form" style="--form-accent:${goalColor(g?.color)}">
+    <label class="entry-field entry-primary" for="goal-name">Название цели
+      <input type="text" id="goal-name" maxlength="70" value="${esc(g?.n||'')}" placeholder="Например, английский или зал">
+    </label>
+    <div class="goal-options">
+      <label class="entry-field" for="goal-area">Категория
+        <select id="goal-area">${areas.map(a=>`<option ${a===(g?.area||'Учёба')?'selected':''}>${a}</option>`).join('')}</select>
+      </label>
+      <label class="entry-field" for="goal-color">Цвет цели
+        <input id="goal-color" type="color" value="${goalColor(g?.color)}">
+      </label>
+    </div>
+    <div class="entry-actions"><p class="form-msg" role="status"></p>
+      <button class="btn cy" data-a="saveGoal">${g?'Сохранить':'Перейти к подцелям'}</button>
+    </div>
+    ${g?`<details class="remove-goal"><summary>Удалить цель</summary>
+      <p>Удалить «${esc(g.n)}» вместе с подцелями? Записанные занятия останутся в истории.</p>
+      <button class="btn" data-a="deleteGoal" data-v="${esc(g.id)}">Подтвердить удаление</button>
+    </details>`:''}
+  </div>`;
+}
+function taskForm(g){
+  const task=g.tasks.find(t=>t.id===taskEditorId);
+  return `<p class="mut">${esc(g.n)}</p><div class="cfg"><label>Название подцели<input id="task-name" maxlength="90" value="${esc(task?.n||'')}" placeholder="Сделать ДЗ или пожать 90 кг"></label>
+    <label>Как считать прогресс<select id="task-kind" ${task?'disabled':''}><option value="check">Отметка о выполнении</option><option value="time" ${task?.type==='time'?'selected':''}>Время после учёбы</option></select></label>
+    <label id="task-hours-label" ${task?.type==='time'?'':'hidden'}>Сколько часов набрать<input type="number" id="task-hours" value="${task?.target?Number((task.target/60).toFixed(4)):''}" min="0.02" step="any" inputmode="decimal" placeholder="3"></label></div>
+    <p class="form-msg" role="status"></p><div class="row"><button class="btn cy" data-a="saveTask">${task?'Сохранить':'Добавить подцель'}</button><button class="btn gh" data-a="closeModal">Закрыть</button></div>`;
+}
+
+function archiveRun(r,label,amount){
+  const minutes=r.actual??r.prog;
+  const entry={id:uid(),t:Date.now(),txt:label+' · '+hm(minutes),amt:amount,minutes,parts:[],blocks:r.blocks||[]};
+  S.logStudy.unshift(entry);
+  if(minutes){allocationId=entry.id;modalState='allocation';}
+}
+function modalShell(title,contents,closable=true){
+  $('#modal-root').innerHTML=`<div class="modal-bg"><div class="modal cut" role="dialog" aria-modal="true" aria-labelledby="extra-title">
+  <div class="hud"><h2 id="extra-title">${title}</h2>${closable?'<button class="icon-btn" aria-label="Закрыть" data-a="closeModal">✕</button>':''}</div>${contents}</div></div>`;
+}
+function requirementsForm(first){
+  const r=S.rules;
+  const reqs=r.requirements;
+  return `${first?'<p class="mut">Шаг 2 из 2</p>':''}
+    <h3>Какие тренировки нужны для выплаты?</h3><p class="mut">Укажи количество напротив нужных категорий. Ноль исключает категорию. Одна тренировка закрывает одну позицию. Условия можно менять раз в 14 дней.</p>
+    <div class="quota-grid" id="quota-list">${S.activities.map(m=>quotaRow(m,reqs[m.id]||0)).join('')}</div>
+    ${first?'<button class="btn gh" data-a="previousSetup">‹ Профиль</button>':''}
+    <p class="form-msg" role="status"></p><button class="btn cy" data-a="saveRules">${first?'Начать':'Сохранить условия'}</button>`;
+}
+function quotaRow(m,n){
+  return `<label>${esc(m.n)}<input type="number" inputmode="numeric" min="0" max="${Math.max(99,n)}" data-quota="${esc(m.id)}" data-name="${esc(m.n)}" value="${n}"></label>`;
+}
+function updateAllocationTotal(){
+  const entry=S.logStudy.find(l=>l.id===allocationId);
+  if(!entry)return;
+  const total=$$('[data-minutes]').reduce((a,x)=>a+Number(x.value||0),0);
+  const out=$('#remaining-min');
+  if(out)out.textContent=total<=entry.minutes?'Осталось распределить: '+hm(entry.minutes-total):'Лишних минут: '+(total-entry.minutes);
+}
+function allocationForm(entry){
+  const totals=goalMinutes(),rows=[];
+  for(const g of S.goals){
+    if(g.archived||goalDone(g,totals))continue;
+    for(const task of g.tasks)if(task.type==='time'&&!taskDone(task,totals))rows.push({id:task.id,n:g.n+' · '+task.n});
+  }
+  for(const p of entry.parts||[])if(!rows.some(x=>x.id===p.id))rows.push({id:p.id,n:p.name});
+  return `<p class="mut">Завершено ${hm(entry.minutes)}. Распредели минуты между учебными подцелями. К этой записи можно вернуться из истории.</p>
+    <div id="allocation-rows">${rows.map(g=>allocationRow(g,entry.parts?.find(p=>p.id===g.id)?.min||0)).join('')}</div>
+    <details class="editor"><summary>Добавить учебную цель</summary><div class="cfg"><label>Название<input id="quick-goal" maxlength="70" placeholder="Например, сопромат"></label>
+    <label>Цель в часах<input type="number" id="quick-hours" min="0.02" step="any" placeholder="3"></label></div><button class="btn gh" data-a="quickGoal">Добавить</button><p id="quick-error" class="mut"></p></details>
+    <p id="remaining-min" aria-live="polite"></p><p class="form-msg" role="status"></p>
+    <div class="row"><button class="btn cy" data-a="saveAllocation">Сохранить</button><button class="btn gh" data-a="closeModal">Позже</button></div>`;
+}
+
+function allocationRow(g,n){return `<label class="goal-row">${esc(g.n)}<input type="number" min="0" step="1" inputmode="numeric" data-minutes="${esc(g.id)}" data-name="${esc(g.n)}" value="${n}"></label>`;}
+function renderExtraModal(){
+  if(!cloudLoaded){
+    modalShell('Профиль Telegram',syncError?`<p class="mut">Не удалось загрузить профиль с сервера. Повторная попытка через несколько секунд.</p><button class="btn cy" data-a="retryLoad">Повторить сейчас</button>`:'<p class="mut">Загружаем сохранённый прогресс…</p>',false);
+    return true;
+  }
+  if(!S.setupDone&&!S.profileStepDone){
+    modalShell('Настрой свой профиль',`<div class="entry-form">
+      <small class="mut">Шаг 1 из 2</small>
+      <label class="entry-field entry-primary" for="setup-nick">Твой ник
+        <input type="text" id="setup-nick" maxlength="24" value="${esc(S.profile.nick)}" autocomplete="nickname">
+      </label>
+      <label class="entry-field" for="setup-title">Титул
+        <input type="text" id="setup-title" maxlength="36" value="${esc(S.profile.title)}">
+      </label>
+      <div class="entry-actions"><p class="form-msg" role="status"></p><button class="btn cy" data-a="nextSetup">Далее</button></div>
+    </div>`,false);return true;
+  }
+  if(modalState==='goal'){modalShell(goalEditorId?'Настроить цель':'Добавить цель',goalForm(S.goals.find(g=>g.id===goalEditorId)));return true;}
+  if(modalState==='task'){const g=S.goals.find(g=>g.id===goalEditorId);if(g){modalShell(taskEditorId?'Изменить подцель':'Добавить подцель',taskForm(g));return true;}}
+  if(!S.setupDone||modalState==='rules'){
+    modalShell('Условия выплаты',requirementsForm(!S.setupDone),S.setupDone);
+    return true;
+  }
+  if(modalState==='keys'){
+    const m=S.stats.keyMinutes||0;
+    modalShell('Ключи за учёбу',`<div class="kv">В инвентаре<b>${S.stats.keyBalance} 🔑</b></div><p>До следующего ключа — <b>${hm(90-m)}</b>.</p>
+      <progress max="90" value="${m}"></progress><small>${m} из 90 минут</small><p class="mut">Суммируются завершённые учебные блоки из всех забегов. Оставшиеся минуты переходят на следующий ключ.</p>
+      <button class="btn cy" data-a="tab" data-v="shop">В магазин</button>`);
+    return true;
+  }
+  if(modalState==='audio'){
+    modalShell('Громкость',`${[['effects','Эффекты игры'],['timer','Окончание таймера']].map(([k,n])=>`<label class="volume"><span>${n}</span><output>${S.audio[k]}%</output><input type="range" min="0" max="100" data-volume="${k}" value="${S.audio[k]}"></label>`).join('')}
+      <button class="btn gh" data-a="mute">${S.mute?'Включить звук':'Выключить звук'}</button><button class="btn cy" data-a="testAlarm">Проверить сигнал</button>`);
+    return true;
+  }
+  if(modalState==='allocation'){
+    const entry=S.logStudy.find(x=>x.id===allocationId);
+    if(entry){modalShell('Распределить время',allocationForm(entry));updateAllocationTotal();return true;}
+    modalState=null;
+  }
+  return false;
+}
+
 /* ACTIONS */
 const A={
+  showModal:d=>{modalState=d.v;renderModal();},
+  retryLoad:()=>loadCloudProfile(),
+  moreHistory:()=>{historyLimit+=40;render();},
+  studyHistory:()=>{S.histTab='study';A.tab({v:'history'});},
+  editAllocation:d=>{allocationId=d.v;modalState='allocation';renderModal();},
+  testAlarm:()=>snd('alarm'),
+  fullscreen:async()=>{
+    try{
+      if(tg?.initData&&tg.isVersionAtLeast?.('8.0')&&tg.requestFullscreen){
+        if(tg.isFullscreen)tg.exitFullscreen();else tg.requestFullscreen();
+      }else if(document.fullscreenElement)await document.exitFullscreen();
+      else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();
+      else alert('Этот браузер не поддерживает полноэкранный режим.');
+    }catch{alert('Не удалось открыть полный экран в этом окне.');}
+  },
+  nextSetup:()=>{
+    const nick=$('#setup-nick').value.trim();
+    if(!nick){$('.form-msg').textContent='Введи ник.';return;}
+    S.profile.nick=nick;S.profile.title=$('#setup-title').value.trim();
+    S.profileStepDone=true;save();renderModal();
+  },
+  previousSetup:()=>{S.profileStepDone=false;save();renderModal();},
+  saveRules:()=>{
+    if(!S.setupDone&&!S.profileStepDone)return;
+    if(S.setupDone&&Date.now()<S.rules.changed+FORTNIGHT)return;
+    const rows=$$('[data-quota]'),requirements={};
+    if(!rows.some(x=>Number(x.value)>0)||rows.some(x=>!Number.isInteger(+x.value)||+x.value<0||+x.value>Math.max(99,S.rules.requirements[x.dataset.quota]||0))){
+      $('.form-msg').textContent='Выбери хотя бы одну тренировку и укажи целое количество.';return;
+    }
+    for(const x of rows)if(+x.value)requirements[x.dataset.quota]=+x.value;
+    S.rules={requirements,counts:{},changed:Date.now()};
+    S.setupDone=true;modalState=null;save();render();
+  },
+  recordWorkout:d=>{
+    if(S.tab!=='work')return;
+    const sport=S.activities.find(a=>a.id===d.v);if(!sport)return;
+    const yoga=sport.id==='yoga',earned=creditMoney(yoga?200:S.cfg.rw,!yoga);
+    S.stats.wk++;
+    S.stats.muscles[sport.id]=(S.stats.muscles[sport.id]||0)+1;
+    if((S.rules.counts[sport.id]||0)<(S.rules.requirements[sport.id]||0))S.rules.counts[sport.id]=(S.rules.counts[sport.id]||0)+1;
+    recordDailyActivity(0,1,0);
+    const w={id:uid(),t:Date.now(),kind:sport.id,txt:sport.n,amt:earned};
+    prepareWorkout(w);S.logWork.unshift(w);A.openGymForWorkout({v:w.id});
+  },
+  openGymForWorkout:d=>{
+    const w=S.logWork.find(x=>x.id===d.v);if(!w)return;
+    prepareWorkout(w);S.gym.current=w.id;selectedGroup='';selectedExercise='';
+    A.tab({v:'gym'});
+  },
+  groupPick:d=>{selectedGroup=d.v;selectedExercise='';render();},
+  exercisePick:d=>{selectedExercise=d.v;render();},
+  groupsBack:()=>{selectedGroup='';selectedExercise='';render();},
+  exercisesBack:()=>{selectedExercise='';render();},
+  recordSets:()=>{
+    const w=currentWorkout(),g=S.gym.groups.find(x=>x.id===selectedGroup);
+    if(!w||!g?.ex.includes(selectedExercise))return;
+    const count=Number($('#set-count').value),weight=Number($('#set-weight').value),reps=Number($('#set-reps').value);
+    if(!Number.isInteger(count)||count<1||count>50||!Number.isFinite(weight)||weight<0||weight>2000||!Number.isInteger(reps)||reps<1||reps>999)return alert('Проверь количество подходов, вес и повторения.');
+    if(!w.detail.sets.some(x=>x.group===g.id))S.stats.muscles[g.id]=(S.stats.muscles[g.id]||0)+1;
+    for(let i=0;i<count;i++)w.detail.sets.push({ex:selectedExercise,group:g.id,w:weight,r:reps});
+    w.lastW=weight;w.lastR=reps;selectedExercise='';save();render();
+  },
+  deleteSet:d=>{
+    const w=currentWorkout();if(!w)return;
+    const [set]=w.detail.sets.splice(Number(d.v),1);
+    if(set&&!w.detail.sets.some(s=>s.group===set.group))S.stats.muscles[set.group]=Math.max(0,(S.stats.muscles[set.group]||0)-1);
+    save();render();
+  },
+  finishJournal:()=>{const w=currentWorkout();if(w)w.detail.done=true;A.deferJournal();},
+  deferJournal:()=>{S.gym.current=null;selectedGroup='';selectedExercise='';save();render();},
+  catalogAdd:d=>{
+    const name=$('#catalog-name').value.trim(),kind=d.v;if(!name)return;
+    const group=S.gym.groups.find(x=>x.id===selectedGroup);
+    const names=kind==='sport'?S.activities.map(x=>x.n):kind==='group'?S.gym.groups.map(x=>x.n):group?.ex;
+    if(!names||names.some(n=>n.toLowerCase()===name.toLowerCase()))return alert('Такое название уже есть.');
+    if(kind==='sport')S.activities.push(SPORTS.find(x=>x.n.toLowerCase()===name.toLowerCase())||{id:uid(),n:name});
+    else if(kind==='group'){
+      const original=GROUPS.find(([,n])=>n.toLowerCase()===name.toLowerCase());
+      S.gym.groups.push({id:original?.[0]||uid(),n:name,ex:original?[...original[2]]:[]});
+    }else group.ex.push(name);
+    save();render();
+  },
+  catalogRemove:d=>{
+    const i=Number(d.index),kind=d.v;
+    if(kind==='sport'){
+      const a=S.activities[i];if(!a)return;
+      if(S.rules.requirements[a.id])return alert('Эта тренировка нужна для выплаты. Сначала измени условия в банке.');
+      S.activities.splice(i,1);
+    }else if(kind==='group')S.gym.groups.splice(i,1);
+    else S.gym.groups.find(x=>x.id===selectedGroup)?.ex.splice(i,1);
+    save();render();
+  },
+  goalForm:d=>{goalEditorId=d.v||null;modalState='goal';renderModal();},
+  taskForm:d=>{goalEditorId=d.v;taskEditorId=d.task||null;modalState='task';renderModal();},
+  deleteGoal:d=>{
+    if(modalState!=='goal'||!goalEditorId||d.v!==goalEditorId)return;
+    S.goals=S.goals.filter(g=>g.id!==goalEditorId);
+    goalEditorId=null;taskEditorId=null;modalState=null;
+    save();render();
+  },
+  saveGoal:()=>{
+    const n=$('#goal-name').value.trim(),area=$('#goal-area').value,color=goalColor($('#goal-color').value);
+    if(!n){$('.form-msg').textContent='Введи название цели.';return;}
+    let g=S.goals.find(x=>x.id===goalEditorId);
+    if(g){Object.assign(g,{n,area,color});modalState=null;}
+    else{g={id:uid(),n,area,color,tasks:[]};S.goals.push(g);goalEditorId=g.id;taskEditorId=null;modalState='task';}
+    save();render();
+  },
+  saveTask:()=>{
+    const g=S.goals.find(x=>x.id===goalEditorId);if(!g)return;
+    const n=$('#task-name').value.trim(),type=$('#task-kind').value;
+    const target=type==='time'?Math.round(Number($('#task-hours').value)*60):0;
+    if(!n||type==='time'&&(!Number.isSafeInteger(target)||target<1)){$('.form-msg').textContent='Укажи название и длительность для подцели по времени.';return;}
+    const old=g.tasks.find(t=>t.id===taskEditorId);
+    if(old)Object.assign(old,{n,target});
+    else{g.tasks.push({id:uid(),n,type,target,done:false});g.archived=false;}
+    modalState=null;save();render();
+  },
+  toggleTask:d=>{
+    const t=S.goals.find(g=>g.id===d.goal)?.tasks.find(t=>t.id===d.v);
+    if(t?.type==='check'){t.done=!t.done;save();render();}
+  },
+  archiveGoal:d=>{const g=S.goals.find(x=>x.id===d.v);if(g){g.archived=!g.archived;save();render();}},
+  quickGoal:()=>{
+    const n=$('#quick-goal').value.trim(),target=Math.round(Number($('#quick-hours').value)*60);
+    if(!n||!Number.isSafeInteger(target)||target<1){$('#quick-error').textContent='Введи название и цель в часах.';return;}
+    const t={id:uid(),n:'Учебное время',type:'time',target};
+    S.goals.push({id:uid(),n,area:'Учёба',color:GOAL_COLORS[0],tasks:[t]});
+    $('#allocation-rows').insertAdjacentHTML('beforeend',allocationRow({id:t.id,n:n+' · '+t.n},0));
+    $('#quick-goal').value='';$('#quick-hours').value='';$('#quick-error').textContent='';save();
+  },
+  saveAllocation:()=>{
+    const entry=S.logStudy.find(l=>l.id===allocationId);
+    if(!entry)return;
+    const parts=$$('[data-minutes]').map(x=>({id:x.dataset.minutes,name:x.dataset.name,min:Number(x.value||0)}));
+    if(parts.some(x=>!Number.isInteger(x.min)||x.min<0)||parts.reduce((n,p)=>n+p.min,0)>entry.minutes){
+      $('.form-msg').textContent='Укажи целые минуты в пределах длительности сессии.';return;
+    }
+    entry.parts=parts.filter(x=>x.min>0);modalState=null;save();render();
+  },
+  buyGame:()=>{
+    if(S.stats.keyBalance<5)return;
+    S.stats.keyBalance-=5;S.stats.savedGames++;snd('done');save();render();
+  },
+
   tab:d=>{
-    S.tab=d.v;
+    historyLimit=40;S.tab=d.v;
     modalState=null;
     profDrawerOpen=false;
     save();
@@ -3571,16 +4007,8 @@ const A={
     snd('tick');
     render();
   },
-  histTab:d=>{S.histTab=d.v;save();render();snd('tick')},
+  histTab:d=>{historyLimit=40;S.histTab=d.v;save();render();snd('tick')},
   mute:()=>{S.mute=!S.mute;save();render();snd('tick')},
-  theme:()=>{
-    S.theme=S.theme==='light'?'dark':'light';
-    applyTheme();
-    drawGrid();
-    save();
-    render();
-    snd('done');
-  },
   sel:d=>{S.sel.study=+d.v;save();render();snd('tick')},
   startStudy:()=>{
     S.run.study={phase:'doors',target:Math.max(10,S.sel.study),prog:0,earned:0,step:0,d:pickDoors(),op:-1,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
@@ -3602,10 +4030,10 @@ const A={
       return;
     }
     r.op=idx;snd('open'+(idx%3));shake();render();
-    setTimeout(()=>resolveDoor(idx),750);
+    setTimeout(()=>{if(S.run.study===r)resolveDoor(idx);},750);
   },
   useItem:d=>{
-    const r=S.run.study;if(!r)return;
+    const r=S.run.study;if(!r||(r.phase==='doors'&&r.op>=0))return;
     const id=d.v;
     if(id==='reroll'&&(S.inv.reroll||0)>0&&!r.usedReroll&&r.phase==='doors'){
       S.inv.reroll--;
@@ -3638,7 +4066,8 @@ const A={
     S.inv.bank_game--;
     S.stats.savedGames=(S.stats.savedGames||0)+1;
     r.step=(r.step||0)+1;
-    r.cur=null;
+    r.cur=null;r.scouted={};r.scouting=false;
+    recordDailyActivity(0,0,1);
     r.phase='doors';r.d=pickDoors();r.op=-1;
     snd('done');burst('#eba43d',70);
     save();render();
@@ -3663,22 +4092,19 @@ const A={
     snd('tick');save();render();
   },
   finishRoom:()=>finishStudyRoom(),
-  cancelRoom:()=>{
-    const r=S.run.study;if(!r)return;
-    r.cur=null;r.phase='doors';r.d=pickDoors();r.op=-1;snd('tick');save();render();
-  },
   cashoutAsk:()=>{modalState='cashout';snd('tick');renderModal()},
   cashoutConfirm:()=>{
     const r=S.run.study;
-    if(r&&r.earned>0){
+    modalState=null;
+    if(r&&r.phase!=='done'&&r.prog>0){
       const total=creditMoney(r.earned,true);
-      addStudyLog(`Учёба (досрочный вывод): ${hm(r.prog)}`,total);
+      archiveRun(r,'Досрочное завершение',total);
       snd('done');burst('#d49b4b',90);
     }
-    S.run.study=null;modalState=null;save();render();
+    S.run.study=null;save();render();
   },
   resetAsk:()=>{modalState='reset';snd('tick');renderModal()},
-  resetConfirm:()=>{S.run.study=null;modalState=null;snd('tick');save();render()},
+  resetConfirm:()=>{modalState=null;if(S.run.study?.prog)archiveRun(S.run.study,'Забег сброшен',0);S.run.study=null;snd('tick');save();render()},
   endStudyRun:()=>{S.run.study=null;snd('tick');save();render()},
   closeModal:()=>{modalState=null;snd('tick');renderModal()},
   closeModalBg:(d,e)=>{if(e&&e.target.classList.contains('modal-bg')){modalState=null;snd('tick');renderModal();}},
@@ -3687,10 +4113,10 @@ const A={
   buyItem:d=>{
     const id=d.v;
     const it=SHOP_ITEMS.find(x=>x.id===id);if(!it)return;
-    const cost=id==='reroll'?(1+(S.shop.rerollBuys||0)):it.baseCost;
+    const cost=shopPrice(it);
     if((S.stats.keyBalance||0)<cost)return;
     S.stats.keyBalance-=cost;
-    if(id==='reroll')S.shop.rerollBuys=(S.shop.rerollBuys||0)+1;
+    S.shop.purchases[id]=(S.shop.purchases[id]||0)+1;
     S.inv[id]=(S.inv[id]||0)+1;
     snd('done');burst(it.col,65);
     save();render();
@@ -3701,19 +4127,17 @@ const A={
     if(!isFree&&(S.stats.keyBalance||0)<1)return;
     if(isFree)S.stats.chests--;
     else S.stats.keyBalance--;
-    save();
 
     /* Weighted random pick for index 36 */
     const totW=SHOP_ITEMS.reduce((a,b)=>a+b.w,0);
     let rw=Math.random()*totW, winItem=SHOP_ITEMS[0];
     for(const it of SHOP_ITEMS){rw-=it.w;if(rw<=0){winItem=it;break}}
 
+    S.inv[winItem.id]=(S.inv[winItem.id]||0)+1;
+    S.shop.lastWon=winItem.n;
+    save();
     const track=$('#roulette-track');
-    if(!track){
-      S.inv[winItem.id]=(S.inv[winItem.id]||0)+1;
-      S.shop.lastWon=winItem.n;
-      save();render();return;
-    }
+    if(!track){render();return;}
 
     caseSpinning=true;
     const winIdx=36;
@@ -3737,10 +4161,8 @@ const A={
 
     setTimeout(()=>{
       caseSpinning=false;
-      S.inv[winItem.id]=(S.inv[winItem.id]||0)+1;
-      S.shop.lastWon=winItem.n;
       snd('key');burst(winItem.col,130);
-      save();render();
+      if(S.tab==='shop')render();
     },3500);
   },
 
@@ -3768,52 +4190,6 @@ const A={
   },
 
   /* WORKOUT ACTIONS */
-  toggleMuscle:d=>{
-    const id=d.v,arr=S.wkForm.sel;
-    const idx=arr.indexOf(id);
-    if(idx>=0)arr.splice(idx,1);else arr.push(id);
-    snd('tick');save();render();
-  },
-  logWorkout:()=>{
-    const durInp=$('#wk-dur-inp'),custInp=$('#custom-act-inp');
-    const dur=durInp?Math.max(0,+durInp.value||0):0;
-    const cust=custInp?custInp.value.trim():'';
-    const sel=S.wkForm.sel.length?S.wkForm.sel:['home'];
-
-    S.stats.wk=(S.stats.wk||0)+1;
-    if(dur>0)S.stats.wkMin=(S.stats.wkMin||0)+dur;
-
-    const names=[];
-    sel.forEach(id=>{
-      S.stats.muscles[id]=(S.stats.muscles[id]||0)+1;
-      const m=MUSCLES.find(x=>x.id===id);
-      if(m)names.push(id==='other'&&cust?`Другое (${cust})`:m.n);
-    });
-    if(sel.includes('other')&&cust){
-      S.stats.customActs[cust]=(S.stats.customActs[cust]||0)+1;
-    }
-
-    const label=`Тренировка: ${names.join(', ')}${dur?` (${dur} мин)`:''}`;
-    const earned=creditMoney(S.cfg.rw,true);
-    recordDailyActivity(0,1,0);
-    addWorkLog(label,earned);
-    S.wkForm.dur='';S.wkForm.customName='';
-    snd('key');burst('#4f9e69',110);
-    save();render();
-    return label;
-  },
-  logWorkoutAndJournal:()=>{
-    const lbl=A.logWorkout();
-    S.gym.draft.workoutRef=lbl;
-    S.tab='gym';
-    save();render();
-  },
-  openGymForWorkout:d=>{
-    S.gym.draft.workoutRef=d.v||'Тренировка';
-    S.tab='gym';
-    snd('tick');save();render();
-  },
-
   /* BODY METRICS */
   addBodyMetric:()=>{
     const w=parseFloat($('#bm-weight')?.value);
@@ -3825,24 +4201,6 @@ const A={
   },
 
   /* EXERCISE JOURNAL & PR ACTIONS */
-  pickExName:d=>{
-    S.gym.draft.exName=d.v;
-    snd('tick');save();render();
-  },
-  addGymSet:()=>{
-    const ex=($('#gym-ex-inp')?.value||S.gym.draft.exName||'Упражнение').trim();
-    const w=Math.max(0,parseFloat($('#gym-w-inp')?.value)||0);
-    const r=Math.max(1,parseInt($('#gym-r-inp')?.value,10)||1);
-    S.gym.draft.exName=ex;
-    S.gym.draft.weight=w;
-    S.gym.draft.reps=r;
-    S.gym.draft.sets.push({ex,w,r});
-    snd('tick');save();render();
-  },
-  delGymSet:d=>{
-    S.gym.draft.sets.splice(+d.v,1);
-    snd('tick');save();render();
-  },
   saveGymSession:()=>{
     const d=S.gym.draft;
     if(!d.sets.length)return;
@@ -3850,9 +4208,9 @@ const A={
     const today=toDayKey();
     d.sets.forEach(s=>{
       const e1rm=Math.round(s.w*(1+s.r/30));
-      const cur=S.gym.prs[s.ex];
+      const cur=Object.hasOwn(S.gym.prs,s.ex)?S.gym.prs[s.ex]:null;
       if(!cur||s.w>cur.maxW||(s.w===cur.maxW&&s.r>cur.reps)){
-        S.gym.prs[s.ex]={maxW:s.w,reps:s.r,e1rm,date:today};
+        Object.defineProperty(S.gym.prs,s.ex,{value:{maxW:s.w,reps:s.r,e1rm,date:today},enumerable:true,writable:true,configurable:true});
       }
     });
     S.gym.sessions.unshift({
@@ -3861,7 +4219,7 @@ const A={
       note,
       sets:d.sets.slice()
     });
-    S.gym.sessions=S.gym.sessions.slice(0,50);
+
     S.gym.draft.sets=[];
     S.gym.draft.note='';
     S.gym.draft.workoutRef='';
@@ -3903,11 +4261,14 @@ const A={
   /* BANK & WEEKLY PLAN */
   topup:()=>{
     const v=Math.round(+$('#am').value);if(!(v>0))return;
+    if(!Number.isSafeInteger(v))return;
     S.bank.card+=v;addBankLog('Пополнение депозита карты',v);
     snd('done');save();render();
   },
   payout:()=>{
-    let v=Math.round(+$('#pm').value);v=Math.min(v,S.bank.pend);if(!(v>0))return;
+    const v=Math.round(+$('#pm').value);
+    if(!Number.isSafeInteger(v)||v<=0||v>withdrawable())return alert('Проверь доступную сумму выплаты.');
+    S.rules.counts={};
     S.bank.pend-=v;S.bank.paid+=v;S.bank.card=Math.max(0,S.bank.card-v);
     addBankLog('Выплата заработанных средств',-v);
     snd('done');save();render();
@@ -3922,7 +4283,7 @@ const A={
     S.weeklyPlan.created=true;
     if(!S.weeklyPlan.creationBonusPaid){
       S.weeklyPlan.creationBonusPaid=true;
-      const bonus=creditMoney(300,false);
+      const bonus=creditMoney(planReward(false),false);
       S.stats.tokens=(S.stats.tokens||0)+1;
       addBankLog(`Бонус за составление недельного плана (${h} ч, ${w} трен.)`,bonus);
     }
@@ -3951,7 +4312,7 @@ const A={
     snd('done');save();render();
   },
   wipeAsk:()=>{modalState='wipe';snd('tick');renderModal()},
-  wipeConfirm:()=>{S=DEF();modalState=null;save();render();drawGrid()}
+  wipeConfirm:()=>{S=normalizeState(null);modalState=null;save();render();drawGrid()}
 };
 
 $('#import-file-inp')?.addEventListener('change',e=>{
@@ -3972,22 +4333,25 @@ $('#import-file-inp')?.addEventListener('change',e=>{
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');
+  if((!cloudLoaded||!S.setupDone||modalState)&&!e.target.closest('#modal-root'))return;
   if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset,e);
 });
 
 document.addEventListener('input',e=>{
+  if(e.target.id==='goal-color'){
+    e.target.closest('.entry-form')?.style.setProperty('--form-accent',goalColor(e.target.value));return;
+  }
+  if(e.target.dataset.detail){updateDetail(e.target,false);return;}
+  if(e.target.dataset.volume)e.target.parentElement.querySelector('output').value=e.target.value+'%';
+  if(e.target.hasAttribute('data-minutes'))updateAllocationTotal();
   if(e.target.id==='prof-nick-inp')S.profile.nick=e.target.value;
   if(e.target.id==='prof-title-inp')S.profile.title=e.target.value;
-  if(e.target.id==='wk-dur-inp')S.wkForm.dur=e.target.value;
-  if(e.target.id==='custom-act-inp')S.wkForm.customName=e.target.value;
-  if(e.target.id==='gym-ex-inp')S.gym.draft.exName=e.target.value;
-  if(e.target.id==='gym-w-inp')S.gym.draft.weight=+e.target.value;
-  if(e.target.id==='gym-r-inp')S.gym.draft.reps=+e.target.value;
-  if(e.target.id==='gym-note-inp')S.gym.draft.note=e.target.value;
 });
 
 document.addEventListener('change',e=>{
   const t=e.target;
+  if(t.dataset.detail){updateDetail(t);return;}
+  if(t.id==='task-kind'){$('#task-hours-label').hidden=t.value!=='time';return;}
   if(t.dataset.door!==undefined){
     const idx=+t.dataset.door,f=t.dataset.df,val=Math.max(0,+t.value||0);
     const d=S.cfg.doors[idx];
@@ -3998,6 +4362,7 @@ document.addEventListener('change',e=>{
     }
     return;
   }
+  if(t.dataset.volume){S.audio[t.dataset.volume]=Math.round(Number(t.value));save();snd(t.dataset.volume==='timer'?'alarm':'tick');return;}
   const k=t.dataset.k;if(!k)return;
   if(k==='selStudy')S.sel.study=Math.max(10,+t.value||60);
   else if(k==='full')S.cfg.full=t.checked;
@@ -4007,10 +4372,11 @@ document.addEventListener('change',e=>{
 
 /* TIMER LOOP (STUDY LABYRINTH) */
 setInterval(()=>{
+  if(S.tab==='shop'&&cloudLoaded&&S.setupDone&&!caseSpinning&&S.shop.day!==toDayKey()){syncCalendarState();render();}
   const r=S.run.study;
-  if(!r||r.phase!=='timer'||!r.cur||r.cur.paused)return;
+  if(!cloudLoaded||!S.setupDone||!r||r.phase!=='timer'||!r.cur||r.cur.paused)return;
   r.cur.left=r.cur.end-Date.now();
-  if(r.cur.left<=0){finishStudyRoom();return}
+  if(r.cur.left<=0){snd('alarm');finishStudyRoom();return}
   if(S.tab==='study'){
     const t=$('#tm'),g=$('#ring');
     if(t)t.textContent=mmss(r.cur.left);
@@ -4029,7 +4395,7 @@ const rgb=h=>{
 function drawGrid(){
   W=bg.width=fx.width=innerWidth;H=bg.height=fx.height=innerHeight;
   bx.clearRect(0,0,W,H);
-  bx.strokeStyle=S.theme==='light'?'rgba(60,50,40,0.04)':'rgba(212,155,75,0.03)';
+  bx.strokeStyle='rgba(212,155,75,0.03)';
   bx.lineWidth=1;
   const s=56;
   bx.beginPath();
@@ -4058,7 +4424,7 @@ function burst(h,n=60){
 function shake(){if(RM)return;const w=$('.wrap');w.classList.add('shake');setTimeout(()=>w.classList.remove('shake'),450)}
 function loop(){
   fc.clearRect(0,0,W,H);PT=PT.filter(p=>!p.t||p.l>0);
-  const ambientCol=S.theme==='light'?'75,68,60':'255,105,30';
+  const ambientCol='255,105,30';
   for(const p of PT){
     p.x+=p.vx;p.y+=p.vy;
     if(p.t){p.vy+=.06;p.l-=p.d}
@@ -4076,9 +4442,11 @@ addEventListener('resize',drawGrid);
 /* KEYBOARD SHORTCUTS */
 document.addEventListener('keydown',e=>{
   if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+  if(!cloudLoaded||!S.setupDone)return;
   const k=e.key;
   if(k==='Escape'&&modalState){A.closeModal();return;}
   if(k==='m'||k==='M'||k==='ь'||k==='Ь'){A.mute();return;}
+  if(modalState||e.target.closest('button'))return;
   if(S.tab==='study'){
     const r=S.run.study;
     if(!r){if(k==='Enter')A.startStudy();return;}
@@ -4090,6 +4458,7 @@ document.addEventListener('keydown',e=>{
 });
 
 render();
+loadCloudProfile();
 })();
 </script>
 </body>
