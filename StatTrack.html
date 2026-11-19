@@ -1543,6 +1543,7 @@ details.card>summary{cursor:pointer;font-weight:700}#goal-archive .goal-card{mar
 .goal-card .time-task>div{flex-wrap:wrap}
 @media(max-width:375px){.goal-options{gap:10px}.entry-form{gap:16px}#goal-archive{padding-inline:10px}}
 
+.login-actions{display:flex;flex-wrap:wrap;gap:10px}.login-actions .btn{min-height:44px;flex:1 1 155px}
 </style>
 </head>
 <body>
@@ -1817,15 +1818,12 @@ function normalizeState(rawObj){
   return s;
 }
 
-let S=null;
-try{
-  const raw=localStorage.getItem(K);
-  if(raw)S=JSON.parse(raw);
-}catch(e){}
-S=normalizeState(S);
-/* Always open on the clean Start screen on launch */
-S.tab='home';
-
+function readLocalProfile(key){
+  try{
+    const raw=JSON.parse(localStorage.getItem(key));
+    return raw?.stats&&raw?.bank?normalizeState(raw):null;
+  }catch{return null;}
+}
 let modalState=null;
 let profDrawerOpen=false;
 let showAllQuestsHome=false;
@@ -1837,16 +1835,43 @@ if(tg){try{tg.ready();tg.expand();}catch(e){}}
 
 // Render remains the primary store. Telegram keeps a second copy, including long histories.
 const onlineProfile=Boolean(tg?.initData&&tg.initDataUnsafe?.user?.id);
-const localKey=onlineProfile?K+'_'+tg.initDataUnsafe.user.id:K;
-const pendingKey=localKey+'_pending';
-let cloudLoaded=false,syncError=false,loading=false,flushing=false,saveTimer=null,retryTimer=null;
-let hasScopedCopy=false,serverReady=!onlineProfile;
-if(onlineProfile){
-  try{
-    const saved=localStorage.getItem(localKey);
-    if(saved){S=normalizeState(JSON.parse(saved));hasScopedCopy=true;}
-    S.tab='home';
-  }catch{}
+const accountKey=onlineProfile?K+'_'+tg.initDataUnsafe.user.id:null;
+const guestKey=(accountKey||K)+'_guest';
+const modeKey=(accountKey||K)+'_mode';
+const pendingKey=accountKey?accountKey+'_pending':null;
+let guestMode=!onlineProfile;
+try{if(onlineProfile)guestMode=localStorage.getItem(modeKey)==='guest';}catch{}
+function guestProfile(){
+  return readLocalProfile(guestKey)||(!onlineProfile&&readLocalProfile(K))||normalizeState(null);
+}
+let accountCopy=!guestMode&&onlineProfile?readLocalProfile(accountKey):null;
+let hasScopedCopy=Boolean(accountCopy);
+let S=guestMode?guestProfile():(accountCopy||normalizeState(null));
+accountCopy=null;
+S.tab='home';
+let cloudLoaded=guestMode,serverReady=false,loading=false,flushing=false;
+let syncError='',saveTimer=null,retryTimer=null,loadGeneration=0,activeLoad=null;
+function startGuest(){
+  if(!guestMode)changeMode(true);
+  if(!guestMode||S.setupDone)return;
+  if(!S.profileStepDone&&S.profile.nick==='Негорящий')S.profile.nick='Гость';
+  S.setupDone=true;S.profileStepDone=true;
+  save();render();
+}
+function changeMode(guest){
+  if(!onlineProfile||guest===guestMode||(guest&&cloudLoaded&&serverReady))return;
+  clearTimeout(saveTimer);clearTimeout(retryTimer);
+  loadGeneration++;
+  activeLoad?.abort();activeLoad=null;loading=false;
+  guestMode=guest;
+  try{if(guest)localStorage.setItem(modeKey,'guest');else localStorage.removeItem(modeKey);}catch{}
+  const local=guest?guestProfile():readLocalProfile(accountKey);
+  hasScopedCopy=!guest&&Boolean(local);S=local||normalizeState(null);
+  S.tab='home';modalState=null;profDrawerOpen=false;goalEditorId=null;taskEditorId=null;allocationId=null;
+  selectedGroup='';selectedExercise='';
+  cloudLoaded=guest;serverReady=false;syncError='';setSyncMessage('');
+  syncCalendarState();render();
+  if(!guest)loadCloudProfile();
 }
 function setSyncMessage(msg){
   const el=$('#sync-state');if(el){el.hidden=!msg;el.textContent=msg;}
@@ -1855,30 +1880,51 @@ function laterWrite(delay=400){
   clearTimeout(saveTimer);saveTimer=setTimeout(flushSave,delay);
 }
 function storeLocal(raw){
-  try{localStorage.setItem(localKey,raw);return true;}
+  try{localStorage.setItem(guestMode?guestKey:accountKey,raw);return true;}
   catch{setSyncMessage('На устройстве недостаточно места для копии.');return false;}
 }
 function save(){
   if(!cloudLoaded)return;
   S.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);
   storeLocal(JSON.stringify(S));
-  if(onlineProfile){
+  if(!guestMode&&onlineProfile){
     try{localStorage.setItem(pendingKey,String(S.updatedAt));}catch{}
     laterWrite();
   }
 }
+function profileError(message,status=0){
+  const error=new Error(message);error.status=status;return error;
+}
+function missingProfile(data){
+  const message=String(data?.message||data?.error||data?.code||'').trim();
+  return data?.found===false||/^(?:(?:user|profile|state|save data|data)[ _-]+(?:not[ _-]+found|does not exist)|(?:профиль|пользователь|данные|сохранение) (?:не найд[её]н[а-я]*|отсутств[а-я]*))[.!]?$/i.test(message);
+}
+function savedState(data){
+  if(data===null)return null;
+  if(!data||typeof data!=='object'||Array.isArray(data))throw profileError('format');
+  if(missingProfile(data))return null;
+  if(data.error||data.success===false||data.ok===false)throw profileError('response');
+  if(data.stats&&data.bank)return data;
+  if(Object.hasOwn(data,'state'))return savedState(data.state);
+  if(Object.hasOwn(data,'data'))return savedState(data.data);
+  if(Object.keys(data).length===0)return null;
+  throw profileError('format');
+}
 async function backend(path,payload){
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),65000);
+  if(path==='load')activeLoad=controller;
   try{
     const response=await fetch(BACKEND_URL+'/api/'+path,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({initData:tg.initData,user_id:tg.initDataUnsafe.user.id,...payload}),signal:controller.signal});
     if(path==='load'&&response.status===404){
       const data=await response.json().catch(()=>null);
-      if(data&&/user|profile|профиль|пользователь/i.test(String(data.message||data.error||'')))return null;
+      if(missingProfile(data))return null;
     }
-    if(!response.ok)throw Error('HTTP '+response.status);
-    return path==='load'?await response.json():null;
-  }finally{clearTimeout(timeout);}
+    if(!response.ok)throw profileError('http',response.status);
+    if(path!=='load'||response.status===204)return null;
+    const data=await response.json().catch(()=>{throw profileError('format');});
+    return savedState(data);
+  }finally{clearTimeout(timeout);if(activeLoad===controller)activeLoad=null;}
 }
 function telegramStore(method,...args){
   return new Promise((resolve,reject)=>{
@@ -1894,7 +1940,7 @@ function chunkKeys(meta){
 }
 let previousBackup=null,backupBusy=false,nextBackup=null;
 async function readBackup(){
-  if(!onlineProfile||!tg.CloudStorage)return null;
+  if(guestMode||!onlineProfile||!tg.CloudStorage)return null;
   try{
     const head=JSON.parse(await telegramStore('getItem',K)||'null');
     if(!head||head.stats)return head;
@@ -1907,7 +1953,7 @@ async function readBackup(){
   }catch{return null;}
 }
 async function queueBackup(raw){
-  if(!tg?.CloudStorage)return;
+  if(guestMode||!tg?.CloudStorage)return;
   nextBackup=raw;
   if(backupBusy)return;
   backupBusy=true;
@@ -1935,7 +1981,7 @@ async function queueBackup(raw){
   }catch{}finally{backupBusy=false;}
 }
 async function flushSave(){
-  if(!cloudLoaded||!onlineProfile||!serverReady||flushing)return;
+  if(guestMode||!cloudLoaded||!onlineProfile||!serverReady||flushing)return;
   flushing=true;
   const raw=JSON.stringify(S),version=S.updatedAt;
   queueBackup(raw);
@@ -1956,37 +2002,56 @@ function moreRecent(candidate,current){
   if(candidate.updatedAt||current.updatedAt)return (candidate.updatedAt||0)>=(current.updatedAt||0);
   return score(candidate)>=score(current);
 }
+function loadProblem(error){
+  if(error.status===401||error.status===403)return 'Сервер отклонил вход через Telegram. Закрой мини-приложение и снова открой его из бота.';
+  if(error.status===404)return 'Адрес загрузки профиля на сервере не найден (HTTP 404).';
+  if(error.message==='format'||error.message==='response')return 'Сервер вернул неожиданный ответ при загрузке профиля.';
+  if(error.status)return 'Сервер не загрузил профиль (HTTP '+error.status+').';
+  return error.name==='AbortError'?'Сервер не ответил вовремя.':'Связаться с сервером не удалось.';
+}
 async function loadCloudProfile(){
-  if(loading||cloudLoaded&&serverReady)return;
-  loading=true;clearTimeout(retryTimer);
+  if(guestMode||loading||serverReady)return;
+  loading=true;syncError='';clearTimeout(retryTimer);
+  const generation=loadGeneration,wasOpen=cloudLoaded;
+  let replaced=false;
+  if(!cloudLoaded)renderModal();
   try{
-    if(onlineProfile){
-      const [loadResult,backup]=await Promise.all([backend('load',{}).then(value=>({value}),error=>({error})),readBackup()]);
-      if(!hasScopedCopy&&backup?.stats){S=normalizeState(backup);hasScopedCopy=true;}
-      if(loadResult.error){
-        if((hasScopedCopy||backup?.stats)&&S.setupDone){
-          cloudLoaded=true;
-          setSyncMessage('Открыта сохранённая копия. Изменения синхронизируются после подключения.');
-        }
-        throw loadResult.error;
-      }
-      const remote=loadResult.value;
-      const server=remote?.state?.stats?remote.state:remote;
-      if(moreRecent(backup,S))S=normalizeState(backup);
-      if((!hasScopedCopy&&!backup?.stats&&server?.stats)||moreRecent(server,S))S=normalizeState(server);
-      serverReady=true;setSyncMessage('');
-      if(!S.setupDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name)S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
-      S.tab='home';storeLocal(JSON.stringify(S));
-      if(S.updatedAt&&(!server?.stats||S.updatedAt>(server.updatedAt||0)))laterWrite(100);
-      else try{localStorage.removeItem(pendingKey);}catch{}
+    const [result,backup]=await Promise.all([backend('load',{}).then(value=>({value}),error=>({error})),readBackup().catch(()=>null)]);
+    if(generation!==loadGeneration)return;
+    if(moreRecent(backup,S)&&(!wasOpen||backup.updatedAt!==S.updatedAt)){
+      replaced=true;S=normalizeState(backup);hasScopedCopy=true;storeLocal(JSON.stringify(S));
     }
-    cloudLoaded=true;syncError=false;syncCalendarState();
-  }catch{
-    syncError=true;retryTimer=setTimeout(loadCloudProfile,8000);
-  }finally{loading=false;render();}
+    if(result.error)throw result.error;
+    const server=result.value;
+    if(moreRecent(server,S)&&(!wasOpen||server.updatedAt!==S.updatedAt)){
+      const tab=S.tab;S=normalizeState(server);S.tab=tab;replaced=true;
+    }
+    serverReady=true;setSyncMessage('');
+    if(!S.setupDone&&!S.profileStepDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name)S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
+    if(!cloudLoaded)S.tab='home';
+    cloudLoaded=true;syncCalendarState();storeLocal(JSON.stringify(S));
+    if(S.updatedAt&&(!server||S.updatedAt>(server.updatedAt||0)))laterWrite(100);
+    else try{localStorage.removeItem(pendingKey);}catch{}
+  }catch(error){
+    if(generation!==loadGeneration)return;
+    syncError=loadProblem(error);
+    if(hasScopedCopy){
+      if(!cloudLoaded){S.tab='home';cloudLoaded=true;syncCalendarState();}
+      setSyncMessage(syncError+' Открыта сохранённая копия профиля.');
+    }
+    if(!error.status||error.status===429||error.status>=500){
+      if(error.message!=='format'&&error.message!=='response')retryTimer=setTimeout(loadCloudProfile,12000);
+    }
+  }finally{
+    if(generation===loadGeneration){
+      loading=false;
+      if(!cloudLoaded)renderModal();
+      else if(!wasOpen||replaced||(serverReady&&S.tab==='settings'&&!modalState))render();
+    }
+  }
 }
 document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='hidden'&&onlineProfile){
+  if(document.visibilityState==='hidden'&&!guestMode&&onlineProfile){
     try{if(localStorage.getItem(pendingKey))flushSave();}catch{}
   }
 });
@@ -3421,7 +3486,11 @@ function historyView(){
   </section>`;
 }
 function settingsView(){
-  return `<section class="card cut"><h2>Экран и звук</h2><div class="row">
+  const accountPanel=guestMode?`<section class="card cut"><h2>Гостевой профиль</h2><p class="mut">Прогресс сохраняется на этом устройстве.</p>
+    ${onlineProfile?'<button class="btn cy" data-a="accountLogin">Войти через Telegram</button>':''}</section>`:
+    !serverReady?`<section class="card cut"><h2>Профиль Telegram</h2><button class="btn cy" data-a="retryLoad">Повторить подключение</button>
+    <button class="btn gh" data-a="enterGuest">Зайти как гость</button></section>`:'';
+  return `${accountPanel}<section class="card cut"><h2>Экран и звук</h2><div class="row">
     <button class="btn gh" data-a="fullscreen">Полный экран</button>
     <button class="btn gh" data-a="showModal" data-v="audio">Громкость</button></div></section>
   <section class="card cut" style="border-color:var(--cy)">
@@ -3679,9 +3748,9 @@ function withdrawable(){
 }
 function bankRulesView(){
   const r=S.rules;
-  return `<h3>Тренировки до выплаты</h3><div class="chips">${Object.entries(r.requirements).map(([id,n])=>`<span class="chip">${esc(S.activities.find(x=>x.id===id)?.n||id)} · ${r.counts[id]||0}/${n}</span>`).join('')}</div>
+  return `<h3>Тренировки до выплаты</h3>${Object.keys(r.requirements).length?'':'<p class="mut">Выбери тренировки для первой выплаты.</p>'}<div class="chips">${Object.entries(r.requirements).map(([id,n])=>`<span class="chip">${esc(S.activities.find(x=>x.id===id)?.n||id)} · ${r.counts[id]||0}/${n}</span>`).join('')}</div>
     <p class="mut">После каждой выплаты счётчик тренировок начинается заново. Доступная сумма ограничена остатком депозита и заработанной суммой.</p>
-    <button class="btn gh" data-a="showModal" data-v="rules" ${Date.now()<r.changed+FORTNIGHT?'disabled':''}>Изменить условия</button>
+    <button class="btn gh" data-a="showModal" data-v="rules" ${Date.now()<r.changed+FORTNIGHT?'disabled':''}>${Object.keys(r.requirements).length?'Изменить условия':'Выбрать условия выплаты'}</button>
     ${Date.now()<r.changed+FORTNIGHT?`<small class="mut">Можно изменить с ${new Date(r.changed+FORTNIGHT).toLocaleString('ru-RU')}</small>`:''}`;
 }
 function goalMinutes(){
@@ -3795,11 +3864,15 @@ function allocationForm(entry){
 function allocationRow(g,n){return `<label class="goal-row">${esc(g.n)}<input type="number" min="0" step="1" inputmode="numeric" data-minutes="${esc(g.id)}" data-name="${esc(g.n)}" value="${n}"></label>`;}
 function renderExtraModal(){
   if(!cloudLoaded){
-    modalShell('Профиль Telegram',syncError?`<p class="mut">Не удалось загрузить профиль с сервера. Повторная попытка через несколько секунд.</p><button class="btn cy" data-a="retryLoad">Повторить сейчас</button>`:'<p class="mut">Загружаем сохранённый прогресс…</p>',false);
+    modalShell('Профиль Telegram',`<div class="entry-form">
+      <p class="mut" role="status">${esc(syncError||'Загружаем сохранённый прогресс…')}</p>
+      <div class="login-actions">${syncError?'<button class="btn cy" data-a="retryLoad">Повторить сейчас</button>':''}
+      <button class="btn gh" data-a="enterGuest">Зайти как гость</button></div>
+      <small class="mut">Гостевой прогресс сохраняется отдельно на этом устройстве.</small></div>`,false);
     return true;
   }
   if(!S.setupDone&&!S.profileStepDone){
-    modalShell('Настрой свой профиль',`<div class="entry-form">
+    modalShell(guestMode?'Гостевой профиль':'Настрой свой профиль',`<div class="entry-form">
       <small class="mut">Шаг 1 из 2</small>
       <label class="entry-field entry-primary" for="setup-nick">Твой ник
         <input type="text" id="setup-nick" maxlength="24" value="${esc(S.profile.nick)}" autocomplete="nickname">
@@ -3808,6 +3881,9 @@ function renderExtraModal(){
         <input type="text" id="setup-title" maxlength="36" value="${esc(S.profile.title)}">
       </label>
       <div class="entry-actions"><p class="form-msg" role="status"></p><button class="btn cy" data-a="nextSetup">Далее</button></div>
+      ${guestMode?'<small class="mut">Гостевой прогресс хранится на этом устройстве.</small>':''}
+      ${guestMode&&!onlineProfile?'<button class="btn gh" data-a="enterGuest">Зайти как гость</button>':''}
+      ${guestMode&&onlineProfile?'<button class="btn gh" data-a="accountLogin">Вернуться к входу через Telegram</button>':''}
     </div>`,false);return true;
   }
   if(modalState==='goal'){modalShell(goalEditorId?'Настроить цель':'Добавить цель',goalForm(S.goals.find(g=>g.id===goalEditorId)));return true;}
@@ -3840,6 +3916,8 @@ function renderExtraModal(){
 const A={
   showModal:d=>{modalState=d.v;renderModal();},
   retryLoad:()=>loadCloudProfile(),
+  enterGuest:startGuest,
+  accountLogin:()=>changeMode(false),
   moreHistory:()=>{historyLimit+=40;render();},
   studyHistory:()=>{S.histTab='study';A.tab({v:'history'});},
   editAllocation:d=>{allocationId=d.v;modalState='allocation';renderModal();},
