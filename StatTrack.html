@@ -1883,6 +1883,39 @@ details.card>summary{cursor:pointer;font-weight:700}#goal-archive .goal-card{mar
 }
 .admin-crown-btn:hover { opacity: 0.55; }
 .admin-crown-btn.active { opacity: 0.9; color: var(--cy); }
+
+/* === V6: MUSCLE GROUP QUICK-ADD (+) === */
+.pick-row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+.pick-row .pick {
+  flex: 1;
+  min-width: 0;
+}
+.group-add-btn {
+  width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--cy);
+  font: 700 20px 'Inter', sans-serif;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.group-add-btn:hover {
+  border-color: var(--cy);
+}
+.group-add-btn.added {
+  border-color: var(--gr);
+  background: color-mix(in srgb, var(--gr) 22%, var(--surface));
+  color: var(--gr);
+  font-size: 16px;
+}
 </style>
 </head>
 <body>
@@ -2572,6 +2605,10 @@ function syncCalendarState(){
     S.weeklyPlan.created=false;
     S.weeklyPlan.creationBonusPaid=false;
     S.weeklyPlan.completedPaid=false;
+  }
+  if(S.rules.weekKey!==curWeek){
+    S.rules.weekKey=curWeek;
+    S.rules.counts={};
   }
   if(S.streak.lastDate&&S.streak.lastDate!==today){
     const d1=new Date(S.streak.lastDate+'T00:00:00');
@@ -3604,12 +3641,19 @@ function prepareWorkout(w){
   }
   if(!w.detail){
     const m=String(w.txt||'').match(/\((\d+) мин\)\s*$/);
-    w.detail={minutes:m?Number(m[1]):0,lanes:0,note:'',sets:[],done:false};
+    w.detail={minutes:m?Number(m[1]):0,lanes:0,note:'',sets:[],groups:[],done:false};
   }
+  if(!Array.isArray(w.detail.groups))w.detail.groups=[];
+}
+function workoutGroupNames(w){
+  const d=w.detail;if(!d)return [];
+  const ids=[...new Set([...(d.groups||[]),...(d.sets||[]).map(s=>s.group).filter(Boolean)])];
+  return ids.map(id=>S.gym.groups.find(g=>g.id===id)?.n||MUSCLES.find(m=>m.id===id)?.n||id);
 }
 function workoutSummary(w){
   const d=w.detail;if(!d)return 'Заполнить журнал';
-  const items=[d.minutes?hm(d.minutes):'',d.lanes?d.lanes+' дор.':'',d.sets.length?d.sets.length+' подх.':''];
+  const gNames=workoutGroupNames(w);
+  const items=[gNames.length?gNames.join(', '):'',d.minutes?hm(d.minutes):'',d.lanes?d.lanes+' дор.':'',d.sets.length?d.sets.length+' подх.':''];
   return items.filter(Boolean).join(' · ')||(d.done?'Заполнено':'Заполнить позже');
 }
 function journalEditor(w){
@@ -3617,9 +3661,20 @@ function journalEditor(w){
   const group=S.gym.groups.find(g=>g.id===selectedGroup);
   const setRows=d.sets.map((s,i)=>`<div class="entry-row"><span>${esc(s.ex)} · ${s.w} кг × ${s.r}</span><button class="icon-btn" data-a="deleteSet" data-v="${i}" aria-label="Удалить подход">×</button></div>`).join('');
   const choice=(action,id,n)=>`<button class="pick" data-a="${action}" data-v="${esc(id)}">${esc(n)} <span>›</span></button>`;
+  const pickedNames=workoutGroupNames(w);
   let content='';
   if(strength&&!group){
-    content=`<h3>Какие группы мышц тренировались?</h3><div class="pick-list">${S.gym.groups.map(g=>choice('groupPick',g.id,g.n)).join('')}</div>${editList('group',S.gym.groups.map(g=>g.n))}`;
+    content=`<h3>Какие группы мышц тренировались?</h3>
+    <p class="mut" style="font-size:12.5px;margin-bottom:6px">Нажми <b>+</b>, чтобы сразу добавить группу мышц без подходов, или нажми на название, чтобы записать подходы.</p>
+    ${pickedNames.length?`<div class="chips" style="margin-top:4px">${pickedNames.map(n=>`<span class="chip cut-sm on">✓ ${esc(n)}</span>`).join('')}</div>`:''}
+    <div class="pick-list">${S.gym.groups.map(g=>{
+      const cnt=d.sets.filter(s=>s.group===g.id).length;
+      const added=(d.groups||[]).includes(g.id)||cnt>0;
+      return `<div class="pick-row">
+        <button class="pick" data-a="groupPick" data-v="${esc(g.id)}">${esc(g.n)} <span>${cnt?cnt+' подх. · ':''}›</span></button>
+        <button class="group-add-btn ${added?'added':''}" data-a="toggleWorkoutGroup" data-v="${esc(g.id)}" title="${added?'Убрать группу из тренировки':'Добавить группу в тренировку'}" aria-pressed="${added}">${added?'✓':'+'}</button>
+      </div>`;
+    }).join('')}</div>${editList('group',S.gym.groups.map(g=>g.n))}`;
   }else if(strength&&!selectedExercise){
     content=`<button class="btn gh" data-a="groupsBack">‹ Группы мышц</button><h3>${esc(group.n)}</h3><div class="pick-list">${group.ex.map(n=>choice('exercisePick',n,n)).join('')}</div>${editList('exercise',group.ex)}`;
   }else if(strength){
@@ -4324,15 +4379,34 @@ function shopPrice(it){
   syncCalendarState();
   return it.baseCost+1+(S.shop.purchases[it.id]||0);
 }
+function getWeeklyRuleCounts(){
+  const curWeek=toWeekKey();
+  const bySport={};
+  let total=0;
+  for(const w of S.logWork||[]){
+    if(toWeekKey(w.t)!==curWeek)continue;
+    prepareWorkout(w);
+    bySport[w.kind]=(bySport[w.kind]||0)+1;
+    total++;
+  }
+  return {bySport,total};
+}
 function withdrawable(){
+  syncCalendarState();
   const rules=Object.entries(S.rules.requirements);
-  if(!S.setupDone||!rules.length||rules.some(([id,n])=>(S.rules.counts[id]||0)<n))return 0;
+  const {bySport}=getWeeklyRuleCounts();
+  if(!S.setupDone||!rules.length||rules.some(([id,n])=>(bySport[id]||0)<n))return 0;
   return Math.min(S.bank.pend,S.bank.card);
 }
 function bankRulesView(){
+  syncCalendarState();
   const r=S.rules;
-  return `<h3>Тренировки до выплаты</h3>${Object.keys(r.requirements).length?'':'<p class="mut">Выбери тренировки для первой выплаты.</p>'}<div class="chips">${Object.entries(r.requirements).map(([id,n])=>`<span class="chip">${esc(S.activities.find(x=>x.id===id)?.n||id)} · ${r.counts[id]||0}/${n}</span>`).join('')}</div>
-    <p class="mut">После каждой выплаты счётчик тренировок начинается заново. Доступная сумма ограничена остатком депозита и заработанной суммой.</p>
+  const {bySport,total}=getWeeklyRuleCounts();
+  return `<h3>Тренировки за эту неделю (всего: ${total})</h3>${Object.keys(r.requirements).length?'':'<p class="mut">Выбери тренировки для вывода средств.</p>'}<div class="chips">${Object.entries(r.requirements).map(([id,n])=>{
+    const done=bySport[id]||0;
+    return `<span class="chip ${done>=n?'on':''}">${esc(S.activities.find(x=>x.id===id)?.n||id)} · ${done}/${n}</span>`;
+  }).join('')}</div>
+    <p class="mut">Учитываются тренировки за текущую неделю (Пн–Вс). Счётчик автоматически обновляется каждый понедельник в 00:00. Доступная сумма ограничена остатком депозита и заработанной суммой.</p>
     <button class="btn gh" data-a="showModal" data-v="rules" ${Date.now()<r.changed+FORTNIGHT?'disabled':''}>${Object.keys(r.requirements).length?'Изменить условия':'Выбрать условия выплаты'}</button>
     ${Date.now()<r.changed+FORTNIGHT?`<small class="mut">Можно изменить с ${new Date(r.changed+FORTNIGHT).toLocaleString('ru-RU')}</small>`:''}`;
 }
@@ -4721,7 +4795,7 @@ const A={
       $('.form-msg').textContent='Выбери хотя бы одну тренировку и укажи целое количество.';return;
     }
     for(const x of rows)if(+x.value)requirements[x.dataset.quota]=+x.value;
-    S.rules={requirements,counts:{},changed:Date.now()};
+    S.rules={requirements,counts:{},weekKey:toWeekKey(),changed:Date.now()};
     S.setupDone=true;modalState=null;save();render();
   },
   recordWorkout:d=>{
@@ -4744,19 +4818,38 @@ const A={
   exercisePick:d=>{selectedExercise=d.v;render();},
   groupsBack:()=>{selectedGroup='';selectedExercise='';render();},
   exercisesBack:()=>{selectedExercise='';render();},
+  toggleWorkoutGroup:d=>{
+    const w=currentWorkout();if(!w)return;
+    prepareWorkout(w);
+    const id=d.v;
+    const hasSets=w.detail.sets.some(s=>s.group===id);
+    const idx=w.detail.groups.indexOf(id);
+    if(idx>=0){
+      w.detail.groups.splice(idx,1);
+      if(!hasSets)S.stats.muscles[id]=Math.max(0,(S.stats.muscles[id]||0)-1);
+    }else{
+      w.detail.groups.push(id);
+      if(!hasSets)S.stats.muscles[id]=(S.stats.muscles[id]||0)+1;
+    }
+    snd('tick');save();render();
+  },
   recordSets:()=>{
     const w=currentWorkout(),g=S.gym.groups.find(x=>x.id===selectedGroup);
     if(!w||!g?.ex.includes(selectedExercise))return;
+    prepareWorkout(w);
     const count=Number($('#set-count').value),weight=Number($('#set-weight').value),reps=Number($('#set-reps').value);
     if(!Number.isInteger(count)||count<1||count>50||!Number.isFinite(weight)||weight<0||weight>2000||!Number.isInteger(reps)||reps<1||reps>999)return alert('Проверь количество подходов, вес и повторения.');
-    if(!w.detail.sets.some(x=>x.group===g.id))S.stats.muscles[g.id]=(S.stats.muscles[g.id]||0)+1;
+    const hadGroup=w.detail.sets.some(x=>x.group===g.id)||w.detail.groups.includes(g.id);
+    if(!hadGroup)S.stats.muscles[g.id]=(S.stats.muscles[g.id]||0)+1;
+    if(!w.detail.groups.includes(g.id))w.detail.groups.push(g.id);
     for(let i=0;i<count;i++)w.detail.sets.push({ex:selectedExercise,group:g.id,w:weight,r:reps});
     w.lastW=weight;w.lastR=reps;selectedExercise='';save();render();
   },
   deleteSet:d=>{
     const w=currentWorkout();if(!w)return;
+    prepareWorkout(w);
     const [set]=w.detail.sets.splice(Number(d.v),1);
-    if(set&&!w.detail.sets.some(s=>s.group===set.group))S.stats.muscles[set.group]=Math.max(0,(S.stats.muscles[set.group]||0)-1);
+    if(set&&!w.detail.sets.some(s=>s.group===set.group)&&!w.detail.groups.includes(set.group))S.stats.muscles[set.group]=Math.max(0,(S.stats.muscles[set.group]||0)-1);
     save();render();
   },
   finishJournal:()=>{const w=currentWorkout();if(w)w.detail.done=true;A.deferJournal();},
@@ -5121,7 +5214,6 @@ const A={
   payout:()=>{
     const v=Math.round(+$('#pm').value);
     if(!Number.isSafeInteger(v)||v<=0||v>withdrawable())return alert('Проверь доступную сумму выплаты.');
-    S.rules.counts={};
     S.bank.pend-=v;S.bank.paid+=v;S.bank.card=Math.max(0,S.bank.card-v);
     addBankLog('Выплата заработанных средств',-v);
     snd('done');save();render();
@@ -5226,7 +5318,7 @@ document.addEventListener('change',e=>{
 
 /* TIMER LOOP (STUDY LABYRINTH) */
 setInterval(()=>{
-  if(S.tab==='shop'&&cloudLoaded&&S.setupDone&&!caseSpinning&&S.shop.day!==toDayKey()){syncCalendarState();render();}
+  if(cloudLoaded&&S.setupDone&&!caseSpinning&&((S.tab==='shop'&&S.shop.day!==toDayKey())||(S.tab==='bank'&&S.rules.weekKey!==toWeekKey()))){syncCalendarState();render();}
   const r=S.run.study;
   if(!cloudLoaded||!S.setupDone||!r||r.phase!=='timer'||!r.cur||r.cur.paused)return;
   r.cur.left=r.cur.end-Date.now();
