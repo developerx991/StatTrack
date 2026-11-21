@@ -1917,34 +1917,90 @@ details.card>summary{cursor:pointer;font-weight:700}#goal-archive .goal-card{mar
   font-size: 16px;
 }
 
-/* === V7: FULLSCREEN SAFE-AREA & STICKY TABS FIX === */
+/* === V8: ZERO-OVERLAP FULLSCREEN FIX (NO FLOATING/STICKY BARS) === */
 html {
-  scroll-padding-top: calc(var(--top-inset) + 56px);
-}
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--top-inset);
-  background: var(--bg);
-  z-index: 35;
-  pointer-events: none;
+  scroll-padding-top: var(--top-inset);
 }
 .topbar {
-  position: relative !important;
+  position: static !important;
   top: auto !important;
-  z-index: 15;
-  background: transparent;
+  z-index: auto !important;
+  background: transparent !important;
   padding-top: 2px;
 }
 .tabs {
-  position: sticky;
-  top: var(--top-inset);
-  z-index: 30;
-  background: color-mix(in srgb, var(--bg) 96%, transparent);
-  transform: translateZ(0);
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  margin: 0 0 12px !important;
+  padding: 6px 0 !important;
+}
+
+/* === V9: BIG +/- STEPPER FOR WORKOUT QUOTAS === */
+.quota-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.quota-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.quota-name {
+  font-weight: 600;
+  color: var(--ink-strong);
+  font-size: 14.5px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.quota-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.quota-step {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid var(--line-gold);
+  background: linear-gradient(180deg, var(--card2), var(--card));
+  color: var(--cy);
+  font: 700 22px/1 'Inter', sans-serif;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+.quota-step:hover:not(:disabled) {
+  border-color: var(--cy);
+  background: color-mix(in srgb, var(--cy) 18%, var(--card));
+}
+.quota-step:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.quota-ctrl input[data-quota] {
+  width: 52px !important;
+  height: 44px;
+  text-align: center;
+  font: 700 17px 'Inter', sans-serif;
+  padding: 4px;
+  -moz-appearance: textfield;
+}
+.quota-ctrl input[data-quota]::-webkit-outer-spin-button,
+.quota-ctrl input[data-quota]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
 </head>
@@ -2500,9 +2556,7 @@ function loadProblem(error){
 }
 function openTelegramOffline(){
   if(guestMode||!onlineProfile)return;
-  if(!S.setupDone&&!S.profileStepDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name){
-    S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
-  }
+
   S.tab='home';
   cloudLoaded=true;
   syncCalendarState();
@@ -2541,7 +2595,7 @@ async function loadCloudProfile(isAutoRetry=false){
       S=normalizeState(server);S.tab=cloudLoaded?tab:'home';replaced=true;
     }
     serverReady=true;lastServerSync=Date.now();syncError='';setSyncMessage('');
-    if(!S.setupDone&&!S.profileStepDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name)S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
+    
     if(!cloudLoaded)S.tab='home';
     cloudLoaded=true;syncCalendarState();
     const rawNow=JSON.stringify(S);
@@ -2554,9 +2608,7 @@ async function loadCloudProfile(isAutoRetry=false){
     syncError=loadProblem(error);
     if(hasScopedCopy||hasTgCloud){
       if(!cloudLoaded){
-        if(!S.setupDone&&!S.profileStepDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name){
-          S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
-        }
+
         S.tab='home';cloudLoaded=true;syncCalendarState();
       }
       setSyncMessage(syncError+(hasTgCloud?' Профиль открыт через Telegram Cloud (телефон ↔ ПК).':' Открыта локальная копия.'));
@@ -4657,7 +4709,15 @@ function requirementsForm(first){
     <p class="form-msg" role="status"></p><button class="btn cy" data-a="saveRules">${first?'Начать':'Сохранить условия'}</button>`;
 }
 function quotaRow(m,n){
-  return `<label>${esc(m.n)}<input type="number" inputmode="numeric" min="0" max="${Math.max(99,n)}" data-quota="${esc(m.id)}" data-name="${esc(m.n)}" value="${n}"></label>`;
+  const maxVal=Math.max(99,n);
+  return `<div class="quota-item">
+    <span class="quota-name">${esc(m.n)}</span>
+    <div class="quota-ctrl">
+      <button type="button" class="quota-step" data-a="stepQuota" data-v="-1" aria-label="Уменьшить" ${n<=0?'disabled':''}>−</button>
+      <input type="number" inputmode="numeric" min="0" max="${maxVal}" data-quota="${esc(m.id)}" data-name="${esc(m.n)}" value="${n}">
+      <button type="button" class="quota-step" data-a="stepQuota" data-v="1" aria-label="Увеличить">+</button>
+    </div>
+  </div>`;
 }
 function updateAllocationTotal(){
   const entry=S.logStudy.find(l=>l.id===allocationId);
@@ -4695,13 +4755,15 @@ function renderExtraModal(){
     return true;
   }
   if(!S.setupDone&&!S.profileStepDone){
+    const setupNick=S.profile.nick==='Негорящий'?'':S.profile.nick;
+    const setupTitle=S.profile.title==='Искатель Пепла'?'':S.profile.title;
     modalShell(guestMode?'Гостевой профиль':'Настрой свой профиль',`<div class="entry-form">
       <small class="mut">Шаг 1 из 2</small>
       <label class="entry-field entry-primary" for="setup-nick">Твой ник
-        <input type="text" id="setup-nick" maxlength="24" value="${esc(S.profile.nick)}" autocomplete="nickname">
+        <input type="text" id="setup-nick" maxlength="24" value="${esc(setupNick)}" placeholder="Введите имя" autocomplete="nickname">
       </label>
       <label class="entry-field" for="setup-title">Подпись под ником
-        <input type="text" id="setup-title" maxlength="36" value="${esc(S.profile.title)}">
+        <input type="text" id="setup-title" maxlength="36" value="${esc(setupTitle)}" placeholder="Введите титул (необязательно)">
       </label>
       <div class="entry-actions"><p class="form-msg" role="status"></p><button class="btn cy" data-a="nextSetup">Далее</button></div>
       ${guestMode?'<small class="mut">Гостевой прогресс хранится на этом устройстве.</small>':''}
@@ -4827,6 +4889,17 @@ const A={
       else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();
       else alert('Этот браузер не поддерживает полноэкранный режим.');
     }catch{alert('Не удалось открыть полный экран в этом окне.');}
+  },
+  stepQuota:(d,e)=>{
+    const ctrl=e?.target?.closest('.quota-ctrl');
+    const inp=ctrl?.querySelector('[data-quota]');
+    if(!inp)return;
+    const max=Number(inp.max)||99;
+    const next=Math.max(0,Math.min(max,(Number(inp.value)||0)+Number(d.v)));
+    inp.value=next;
+    const minusBtn=ctrl.querySelector('[data-v="-1"]');
+    if(minusBtn)minusBtn.disabled=next<=0;
+    snd('tick');
   },
   nextSetup:()=>{
     const nick=$('#setup-nick').value.trim();
