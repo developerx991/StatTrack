@@ -9,6 +9,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>StatTrack — Трекер прогресса и дисциплины</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Forum&family=Inter:wght@400;500;600;700&display=swap">
+<!-- Yandex.Metrika counter (замени YOUR_METRIKA_ID на номер твоего счётчика из metrika.yandex.ru) -->
+<script>
+const METRIKA_ID = 0; // <-- вставь сюда ID счётчика, например: 98765432
+if (METRIKA_ID) {
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+  m[i].l=1*new Date();
+  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+  ym(METRIKA_ID, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
+}
+</script>
 <style>
 /* ==========================================================================
    DARK SOULS THEME: "BLACK KNIGHT OF ASH" (DARK) & "WHITE KNIGHT OF MIST" (LIGHT)
@@ -2002,6 +2014,29 @@ html {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* === V10: ADMIN LEADERBOARD & VISITORS === */
+.lb-list { display: grid; gap: 6px; margin-top: 10px; }
+.lb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--cy);
+  border-radius: 5px;
+  font-size: 13.5px;
+}
+.lb-row.top1 { border-left-color: #f5d061; background: color-mix(in srgb, #f5d061 10%, var(--surface)); }
+.lb-row.top2 { border-left-color: #c0c7d1; }
+.lb-row.top3 { border-left-color: #cd7f32; }
+.lb-pos { width: 26px; font-weight: 700; color: var(--cy); text-align: center; flex-shrink: 0; }
+.lb-main { flex: 1; min-width: 0; }
+.lb-main b { color: var(--ink-strong); }
+.lb-main small { display: block; color: var(--mut); font-size: 11.5px; }
+.lb-val { font-weight: 700; color: var(--cy); white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -2304,6 +2339,40 @@ let showAllQuestsHome=false;
 let caseSpinning=false;
 
 const BACKEND_URL='https://stattrack-backend.onrender.com';
+function getVisitorId(){
+  const vk='stattrack_visitor_id';
+  try{
+    let v=localStorage.getItem(vk);
+    if(!v){v='g_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem(vk,v);}
+    return v;
+  }catch{return 'g_anon';}
+}
+let pingSent=false;
+function sendVisitPing(){
+  if(pingSent)return;
+  pingSent=true;
+  const u=window.Telegram?.WebApp?.initDataUnsafe?.user;
+  const payload={
+    visitorId:u?.id?('tg_'+u.id):getVisitorId(),
+    user_id:u?.id||null,
+    username:u?.username||'',
+    firstName:u?.first_name||'',
+    mode:(u?.id&&!guestMode)?'telegram':'guest',
+    nick:S?.profile?.nick||'',
+    studyMin:S?.stats?.min||0,
+    workouts:S?.stats?.wk||0,
+    streak:S?.streak?.cur||0,
+    ts:Date.now()
+  };
+  try{
+    fetch(BACKEND_URL+'/api/ping',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+      keepalive:true
+    }).catch(()=>{});
+  }catch{}
+}
 const tg=window.Telegram?.WebApp;
 function syncSafeInsets(){
   const root=document.documentElement;
@@ -3082,7 +3151,8 @@ function renderHeader(){
     ['shop','Магазин','shop'],
     ['progress','Прогресс','chart'],
     ['ach','Достижения','trophy'],
-    ['history','История','chart']
+    ['history','История','chart'],
+    ...(S.isAdmin?[['rating','Рейтинг','crown']]:[])
   ];
   $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,15)} ${v}</button>`).join('');
 
@@ -4365,6 +4435,72 @@ function renderModal(){
   }
 }
 
+let lbData={loading:false,error:'',items:[],visitors:[],sort:'study'};
+async function loadLeaderboard(){
+  if(lbData.loading)return;
+  lbData.loading=true;lbData.error='';
+  if(S.tab==='rating')render();
+  try{
+    const res=await fetch(BACKEND_URL+'/api/leaderboard',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({initData:tg?.initData||'',user_id:tg?.initDataUnsafe?.user?.id||null,admin:Boolean(S.isAdmin)})
+    });
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    lbData.items=Array.isArray(data?.leaderboard)?data.leaderboard:(Array.isArray(data)?data:[]);
+    lbData.visitors=Array.isArray(data?.visitors)?data.visitors:[];
+  }catch(err){
+    lbData.error='Не удалось загрузить рейтинг с сервера ('+(err.message||'нет ответа /api/leaderboard')+').';
+  }finally{
+    lbData.loading=false;
+    if(S.tab==='rating')render();
+  }
+}
+function ratingView(){
+  if(!S.isAdmin)return homeView();
+  const mode=lbData.sort||'study';
+  const sorted=lbData.items.slice().sort((a,b)=>{
+    if(mode==='work')return (b.workouts||0)-(a.workouts||0);
+    if(mode==='streak')return (b.streak||0)-(a.streak||0);
+    return (b.studyMin||0)-(a.studyMin||0);
+  });
+  return `<section class="card cut" style="border-color:var(--ye)">
+    <div class="hud">
+      <div>
+        <h2>👑 Рейтинг и визиты (Админ)</h2>
+        <p class="mut" style="font-size:12.5px">Онлайн-список лидеров и журнал последних заходов</p>
+      </div>
+      <button class="btn cy" data-a="refreshLeaderboard" ${lbData.loading?'disabled':''}>${lbData.loading?'Загрузка…':'🔄 Обновить'}</button>
+    </div>
+    <div class="chips">
+      <button class="chip cut-sm ${mode==='study'?'on':''}" data-a="setLbSort" data-v="study">📚 Учёба</button>
+      <button class="chip cut-sm ${mode==='work'?'on':''}" data-a="setLbSort" data-v="work">⚔️ Спорт</button>
+      <button class="chip cut-sm ${mode==='streak'?'on':''}" data-a="setLbSort" data-v="streak">🔥 Серия</button>
+      <button class="chip cut-sm ${mode==='visits'?'on':''}" data-a="setLbSort" data-v="visits">👁️ Визиты (${lbData.visitors.length})</button>
+    </div>
+    ${lbData.error?`<p style="color:var(--or);font-size:13px;margin:8px 0">${esc(lbData.error)}</p>`:''}
+    ${mode==='visits'?`
+      ${lbData.visitors.length?`<div class="lb-list">${lbData.visitors.map((v,i)=>`<div class="lb-row">
+        <div class="lb-pos">${i+1}</div>
+        <div class="lb-main">
+          <b>${esc(v.nick||v.firstName||'Без имени')}</b> ${v.username?`<span class="mut">@${esc(v.username)}</span>`:''}
+          <small>${v.mode==='telegram'?'Telegram':'Гость'} • ID: ${esc(v.visitorId||v.user_id||'—')}</small>
+        </div>
+        <div class="lb-val" style="font-size:12px">${v.lastSeen?new Date(v.lastSeen).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—'}</div>
+      </div>`).join('')}</div>`:'<p class="mut">Пока нет данных о визитах. Нажми «Обновить» или добавь роут /api/ping и /api/leaderboard на сервере.</p>'}
+    `:`
+      ${sorted.length?`<div class="lb-list">${sorted.map((u,i)=>`<div class="lb-row ${i===0?'top1':i===1?'top2':i===2?'top3':''}">
+        <div class="lb-pos">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)}</div>
+        <div class="lb-main">
+          <b>${esc(u.nick||'Игрок')}</b> ${u.username?`<span class="mut">@${esc(u.username)}</span>`:''}
+          <small>Учёба: ${hm(u.studyMin||0)} • Спорт: ${u.workouts||0} тр. • 🔥 ${u.streak||0} дн.</small>
+        </div>
+        <div class="lb-val">${mode==='work'?(u.workouts||0)+' тр.':mode==='streak'?'🔥 '+(u.streak||0)+' дн.':hm(u.studyMin||0)}</div>
+      </div>`).join('')}</div>`:'<p class="mut">Список лидеров пуст. Нажми «Обновить», чтобы загрузить с сервера.</p>'}
+    `}
+  </section>`;
+}
 function render(){
   renderHeader();
   const views={
@@ -4377,7 +4513,8 @@ function render(){
     ach:achView,
     profile:profileView,
     bank:bankView,
-    settings:settingsView
+    settings:settingsView,
+    rating:ratingView
   };
   $('#main').innerHTML=(views[S.tab]||homeView)();
   if(S.tab==='home')drawHeroArt();
@@ -4846,7 +4983,9 @@ const A={
     if(code!=='1984'){$('.form-msg').textContent='Неверный код.';return;}
     S.isAdmin=true;modalState=null;snd('key');save();render();
   },
-  adminLogout:()=>{S.isAdmin=false;modalState=null;snd('tick');save();render();},
+  adminLogout:()=>{S.isAdmin=false;if(S.tab==='rating')S.tab='home';modalState=null;snd('tick');save();render();},
+  refreshLeaderboard:()=>{snd('tick');loadLeaderboard();},
+  setLbSort:d=>{lbData.sort=d.v;snd('tick');render();},
   openDayDetail:d=>{dayDetailKey=d.v;modalState='dayDetail';renderModal();snd('tick');},
   habitForm:d=>{habitEditorId=d.v||null;modalState='habit';renderModal();},
   toggleHabitDay:(d,e)=>{e?.target?.classList.toggle('on');},
@@ -5051,7 +5190,9 @@ const A={
   },
 
   tab:d=>{
+    if(d.v==='rating'&&!S.isAdmin)return;
     historyLimit=40;S.tab=d.v;
+    if(d.v==='rating'&&!lbData.items.length&&!lbData.loading)loadLeaderboard();
     modalState=null;
     profDrawerOpen=false;
     save();
@@ -5526,6 +5667,7 @@ document.addEventListener('keydown',e=>{
 
 render();
 loadCloudProfile();
+setTimeout(sendVisitPing,1500);
 })();
 </script>
 </body>
