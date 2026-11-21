@@ -55,7 +55,7 @@ body {
   color: var(--ink);
   font: 400 15px/1.5 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--bg);
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 #bg, #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
@@ -1916,6 +1916,36 @@ details.card>summary{cursor:pointer;font-weight:700}#goal-archive .goal-card{mar
   color: var(--gr);
   font-size: 16px;
 }
+
+/* === V7: FULLSCREEN SAFE-AREA & STICKY TABS FIX === */
+html {
+  scroll-padding-top: calc(var(--top-inset) + 56px);
+}
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--top-inset);
+  background: var(--bg);
+  z-index: 35;
+  pointer-events: none;
+}
+.topbar {
+  position: relative !important;
+  top: auto !important;
+  z-index: 15;
+  background: transparent;
+  padding-top: 2px;
+}
+.tabs {
+  position: sticky;
+  top: var(--top-inset);
+  z-index: 30;
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
+  transform: translateZ(0);
+}
 </style>
 </head>
 <body>
@@ -2219,7 +2249,23 @@ let caseSpinning=false;
 
 const BACKEND_URL='https://stattrack-backend.onrender.com';
 const tg=window.Telegram?.WebApp;
-if(tg){try{tg.ready();tg.expand();}catch(e){}}
+function syncSafeInsets(){
+  const root=document.documentElement;
+  if(tg){
+    const topSafe=Number(tg.safeAreaInset?.top||0)+Number(tg.contentSafeAreaInset?.top||0);
+    if(topSafe>0)root.style.setProperty('--top-inset',topSafe+'px');
+    else root.style.removeProperty('--top-inset');
+  }
+}
+if(tg){
+  try{
+    tg.ready();tg.expand();syncSafeInsets();
+    ['fullscreenChanged','safeAreaChanged','contentSafeAreaChanged','viewportChanged'].forEach(ev=>{
+      tg.onEvent?.(ev,()=>{syncSafeInsets();drawGrid();});
+    });
+  }catch(e){}
+}
+document.addEventListener('fullscreenchange',()=>{syncSafeInsets();drawGrid();});
 
 // Render (MongoDB) remains the primary store. Telegram CloudStorage keeps an instant second copy, including long histories.
 const onlineProfile=Boolean(tg?.initData&&tg.initDataUnsafe?.user?.id);
@@ -2988,9 +3034,11 @@ function renderHeader(){
   ];
   $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,15)} ${v}</button>`).join('');
 
-  const activeTab=$('#tabs .tab.on');
-  if(activeTab&&activeTab.scrollIntoView){
-    try{activeTab.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});}catch(e){}
+  const tabsEl=$('#tabs'), activeTab=tabsEl?.querySelector('.tab.on');
+  if(tabsEl&&activeTab){
+    const targetLeft=activeTab.offsetLeft-(tabsEl.clientWidth-activeTab.offsetWidth)/2;
+    try{tabsEl.scrollTo({left:Math.max(0,targetLeft),behavior:'smooth'});}
+    catch{tabsEl.scrollLeft=Math.max(0,targetLeft);}
   }
 }
 
