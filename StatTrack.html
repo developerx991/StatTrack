@@ -1544,6 +1544,14 @@ details.card>summary{cursor:pointer;font-weight:700}#goal-archive .goal-card{mar
 @media(max-width:375px){.goal-options{gap:10px}.entry-form{gap:16px}#goal-archive{padding-inline:10px}}
 
 .login-actions{display:flex;flex-wrap:wrap;gap:10px}.login-actions .btn{min-height:44px;flex:1 1 155px}
+
+.sync-btn{min-width:36px;font-weight:700;font-size:12px;gap:3px;padding:5px 7px}
+.sync-btn.ok{border-color:var(--gr);color:var(--gr)}
+.sync-btn.busy{border-color:var(--ye);color:var(--ye)}
+.sync-btn.err{border-color:var(--red);color:var(--red)}
+.sync-list{display:grid;gap:8px;margin:12px 0}
+.sync-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 11px;background:var(--surface);border:1px solid var(--line);border-radius:5px;font-size:13px}
+.sync-row b{font-size:12.5px}
 </style>
 </head>
 <body>
@@ -1833,8 +1841,9 @@ const BACKEND_URL='https://stattrack-backend.onrender.com';
 const tg=window.Telegram?.WebApp;
 if(tg){try{tg.ready();tg.expand();}catch(e){}}
 
-// Render remains the primary store. Telegram keeps a second copy, including long histories.
+// Render (MongoDB) remains the primary store. Telegram CloudStorage keeps an instant second copy, including long histories.
 const onlineProfile=Boolean(tg?.initData&&tg.initDataUnsafe?.user?.id);
+const hasTgCloud=Boolean(tg?.CloudStorage&&(typeof tg.isVersionAtLeast!=='function'||tg.isVersionAtLeast('6.9')));
 const accountKey=onlineProfile?K+'_'+tg.initDataUnsafe.user.id:null;
 const guestKey=(accountKey||K)+'_guest';
 const modeKey=(accountKey||K)+'_mode';
@@ -1849,8 +1858,31 @@ let hasScopedCopy=Boolean(accountCopy);
 let S=guestMode?guestProfile():(accountCopy||normalizeState(null));
 accountCopy=null;
 S.tab='home';
-let cloudLoaded=guestMode,serverReady=false,loading=false,flushing=false;
-let syncError='',saveTimer=null,retryTimer=null,loadGeneration=0,activeLoad=null;
+let cloudLoaded=guestMode,serverReady=false,loading=false,flushing=false,pulling=false;
+let syncError='',saveTimer=null,backupTimer=null,retryTimer=null,loadGeneration=0,activeLoad=null;
+let lastServerSync=0,lastTgSync=0,lastPullAt=0,allowEmptyPush=false;
+
+function hasPendingSync(){
+  if(guestMode||!onlineProfile||!pendingKey)return false;
+  try{return Boolean(localStorage.getItem(pendingKey));}catch{return false;}
+}
+function syncBadgeInfo(){
+  if(guestMode||!onlineProfile)return {cls:'',ic:'💾',title:'Локальное сохранение на устройстве'};
+  if(loading||flushing||pulling)return {cls:'busy',ic:'⏳',title:'Синхронизация с Render/MongoDB и Telegram...'};
+  if(serverReady&&!hasPendingSync()&&!syncError)return {cls:'ok',ic:'☁️✓',title:'Сохранено в MongoDB и Telegram Cloud'};
+  if(syncError||hasPendingSync())return {cls:'err',ic:'☁️!',title:syncError||'Есть несохранённые на сервере изменения'};
+  return {cls:'busy',ic:'⏳',title:'Ожидание подключения к Render/MongoDB'};
+}
+function updateSyncButton(){
+  const btn=$('#sync-btn');
+  if(!btn)return;
+  const info=syncBadgeInfo();
+  btn.className='icon-btn cut-sm sync-btn '+info.cls;
+  btn.textContent=info.ic;
+  btn.title=info.title;
+  btn.setAttribute('aria-label',info.title);
+  if(modalState==='sync')renderModal();
+}
 function startGuest(){
   if(!guestMode)changeMode(true);
   if(!guestMode||S.setupDone)return;
@@ -1860,24 +1892,29 @@ function startGuest(){
 }
 function changeMode(guest){
   if(!onlineProfile||guest===guestMode||(guest&&cloudLoaded&&serverReady))return;
-  clearTimeout(saveTimer);clearTimeout(retryTimer);
+  clearTimeout(saveTimer);clearTimeout(backupTimer);clearTimeout(retryTimer);
   loadGeneration++;
-  activeLoad?.abort();activeLoad=null;loading=false;
+  activeLoad?.abort();activeLoad=null;loading=false;pulling=false;
   guestMode=guest;
   try{if(guest)localStorage.setItem(modeKey,'guest');else localStorage.removeItem(modeKey);}catch{}
   const local=guest?guestProfile():readLocalProfile(accountKey);
   hasScopedCopy=!guest&&Boolean(local);S=local||normalizeState(null);
   S.tab='home';modalState=null;profDrawerOpen=false;goalEditorId=null;taskEditorId=null;allocationId=null;
   selectedGroup='';selectedExercise='';
-  cloudLoaded=guest;serverReady=false;syncError='';setSyncMessage('');
+  cloudLoaded=guest;serverReady=false;syncError='';lastServerSync=0;lastTgSync=0;setSyncMessage('');
   syncCalendarState();render();
   if(!guest)loadCloudProfile();
 }
 function setSyncMessage(msg){
   const el=$('#sync-state');if(el){el.hidden=!msg;el.textContent=msg;}
+  updateSyncButton();
 }
 function laterWrite(delay=400){
-  clearTimeout(saveTimer);saveTimer=setTimeout(flushSave,delay);
+  clearTimeout(saveTimer);saveTimer=setTimeout(()=>flushSave(false),delay);
+}
+function laterBackup(raw,delay=500){
+  if(guestMode||!onlineProfile||!hasTgCloud)return;
+  clearTimeout(backupTimer);backupTimer=setTimeout(()=>queueBackup(raw),delay);
 }
 function storeLocal(raw){
   try{localStorage.setItem(guestMode?guestKey:accountKey,raw);return true;}
@@ -1886,10 +1923,14 @@ function storeLocal(raw){
 function save(){
   if(!cloudLoaded)return;
   S.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1);
-  storeLocal(JSON.stringify(S));
+  const raw=JSON.stringify(S);
+  storeLocal(raw);
   if(!guestMode&&onlineProfile){
     try{localStorage.setItem(pendingKey,String(S.updatedAt));}catch{}
-    laterWrite();
+    laterBackup(raw,350);
+    if(serverReady)laterWrite(450);
+    else if(!loading)loadCloudProfile();
+    updateSyncButton();
   }
 }
 function profileError(message,status=0){
@@ -1910,21 +1951,35 @@ function savedState(data){
   if(Object.keys(data).length===0)return null;
   throw profileError('format');
 }
-async function backend(path,payload){
-  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),65000);
-  if(path==='load')activeLoad=controller;
+async function backend(path,payload,opts={}){
+  const bodyStr=JSON.stringify({initData:tg.initData,user_id:tg.initDataUnsafe.user.id,...payload});
+  const useKeepalive=Boolean(opts.keepalive&&bodyStr.length<60000);
+  const controller=useKeepalive?null:new AbortController();
+  const timeoutMs=opts.timeoutMs||(path==='load'?22000:35000);
+  const timeout=controller?setTimeout(()=>controller.abort(),timeoutMs):null;
+  if(path==='load'&&controller)activeLoad=controller;
   try{
-    const response=await fetch(BACKEND_URL+'/api/'+path,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({initData:tg.initData,user_id:tg.initDataUnsafe.user.id,...payload}),signal:controller.signal});
+    const fetchOpts={method:'POST',headers:{'Content-Type':'application/json'},body:bodyStr};
+    if(controller)fetchOpts.signal=controller.signal;
+    if(useKeepalive)fetchOpts.keepalive=true;
+    const response=await fetch(BACKEND_URL+'/api/'+path,fetchOpts);
     if(path==='load'&&response.status===404){
       const data=await response.json().catch(()=>null);
       if(missingProfile(data))return null;
     }
-    if(!response.ok)throw profileError('http',response.status);
+    if(!response.ok){
+      const errData=await response.json().catch(()=>null);
+      const err=profileError('http',response.status);
+      if(errData?.error)err.detail=String(errData.error);
+      throw err;
+    }
     if(path!=='load'||response.status===204)return null;
     const data=await response.json().catch(()=>{throw profileError('format');});
     return savedState(data);
-  }finally{clearTimeout(timeout);if(activeLoad===controller)activeLoad=null;}
+  }finally{
+    if(timeout)clearTimeout(timeout);
+    if(controller&&activeLoad===controller)activeLoad=null;
+  }
 }
 function telegramStore(method,...args){
   return new Promise((resolve,reject)=>{
@@ -1940,7 +1995,7 @@ function chunkKeys(meta){
 }
 let previousBackup=null,backupBusy=false,nextBackup=null;
 async function readBackup(){
-  if(guestMode||!onlineProfile||!tg.CloudStorage)return null;
+  if(guestMode||!onlineProfile||!hasTgCloud)return null;
   try{
     const head=JSON.parse(await telegramStore('getItem',K)||'null');
     if(!head||head.stats)return head;
@@ -1953,7 +2008,7 @@ async function readBackup(){
   }catch{return null;}
 }
 async function queueBackup(raw){
-  if(guestMode||!tg?.CloudStorage)return;
+  if(guestMode||!hasTgCloud)return;
   nextBackup=raw;
   if(backupBusy)return;
   backupBusy=true;
@@ -1975,85 +2030,181 @@ async function queueBackup(raw){
           await telegramStore('setItem',K,JSON.stringify(meta));
         }catch{await telegramStore('removeItems',keys).catch(()=>{});continue;}
       }else await telegramStore('setItem',K,body);
+      lastTgSync=Date.now();
       const obsolete=chunkKeys(previousBackup);previousBackup=meta;
       if(obsolete.length)await telegramStore('removeItems',obsolete).catch(()=>{});
     }
-  }catch{}finally{backupBusy=false;}
+  }catch{}finally{backupBusy=false;updateSyncButton();}
 }
-async function flushSave(){
+function score(st){return (st?.stats?.min||0)+(st?.stats?.wk||0)*60+(st?.stats?.totalEarned||0)+(st?.bank?.card||0)+(st?.bank?.paid||0);}
+function isBlankProfile(st){return !st||(!st.setupDone&&score(st)===0&&!(st.logStudy?.length)&&!(st.logWork?.length)&&!(st.goals?.length));}
+function moreRecent(candidate,current){
+  if(!candidate?.stats)return false;
+  if(isBlankProfile(current)&&!isBlankProfile(candidate))return true;
+  if(!isBlankProfile(current)&&isBlankProfile(candidate))return false;
+  if(candidate.updatedAt||current.updatedAt)return (candidate.updatedAt||0)>(current.updatedAt||0)||((candidate.updatedAt||0)===(current.updatedAt||0)&&score(candidate)>=score(current));
+  return score(candidate)>=score(current);
+}
+async function flushSave(keepalive=false){
   if(guestMode||!cloudLoaded||!onlineProfile||!serverReady||flushing)return;
-  flushing=true;
+  if(isBlankProfile(S)&&!allowEmptyPush)return;
+  flushing=true;updateSyncButton();
   const raw=JSON.stringify(S),version=S.updatedAt;
   queueBackup(raw);
   try{
-    await backend('save',{state:JSON.parse(raw)});
+    await backend('save',{state:JSON.parse(raw)},{keepalive});
+    allowEmptyPush=false;
+    lastServerSync=Date.now();
+    syncError='';
     if(S.updatedAt===version){
       try{localStorage.removeItem(pendingKey);}catch{}
       setSyncMessage('');
     }else laterWrite(0);
   }catch{
-    setSyncMessage('Синхронизация с сервером ожидает подключения.');
+    syncError='Синхронизация с сервером Render ожидает подключения.';
+    setSyncMessage(syncError);
     laterWrite(7000);
-  }finally{flushing=false;}
-}
-function score(st){return (st.stats?.min||0)+(st.stats?.wk||0)*60+(st.stats?.totalEarned||0)+(st.bank?.card||0)+(st.bank?.paid||0);}
-function moreRecent(candidate,current){
-  if(!candidate?.stats)return false;
-  if(candidate.updatedAt||current.updatedAt)return (candidate.updatedAt||0)>=(current.updatedAt||0);
-  return score(candidate)>=score(current);
+  }finally{flushing=false;updateSyncButton();}
 }
 function loadProblem(error){
-  if(error.status===401||error.status===403)return 'Сервер отклонил вход через Telegram. Закрой мини-приложение и снова открой его из бота.';
-  if(error.status===404)return 'Адрес загрузки профиля на сервере не найден (HTTP 404).';
+  const det=error.detail?' ('+error.detail+')':'';
+  if(error.status===401||error.status===403)return 'Сервер отклонил вход через Telegram'+det+'. Проверь BOT_TOKEN на Render или перезапусти бота.';
+  if(error.status===404)return 'Адрес /api/load на сервере не найден (HTTP 404).';
   if(error.message==='format'||error.message==='response')return 'Сервер вернул неожиданный ответ при загрузке профиля.';
-  if(error.status)return 'Сервер не загрузил профиль (HTTP '+error.status+').';
-  return error.name==='AbortError'?'Сервер не ответил вовремя.':'Связаться с сервером не удалось.';
+  if(error.status)return 'Ошибка сервера (HTTP '+error.status+')'+det+'.';
+  return error.name==='AbortError'?'Сервер Render не ответил за 22 сек (возможно, просыпается или не запущен).':'Связаться с сервером Render не удалось.';
 }
-async function loadCloudProfile(){
+function openTelegramOffline(){
+  if(guestMode||!onlineProfile)return;
+  if(!S.setupDone&&!S.profileStepDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name){
+    S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
+  }
+  S.tab='home';
+  cloudLoaded=true;
+  syncCalendarState();
+  render();
+  setSyncMessage((syncError||'Render недоступен.')+' Работаем через Telegram Cloud и локальную копию.');
+}
+async function loadCloudProfile(isAutoRetry=false){
   if(guestMode||loading||serverReady)return;
-  loading=true;syncError='';clearTimeout(retryTimer);
+  loading=true;
+  if(!isAutoRetry)syncError='';
+  clearTimeout(retryTimer);
   const generation=loadGeneration,wasOpen=cloudLoaded;
   let replaced=false;
-  if(!cloudLoaded)renderModal();
+  if(!cloudLoaded&&!isAutoRetry)renderModal();
+  updateSyncButton();
   try{
-    const [result,backup]=await Promise.all([backend('load',{}).then(value=>({value}),error=>({error})),readBackup().catch(()=>null)]);
+    const serverPromise=backend('load',{}).then(value=>({value}),error=>({error}));
+    const backup=await readBackup().catch(()=>null);
     if(generation!==loadGeneration)return;
-    if(moreRecent(backup,S)&&(!wasOpen||backup.updatedAt!==S.updatedAt)){
-      replaced=true;S=normalizeState(backup);hasScopedCopy=true;storeLocal(JSON.stringify(S));
+    if(backup&&moreRecent(backup,S)&&(!wasOpen||backup.updatedAt!==S.updatedAt)){
+      const tab=S.tab||'home';
+      S=normalizeState(backup);S.tab=wasOpen?tab:'home';
+      hasScopedCopy=true;replaced=true;lastTgSync=Date.now();
+      storeLocal(JSON.stringify(S));
+      if(!cloudLoaded&&!isBlankProfile(S)){
+        cloudLoaded=true;syncCalendarState();render();
+        setSyncMessage('Профиль загружен из Telegram Cloud. Подключаемся к Render/MongoDB…');
+      }
     }
+    const result=await serverPromise;
+    if(generation!==loadGeneration)return;
     if(result.error)throw result.error;
     const server=result.value;
-    if(moreRecent(server,S)&&(!wasOpen||server.updatedAt!==S.updatedAt)){
-      const tab=S.tab;S=normalizeState(server);S.tab=tab;replaced=true;
+    if(server&&moreRecent(server,S)&&(!cloudLoaded||server.updatedAt!==S.updatedAt)){
+      const tab=S.tab||'home';
+      S=normalizeState(server);S.tab=cloudLoaded?tab:'home';replaced=true;
     }
-    serverReady=true;setSyncMessage('');
+    serverReady=true;lastServerSync=Date.now();syncError='';setSyncMessage('');
     if(!S.setupDone&&!S.profileStepDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name)S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
     if(!cloudLoaded)S.tab='home';
-    cloudLoaded=true;syncCalendarState();storeLocal(JSON.stringify(S));
-    if(S.updatedAt&&(!server||S.updatedAt>(server.updatedAt||0)))laterWrite(100);
+    cloudLoaded=true;syncCalendarState();
+    const rawNow=JSON.stringify(S);
+    storeLocal(rawNow);
+    if(!backup||((S.updatedAt||0)>(backup.updatedAt||0)&&!isBlankProfile(S)))queueBackup(rawNow);
+    if(!isBlankProfile(S)&&(!server||(S.updatedAt||0)>(server.updatedAt||0)))laterWrite(100);
     else try{localStorage.removeItem(pendingKey);}catch{}
   }catch(error){
     if(generation!==loadGeneration)return;
     syncError=loadProblem(error);
-    if(hasScopedCopy){
-      if(!cloudLoaded){S.tab='home';cloudLoaded=true;syncCalendarState();}
-      setSyncMessage(syncError+' Открыта сохранённая копия профиля.');
+    if(hasScopedCopy||hasTgCloud){
+      if(!cloudLoaded){
+        if(!S.setupDone&&!S.profileStepDone&&S.profile.nick==='Негорящий'&&tg.initDataUnsafe.user.first_name){
+          S.profile.nick=tg.initDataUnsafe.user.first_name.slice(0,24);
+        }
+        S.tab='home';cloudLoaded=true;syncCalendarState();
+      }
+      setSyncMessage(syncError+(hasTgCloud?' Профиль открыт через Telegram Cloud (телефон ↔ ПК).':' Открыта локальная копия.'));
     }
     if(!error.status||error.status===429||error.status>=500){
-      if(error.message!=='format'&&error.message!=='response')retryTimer=setTimeout(loadCloudProfile,12000);
+      if(error.message!=='format'&&error.message!=='response')retryTimer=setTimeout(()=>loadCloudProfile(true),15000);
     }
   }finally{
     if(generation===loadGeneration){
       loading=false;
       if(!cloudLoaded)renderModal();
-      else if(!wasOpen||replaced||(serverReady&&S.tab==='settings'&&!modalState))render();
+      else if(!wasOpen||replaced||(serverReady&&(S.tab==='settings'||modalState==='sync')))render();
+      updateSyncButton();
     }
   }
 }
-document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='hidden'&&!guestMode&&onlineProfile){
-    try{if(localStorage.getItem(pendingKey))flushSave();}catch{}
+async function syncNow(silent=false){
+  if(guestMode||!onlineProfile)return;
+  if(!serverReady){
+    await loadCloudProfile();
+    return;
   }
+  if(pulling||loading||flushing)return;
+  const now=Date.now();
+  if(silent&&now-lastPullAt<12000)return;
+  lastPullAt=now;
+  pulling=true;updateSyncButton();
+  try{
+    if(hasPendingSync())await flushSave(false);
+    const [result,backup]=await Promise.all([
+      backend('load',{}).then(value=>({value}),error=>({error})),
+      readBackup().catch(()=>null)
+    ]);
+    let best=null;
+    if(backup&&moreRecent(backup,S))best=backup;
+    if(!result.error&&result.value&&moreRecent(result.value,best||S))best=result.value;
+    if(result.error){
+      if(!silent){syncError=loadProblem(result.error);setSyncMessage(syncError);}
+    }else{
+      lastServerSync=Date.now();syncError='';setSyncMessage('');
+    }
+    if(best&&best.updatedAt!==S.updatedAt){
+      const tab=S.tab;
+      S=normalizeState(best);S.tab=tab;
+      syncCalendarState();
+      const raw=JSON.stringify(S);
+      storeLocal(raw);
+      if(!backup||(S.updatedAt||0)>(backup.updatedAt||0))queueBackup(raw);
+      if(!result.error&&(!result.value||(S.updatedAt||0)>(result.value.updatedAt||0)))laterWrite(100);
+      render();
+    }else if(!result.error&&!isBlankProfile(S)&&(!result.value||(S.updatedAt||0)>(result.value.updatedAt||0))){
+      await flushSave(false);
+    }
+  }finally{
+    pulling=false;updateSyncButton();
+  }
+}
+document.addEventListener('visibilitychange',()=>{
+  if(guestMode||!onlineProfile)return;
+  if(document.visibilityState==='hidden'){
+    try{if(hasPendingSync())flushSave(true);}catch{}
+  }else if(document.visibilityState==='visible'&&cloudLoaded){
+    syncNow(true);
+  }
+});
+window.addEventListener('pagehide',()=>{
+  if(!guestMode&&onlineProfile&&hasPendingSync()){
+    try{flushSave(true);}catch{}
+  }
+});
+window.addEventListener('focus',()=>{
+  if(!guestMode&&onlineProfile&&cloudLoaded)syncNow(true);
 });
 
 
@@ -2368,6 +2519,7 @@ function renderHeader(){
       <button class="icon-btn cut-sm ${S.tab==='profile'?'on':''}" data-a="tab" data-v="profile" title="Профиль">${icon('user',15)} <span>Профиль</span></button>
     </div>
     <div class="top-grp-sys">
+      <button id="sync-btn" class="icon-btn cut-sm sync-btn ${syncBadgeInfo().cls}" data-a="showModal" data-v="sync" title="${esc(syncBadgeInfo().title)}" aria-label="${esc(syncBadgeInfo().title)}">${syncBadgeInfo().ic}</button>
       <button class="icon-btn cut-sm ${S.tab==='settings'?'on':''}" data-a="tab" data-v="settings" title="Настройки и шансы">${icon('gear',15)}</button>
       <button class="icon-btn cut-sm" data-a="showModal" data-v="audio" title="Громкость" aria-label="Микшер громкости">${icon(S.mute?'mute':'snd',15)}</button>
     </div>
@@ -3865,10 +4017,13 @@ function allocationRow(g,n){return `<label class="goal-row">${esc(g.n)}<input ty
 function renderExtraModal(){
   if(!cloudLoaded){
     modalShell('Профиль Telegram',`<div class="entry-form">
-      <p class="mut" role="status">${esc(syncError||'Загружаем сохранённый прогресс…')}</p>
-      <div class="login-actions">${syncError?'<button class="btn cy" data-a="retryLoad">Повторить сейчас</button>':''}
-      <button class="btn gh" data-a="enterGuest">Зайти как гость</button></div>
-      <small class="mut">Гостевой прогресс сохраняется отдельно на этом устройстве.</small></div>`,false);
+      <p class="mut" role="status">${esc(syncError||'Загружаем сохранённый прогресс с Render/MongoDB и Telegram Cloud… Если сервер спал, это займёт до 20 сек.')}</p>
+      <div class="login-actions">
+        ${syncError?'<button class="btn cy" data-a="retryLoad">Повторить сейчас</button>':''}
+        <button class="btn gr" data-a="continueTgOffline">Открыть профиль сейчас</button>
+        <button class="btn gh" data-a="enterGuest">Зайти как гость</button>
+      </div>
+      <small class="mut">«Открыть профиль сейчас» сохранит данные в Telegram Cloud и отправит на Render, как только сервер проснётся.</small></div>`,false);
     return true;
   }
   if(!S.setupDone&&!S.profileStepDone){
@@ -3904,6 +4059,29 @@ function renderExtraModal(){
       <button class="btn gh" data-a="mute">${S.mute?'Включить звук':'Выключить звук'}</button><button class="btn cy" data-a="testAlarm">Проверить сигнал</button>`);
     return true;
   }
+  if(modalState==='sync'){
+    const fmtT=ts=>ts?new Date(ts).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'—';
+    const uidTxt=onlineProfile?('Telegram ID: '+tg.initDataUnsafe.user.id):'Открыто вне Telegram (локальный режим)';
+    const srvTxt=guestMode?'Отключено (гость)':!onlineProfile?'Нужен запуск из Telegram':(loading||flushing||pulling)?'Синхронизация…':serverReady?(hasPendingSync()?'Ожидает отправки':'Подключено · '+fmtT(lastServerSync)):(syncError||'Просыпается Render…');
+    const tgTxt=guestMode?'Отключено (гость)':!hasTgCloud?'Недоступно в этом клиенте':lastTgSync?('Активно · '+fmtT(lastTgSync)):'Готово к записи';
+    modalShell('Синхронизация и данные',`<p class="mut">${esc(uidTxt)}</p>
+      <div class="sync-list">
+        <div class="sync-row"><span>Render + MongoDB</span><b style="color:${serverReady&&!hasPendingSync()?'var(--gr)':syncError?'var(--red)':'var(--ye)'}">${esc(srvTxt)}</b></div>
+        <div class="sync-row"><span>Telegram Cloud (телефон ↔ ПК)</span><b style="color:${hasTgCloud&&!guestMode?'var(--gr)':'var(--mut)'}">${esc(tgTxt)}</b></div>
+        <div class="sync-row"><span>Локальная копия</span><b style="color:var(--gr)">Сохраняется мгновенно</b></div>
+      </div>
+      ${syncError?`<p class="form-msg">${esc(syncError)}</p>`:''}
+      <p class="mut" style="font-size:12.5px">Чтобы на телефоне и ПК было одно сохранение, всегда открывай приложение через бота в Telegram. При переключении между устройствами данные подтягиваются автоматически.</p>
+      <div class="row">
+        ${!guestMode&&onlineProfile?`<button class="btn cy" data-a="syncNow" ${loading||flushing||pulling?'disabled':''}>🔄 Синхронизировать сейчас</button>`:''}
+        ${guestMode&&onlineProfile?`<button class="btn cy" data-a="accountLogin">Войти через Telegram</button>`:''}
+      </div>
+      <div class="row">
+        <button class="btn gh" data-a="exportData">⬇️ Скачать .json</button>
+        <button class="btn gh" data-a="importDataAsk">⬆️ Загрузить .json</button>
+      </div>`);
+    return true;
+  }
   if(modalState==='allocation'){
     const entry=S.logStudy.find(x=>x.id===allocationId);
     if(entry){modalShell('Распределить время',allocationForm(entry));updateAllocationTotal();return true;}
@@ -3915,7 +4093,9 @@ function renderExtraModal(){
 /* ACTIONS */
 const A={
   showModal:d=>{modalState=d.v;renderModal();},
-  retryLoad:()=>loadCloudProfile(),
+  retryLoad:()=>loadCloudProfile(false),
+  continueTgOffline:()=>openTelegramOffline(),
+  syncNow:()=>syncNow(false),
   enterGuest:startGuest,
   accountLogin:()=>changeMode(false),
   moreHistory:()=>{historyLimit+=40;render();},
@@ -4390,7 +4570,7 @@ const A={
     snd('done');save();render();
   },
   wipeAsk:()=>{modalState='wipe';snd('tick');renderModal()},
-  wipeConfirm:()=>{S=normalizeState(null);modalState=null;save();render();drawGrid()}
+  wipeConfirm:()=>{allowEmptyPush=true;S=normalizeState(null);modalState=null;save();render();drawGrid()}
 };
 
 $('#import-file-inp')?.addEventListener('change',e=>{
