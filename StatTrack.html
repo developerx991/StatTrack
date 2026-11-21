@@ -4632,20 +4632,25 @@ function withdrawable(){
   syncCalendarState();
   const rules=Object.entries(S.rules.requirements);
   const {bySport}=getWeeklyRuleCounts();
-  if(!S.setupDone||!rules.length||rules.some(([id,n])=>(bySport[id]||0)<n))return 0;
+  if(!S.setupDone||rules.some(([id,n])=>(bySport[id]||0)<n))return 0;
   return Math.min(S.bank.pend,S.bank.card);
 }
 function bankRulesView(){
   syncCalendarState();
   const r=S.rules;
   const {bySport,total}=getWeeklyRuleCounts();
-  return `<h3>Тренировки за эту неделю (всего: ${total})</h3>${Object.keys(r.requirements).length?'':'<p class="mut">Выбери тренировки для вывода средств.</p>'}<div class="chips">${Object.entries(r.requirements).map(([id,n])=>{
-    const done=bySport[id]||0;
-    return `<span class="chip ${done>=n?'on':''}">${esc(S.activities.find(x=>x.id===id)?.n||id)} · ${done}/${n}</span>`;
-  }).join('')}</div>
+  const hasRules=Object.keys(r.requirements).length>0;
+  const locked=hasRules&&Date.now()<r.changed+FORTNIGHT;
+  return `<h3>Тренировки за эту неделю (всего: ${total})</h3>
+    ${hasRules?`<div class="chips">${Object.entries(r.requirements).map(([id,n])=>{
+      const done=bySport[id]||0;
+      return `<span class="chip ${done>=n?'on':''}">${esc(S.activities.find(x=>x.id===id)?.n||id)} · ${done}/${n}</span>`;
+    }).join('')}</div>`:'<p class="mut">Условие по тренировкам не задано — вывод средств открыт без ограничений. Ты можешь добавить условие в любой момент.</p>'}
     <p class="mut">Учитываются тренировки за текущую неделю (Пн–Вс). Счётчик автоматически обновляется каждый понедельник в 00:00. Доступная сумма ограничена остатком депозита и заработанной суммой.</p>
-    <button class="btn gh" data-a="showModal" data-v="rules" ${Date.now()<r.changed+FORTNIGHT?'disabled':''}>${Object.keys(r.requirements).length?'Изменить условия':'Выбрать условия выплаты'}</button>
-    ${Date.now()<r.changed+FORTNIGHT?`<small class="mut">Можно изменить с ${new Date(r.changed+FORTNIGHT).toLocaleString('ru-RU')}</small>`:''}`;
+    <div class="row" style="margin-bottom:10px">
+      <button class="btn ${hasRules?'gh':'cy'}" data-a="showModal" data-v="rules" ${locked?'disabled':''}>${hasRules?'Изменить условия':'+ Добавить условие выплаты'}</button>
+    </div>
+    ${locked?`<small class="mut">Можно изменить с ${new Date(r.changed+FORTNIGHT).toLocaleString('ru-RU')}</small>`:''}`;
 }
 function goalMinutes(){
   const totals=new Map();
@@ -4839,11 +4844,15 @@ function modalShell(title,contents,closable=true){
 function requirementsForm(first){
   const r=S.rules;
   const reqs=r.requirements;
-  return `${first?'<p class="mut">Шаг 2 из 2</p>':''}
-    <h3>Какие тренировки нужны для выплаты?</h3><p class="mut">Укажи количество напротив нужных категорий. Ноль исключает категорию. Одна тренировка закрывает одну позицию. Условия можно менять раз в 14 дней.</p>
+  return `${first?'<p class="mut">Шаг 2 из 2 (необязательно)</p>':''}
+    <h3>Какие тренировки нужны для выплаты?</h3><p class="mut">Укажи количество напротив нужных категорий или пропусти этот шаг — условие всегда можно добавить позже в разделе «Банк». После установки условия его можно менять раз в 14 дней.</p>
     <div class="quota-grid" id="quota-list">${S.activities.map(m=>quotaRow(m,reqs[m.id]||0)).join('')}</div>
-    ${first?'<button class="btn gh" data-a="previousSetup">‹ Профиль</button>':''}
-    <p class="form-msg" role="status"></p><button class="btn cy" data-a="saveRules">${first?'Начать':'Сохранить условия'}</button>`;
+    <p class="form-msg" role="status"></p>
+    <div class="row">
+      ${first?'<button class="btn gh" data-a="previousSetup">‹ Профиль</button>':''}
+      ${first?'<button class="btn gh" data-a="skipRules">Пропустить</button>':''}
+      <button class="btn cy" data-a="saveRules">${first?'Начать':'Сохранить условия'}</button>
+    </div>`;
 }
 function quotaRow(m,n){
   const maxVal=Math.max(99,n);
@@ -5047,16 +5056,26 @@ const A={
     S.profileStepDone=true;save();renderModal();
   },
   previousSetup:()=>{S.profileStepDone=false;save();renderModal();},
+  skipRules:()=>{
+    if(!S.setupDone&&!S.profileStepDone)return;
+    S.rules={requirements:{},counts:{},weekKey:toWeekKey(),changed:0};
+    S.setupDone=true;modalState=null;snd('done');save();render();
+  },
   saveRules:()=>{
     if(!S.setupDone&&!S.profileStepDone)return;
-    if(S.setupDone&&Date.now()<S.rules.changed+FORTNIGHT)return;
+    const hadRules=Object.keys(S.rules.requirements||{}).length>0;
+    if(S.setupDone&&hadRules&&Date.now()<S.rules.changed+FORTNIGHT)return;
     const rows=$$('[data-quota]'),requirements={};
-    if(!rows.some(x=>Number(x.value)>0)||rows.some(x=>!Number.isInteger(+x.value)||+x.value<0||+x.value>Math.max(99,S.rules.requirements[x.dataset.quota]||0))){
-      $('.form-msg').textContent='Выбери хотя бы одну тренировку и укажи целое количество.';return;
+    if(rows.some(x=>!Number.isInteger(+x.value)||+x.value<0||+x.value>Math.max(99,S.rules.requirements[x.dataset.quota]||0))){
+      $('.form-msg').textContent='Укажи целое число от 0 до 99.';return;
     }
     for(const x of rows)if(+x.value)requirements[x.dataset.quota]=+x.value;
-    S.rules={requirements,counts:{},weekKey:toWeekKey(),changed:Date.now()};
-    S.setupDone=true;modalState=null;save();render();
+    const hasAny=Object.keys(requirements).length>0;
+    if(S.setupDone&&!hadRules&&!hasAny){
+      $('.form-msg').textContent='Выбери хотя бы одну тренировку для условия.';return;
+    }
+    S.rules={requirements,counts:{},weekKey:toWeekKey(),changed:hasAny?Date.now():0};
+    S.setupDone=true;modalState=null;snd('done');save();render();
   },
   recordWorkout:d=>{
     if(S.tab!=='work')return;
