@@ -1552,6 +1552,230 @@ details.card>summary{cursor:pointer;font-weight:700}#goal-archive .goal-card{mar
 .sync-list{display:grid;gap:8px;margin:12px 0}
 .sync-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 11px;background:var(--surface);border:1px solid var(--line);border-radius:5px;font-size:13px}
 .sync-row b{font-size:12.5px}
+
+/* === V4 VISUAL & HABITS & HEATMAP UPGRADES === */
+.top-actions .icon-btn,
+.top-actions .res-pill {
+  height: 36px;
+  min-height: 36px;
+  min-width: 36px;
+  padding: 0 9px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 12.5px 'Inter', sans-serif;
+}
+.top-actions .res-pill { min-width: 48px; gap: 4px; }
+.top-actions .sync-btn { min-width: 36px; padding: 0 8px; }
+
+.prof-mini-ranks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 8px;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--mut);
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.3;
+}
+.prof-mini-ranks .rank-sep { opacity: 0.45; }
+@media (max-width: 600px) {
+  .top-actions .icon-btn,
+  .top-actions .res-pill {
+    height: 34px;
+    min-height: 34px;
+    min-width: 34px;
+    padding: 0 7px;
+  }
+  .top-actions .res-pill { min-width: 44px; font-size: 12px; }
+  .prof-mini-ranks { flex-direction: column; align-items: flex-start; gap: 1px; }
+  .prof-mini-ranks .rank-sep { display: none; }
+}
+
+/* Unified clean font in forms & modals */
+.entry-form,
+.entry-form label,
+.entry-form input,
+.entry-form select,
+.entry-form small,
+.entry-form p,
+.modal .entry-primary input[type=text],
+.modal input[type=text],
+.modal input[type=number],
+.modal select {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  letter-spacing: 0;
+}
+.modal .entry-primary input[type=text] {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Modern Profile Customization */
+.prof-custom-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+.ava-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 7px;
+  margin-top: 8px;
+}
+.ava-opt {
+  height: 44px;
+  background: var(--surface);
+  color: var(--mut);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.ava-opt:hover { border-color: var(--line-gold); color: var(--ink-strong); }
+.ava-opt.on {
+  border-color: var(--cy);
+  color: var(--cy);
+  background: color-mix(in srgb, var(--cy) 16%, var(--surface));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--cy) 28%, transparent);
+}
+.swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+.color-swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.18);
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+}
+.color-swatch.on {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--sw-col, var(--cy));
+  transform: scale(1.08);
+}
+
+/* Habits */
+.habit-card {
+  border-left: 4px solid var(--habit-color, var(--cy));
+}
+.habit-check-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink-strong);
+  font: 600 14px 'Inter', sans-serif;
+  cursor: pointer;
+  text-align: left;
+}
+.habit-check-btn.done {
+  border-color: var(--gr);
+  background: color-mix(in srgb, var(--gr) 16%, var(--surface));
+  color: var(--ink-strong);
+}
+.habit-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 2px solid var(--habit-color, var(--cy));
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.habit-check-btn.done .habit-box {
+  background: var(--gr);
+  border-color: var(--gr);
+  color: #fff;
+}
+.habit-week {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+}
+.habit-dot {
+  flex: 1;
+  text-align: center;
+  padding: 4px 2px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--mut);
+}
+.habit-dot.done {
+  background: color-mix(in srgb, var(--gr) 24%, var(--surface));
+  border-color: var(--gr);
+  color: var(--ink-strong);
+  font-weight: 700;
+}
+.habit-dot.miss {
+  background: color-mix(in srgb, var(--red) 16%, var(--surface));
+  border-color: color-mix(in srgb, var(--red) 55%, var(--line));
+}
+.day-picker {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.day-pill {
+  min-width: 38px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--mut);
+  font: 600 12.5px 'Inter', sans-serif;
+  cursor: pointer;
+}
+.day-pill.on {
+  border-color: var(--cy);
+  background: color-mix(in srgb, var(--cy) 20%, var(--surface));
+  color: var(--ink-strong);
+}
+
+/* Traffic-light Heatmap (Red / Yellow / Green) + clickable cells */
+.hm-cell { cursor: pointer; transition: transform 0.12s ease; }
+.hm-cell:hover { transform: scale(1.22); z-index: 2; }
+.hm-cell.hm-future { background: transparent; border-color: color-mix(in srgb, var(--line) 45%, transparent); opacity: 0.35; cursor: default; }
+.hm-cell.hm-future:hover { transform: none; }
+.hm-cell.hm-red, .hm-legend-cell.hm-red { background: #6b1d20; border-color: #9e2a2f; }
+.hm-cell.hm-yel, .hm-legend-cell.hm-yel { background: #b88421; border-color: #e3aa3b; }
+.hm-cell.hm-grn, .hm-legend-cell.hm-grn { background: #2d8a50; border-color: #52c27a; box-shadow: 0 0 4px rgba(82, 194, 122, 0.35); }
+.day-detail-list { display: grid; gap: 6px; margin: 10px 0; }
+.day-detail-item {
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
 </style>
 </head>
 <body>
@@ -1747,7 +1971,7 @@ function migrateTracker(s,old){
 }
 
 const DEF=()=>({
-  doorRevision:1,trainingVersion:2,setupDone:false,profileStepDone:false,activities:SPORTS.map(x=>({...x})),goals:[],
+  doorRevision:1,trainingVersion:2,setupDone:false,profileStepDone:false,activities:SPORTS.map(x=>({...x})),goals:[],habits:[],heatmapMode:'activity',
   rules:{requirements:{},counts:{},changed:0},
   audio:{effects:75,timer:100},
   profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',medals:['st_hrs','wk_tot','keys']},
@@ -1818,7 +2042,8 @@ function normalizeState(rawObj){
   if(!Array.isArray(s.gym.draft.sets))s.gym.draft.sets=[];
   if(!Array.isArray(s.bodyMetrics))s.bodyMetrics=[];
   for(const k of ['rules','audio','run','sel'])s[k]={...b[k],...s[k]};
-  for(const k of ['activities','goals','logStudy','logWork','logBank'])if(!Array.isArray(s[k]))s[k]=b[k];
+  for(const k of ['activities','goals','habits','logStudy','logWork','logBank'])if(!Array.isArray(s[k]))s[k]=b[k];
+  if(s.heatmapMode!=='habits')s.heatmapMode='activity';
   s.stats.keyMinutes??=Math.floor(s.stats.min||0)%90;
   s.stats.studyKeys??=0;
   migrateTracker(s,rawObj);
@@ -1867,11 +2092,10 @@ function hasPendingSync(){
   try{return Boolean(localStorage.getItem(pendingKey));}catch{return false;}
 }
 function syncBadgeInfo(){
-  if(guestMode||!onlineProfile)return {cls:'',ic:'💾',title:'Локальное сохранение на устройстве'};
-  if(loading||flushing||pulling)return {cls:'busy',ic:'⏳',title:'Синхронизация с Render/MongoDB и Telegram...'};
-  if(serverReady&&!hasPendingSync()&&!syncError)return {cls:'ok',ic:'☁️✓',title:'Сохранено в MongoDB и Telegram Cloud'};
-  if(syncError||hasPendingSync())return {cls:'err',ic:'☁️!',title:syncError||'Есть несохранённые на сервере изменения'};
-  return {cls:'busy',ic:'⏳',title:'Ожидание подключения к Render/MongoDB'};
+  if(guestMode||!onlineProfile)return {cls:'',ic:'💾',title:'Локальное сохранение'};
+  if(syncError)return {cls:'err',ic:'☁️!',title:'Проблема с синхронизацией'};
+  if(serverReady||cloudLoaded)return {cls:'ok',ic:'☁️',title:'Профиль Telegram связан'};
+  return {cls:'busy',ic:'☁️',title:'Подключение профиля Telegram'};
 }
 function updateSyncButton(){
   const btn=$('#sync-btn');
@@ -1881,7 +2105,6 @@ function updateSyncButton(){
   btn.textContent=info.ic;
   btn.title=info.title;
   btn.setAttribute('aria-label',info.title);
-  if(modalState==='sync')renderModal();
 }
 function startGuest(){
   if(!guestMode)changeMode(true);
@@ -2335,7 +2558,10 @@ const P={
   book:'<path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M7 4v16"/>',
   refresh:'<path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/>',
   eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
-  snow:'<path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1"/>'
+  snow:'<path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1"/>',
+  gem:'<path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6z"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
+  check:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'
 };
 const icon=(n,s=22)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${P[n]||P.star}</svg>`;
 
@@ -2550,7 +2776,7 @@ function renderHeader(){
             </div>
             <div class="prof-mini-ranks" data-a="toggleProfDrawer">
               <span>📚 Ур.${sr.lvl+1} <b>${sr.name}</b></span>
-              <span>•</span>
+              <span class="rank-sep">•</span>
               <span>⚔️ Ур.${wr.lvl+1} <b>${wr.name}</b></span>
             </div>
           </div>
@@ -2592,10 +2818,11 @@ function renderHeader(){
     ['study','Учёба','study'],
     ['work','Спорт','work'],
     ['gym','Журнал весов','gym'],
+    ['goals','Цели','book'],
+    ['habits','Привычки','check'],
     ['shop','Магазин','shop'],
     ['progress','Прогресс','chart'],
     ['ach','Достижения','trophy'],
-    ['goals','Цели','book'],
     ['history','История','chart']
   ];
   $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,15)} ${v}</button>`).join('');
@@ -3376,9 +3603,29 @@ function shopView(){
 }
 
 /* 6. PROGRESS, FULL-SCREEN GITHUB HEATMAP, WEEKLY CHART, BEST TIME OF DAY & BACKUP */
+function isHabitScheduled(h,dayStr){
+  const dt=new Date(dayStr+'T00:00:00');
+  const wd=(dt.getDay()+6)%7; // 0=Пн .. 6=Вс
+  if(h.freq==='weekdays')return wd<5;
+  if(h.freq==='weekends')return wd>=5;
+  if(h.freq==='custom')return Array.isArray(h.days)&&h.days.includes(wd);
+  return true;
+}
+function habitDayStats(dayStr){
+  const list=S.habits||[];
+  let due=0,done=0;
+  for(const h of list){
+    const sched=isHabitScheduled(h,dayStr);
+    const isDone=Boolean(h.logs&&h.logs[dayStr]);
+    if(sched)due++;
+    if(isDone)done++;
+  }
+  return {due,done,total:list.length};
+}
 function progressView(){
-  /* Build 140 days (20 weeks) GitHub heatmap — fits full width without scrolling */
+  const mode=S.heatmapMode==='habits'?'habits':'activity';
   const today=new Date();
+  const todayKey=toDayKey(today.getTime());
   const dayOfWk=(today.getDay()+6)%7;
   const endMon=new Date(today.getFullYear(),today.getMonth(),today.getDate()-dayOfWk);
   const cells=[];
@@ -3386,10 +3633,26 @@ function progressView(){
     for(let d=0;d<7;d++){
       const dt=new Date(endMon.getTime()-(w*7-d)*86400000);
       const k=toDayKey(dt.getTime());
-      const rec=S.daily[k]||{min:0,wk:0};
-      const score=(rec.min||0)+(rec.wk||0)*45;
-      const lvl=score>=180?4:score>=90?3:score>=30?2:score>0?1:0;
-      cells.push({k,min:rec.min||0,wk:rec.wk||0,lvl});
+      const isFuture=k>todayKey;
+      let cls='hm-future', title=k;
+      if(!isFuture){
+        if(mode==='habits'){
+          const hs=habitDayStats(k);
+          if(hs.done<=0){cls='hm-red';}
+          else if(hs.due>0&&hs.done>=hs.due){cls='hm-grn';}
+          else if(hs.due===0&&hs.done>0){cls='hm-grn';}
+          else{cls='hm-yel';}
+          title=`${k}: Привычки ${hs.done}/${hs.due||hs.total}`;
+        }else{
+          const rec=S.daily[k]||{min:0,wk:0};
+          const m=rec.min||0, wk=rec.wk||0;
+          if(m===0&&wk===0)cls='hm-red';
+          else if(m>=60||wk>=1)cls='hm-grn';
+          else cls='hm-yel';
+          title=`${k}: Учёба ${m} мин, Тренировок: ${wk}`;
+        }
+      }
+      cells.push({k,cls,title,isFuture});
     }
   }
 
@@ -3415,16 +3678,26 @@ function progressView(){
   S.hours.forEach((v,i)=>{if(v>(S.hours[peakHr]||0))peakHr=i});
 
   return `<section class="card cut" style="border-color:var(--cy)">
-    <h2>🟩 Цифровая карта активности (20 недель целиком)</h2>
-    <p class="mut" style="font-size:13px">Полная панорама за 140 дней на одном экране. Чем ярче клетка, тем больше учёбы и тренировок было в этот день.</p>
+    <div class="hud">
+      <h2 style="display:flex;align-items:center;gap:8px;margin-bottom:2px">${icon(mode==='habits'?'check':'chart',20)} ${mode==='habits'?'Карта привычек':'Цифровая карта активности'}</h2>
+      <div class="chips" style="margin:0">
+        <button class="chip cut-sm ${mode==='activity'?'on':''}" data-a="setHeatmapMode" data-v="activity">Активность</button>
+        <button class="chip cut-sm ${mode==='habits'?'on':''}" data-a="setHeatmapMode" data-v="habits">Привычки</button>
+      </div>
+    </div>
+    <p class="mut" style="font-size:13px;margin-top:4px">${mode==='habits'?'Выполнение привычек за последние 20 недель. Нажми на любой день, чтобы увидеть подробности.':'Панорама за 140 дней. Нажми на любой квадратик, чтобы посмотреть, что ты делал в этот день.'}</p>
     <div class="heatmap-wrap">
       <div class="heatmap">
-        ${cells.map(c=>`<div class="hm-cell ${c.lvl?'l'+c.lvl:''}" title="${c.k}: Учёба ${c.min} мин, Тренировок: ${c.wk}"></div>`).join('')}
+        ${cells.map(c=>`<div class="hm-cell ${c.cls}" ${c.isFuture?'':`data-a="openDayDetail" data-v="${c.k}"`} title="${esc(c.title)}"></div>`).join('')}
       </div>
     </div>
     <div class="row" style="justify-content:space-between;margin-top:8px;font-size:12px">
       <span>🔥 Серия: <b>${S.streak.cur||0} дн.</b> (Рекорд: <b>${S.streak.best||0} дн.</b>)</span>
-      <span class="mut">Меньше <span class="hm-legend-cell"></span> <span class="hm-legend-cell l2"></span> <span class="hm-legend-cell l4"></span> Больше</span>
+      <span class="mut" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span class="hm-legend-cell hm-red"></span> 0
+        <span class="hm-legend-cell hm-yel"></span> Мало
+        <span class="hm-legend-cell hm-grn"></span> Много
+      </span>
     </div>
   </section>
 
@@ -3487,36 +3760,38 @@ function achView(){
 /* 8. PROFILE, CUSTOMIZATION & 20+20 CAREER LADDER */
 function profileView(){
   const sr=getStudyRank(),wr=getSportRank();
-  const avas=['bolt','crown','skull','shield','star','flame','trophy','key','study','work'];
-  const colors=[
-    ['#d49b4b','Золото Лотрика'],
-    ['#b8292f','Багровая Кровь'],
-    ['#4f9e69','Изумруд Глубин'],
-    ['#8c52b5','Аметист Бездны'],
-    ['#e85d24','Пламя Хаоса'],
-    ['#64a6d1','Сталь Анор Лондо']
-  ];
+  const avas=['bolt','crown','skull','shield','star','flame','trophy','key','study','work','gem','compass'];
+  const colors=['#d49b4b','#b8292f','#4f9e69','#8c52b5','#e85d24','#64a6d1'];
   const hrs=(S.stats.min/60).toFixed(1);
 
   return `<section class="card cut" style="border-color:${S.profile.accent}">
-    <h2>Профиль и Кастомизация</h2>
-    <div class="cfg" style="margin-top:10px">
-      <label>Никнейм игрока
-        <input type="text" id="prof-nick-inp" value="${esc(S.profile.nick)}" maxlength="24">
-      </label>
-      <label>Титул / Девиз под ником
-        <input type="text" id="prof-title-inp" value="${esc(S.profile.title)}" maxlength="36">
-      </label>
+    <h2>Профиль</h2>
+    <div class="prof-custom-preview" style="--accent:${S.profile.accent}">
+      <div class="ava" style="width:48px;height:48px">${icon(S.profile.ava||'crown',24)}</div>
+      <div style="min-width:0">
+        <div style="font-size:18px;font-weight:700;color:var(--ink-strong)">${esc(S.profile.nick)}</div>
+        <div class="mut" style="font-size:12.5px">${esc(S.profile.title||'Без подписи')}</div>
+      </div>
     </div>
-    <div style="margin-top:12px">
-      <span class="mut" style="font-size:13.5px">Выбери символ профиля:</span>
-      <div class="chips">${avas.map(av=>`<button class="chip cut-sm ${S.profile.ava===av?'on':''}" data-a="setAva" data-v="${av}">${icon(av,18)}</button>`).join('')}</div>
+    <div class="entry-form" style="margin-top:0">
+      <div class="cfg">
+        <label class="entry-field">Никнейм
+          <input type="text" id="prof-nick-inp" value="${esc(S.profile.nick)}" maxlength="24">
+        </label>
+        <label class="entry-field">Подпись под ником
+          <input type="text" id="prof-title-inp" value="${esc(S.profile.title)}" maxlength="36" placeholder="Например, Иду к цели">
+        </label>
+      </div>
+      <div>
+        <span class="mut" style="font-size:13px;font-weight:600">Иконка профиля</span>
+        <div class="ava-grid">${avas.map(av=>`<button class="ava-opt ${S.profile.ava===av?'on':''}" data-a="setAva" data-v="${av}" aria-label="${av}">${icon(av,20)}</button>`).join('')}</div>
+      </div>
+      <div>
+        <span class="mut" style="font-size:13px;font-weight:600">Цвет акцента</span>
+        <div class="swatch-row">${colors.map(c=>`<button class="color-swatch ${S.profile.accent===c?'on':''}" style="background:${c};--sw-col:${c}" data-a="setAccent" data-v="${c}" aria-label="${c}"></button>`).join('')}</div>
+      </div>
+      <button class="btn cy" data-a="saveProfile">Сохранить профиль</button>
     </div>
-    <div style="margin-top:10px">
-      <span class="mut" style="font-size:13.5px">Цвет печати профиля:</span>
-      <div class="chips">${colors.map(([c,label])=>`<button class="chip cut-sm ${S.profile.accent===c?'on':''}" style="border-color:${c};${S.profile.accent===c?'box-shadow:0 0 12px '+c:''}" data-a="setAccent" data-v="${c}"><span style="width:12px;height:12px;border-radius:50%;background:${c};display:inline-block"></span> ${label}</button>`).join('')}</div>
-    </div>
-    <button class="btn cy" style="margin-top:8px" data-a="saveProfile">Сохранить профиль</button>
   </section>
 
   <section class="card cut">
@@ -3785,7 +4060,7 @@ function renderModal(){
 function render(){
   renderHeader();
   const views={
-    goals:goalsView, history:historyView, home:homeView,
+    goals:goalsView, habits:habitsView, history:historyView, home:homeView,
     study:studyView,
     work:workView,
     gym:gymView,
@@ -3929,6 +4204,121 @@ function goalCard(g,minutes,archived){
     <button class="btn gh" data-a="goalForm" data-v="${id}">Настроить</button>
     ${g.archived?`<button class="btn gh" data-a="archiveGoal" data-v="${id}">Вернуть из архива</button>`:!archived?`<button class="btn gh" data-a="archiveGoal" data-v="${id}">В архив</button>`:''}</div></article>`;
 }
+
+/* HABITS VIEW & FORM */
+let habitEditorId=null, dayDetailKey=null;
+const WEEKDAYS_RU=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+function habitFreqLabel(h){
+  if(h.freq==='weekdays')return 'По будням';
+  if(h.freq==='weekends')return 'По выходным';
+  if(h.freq==='custom'){
+    const ds=(h.days||[]).slice().sort((a,b)=>a-b).map(i=>WEEKDAYS_RU[i]).join(', ');
+    return ds||'Свои дни';
+  }
+  return 'Каждый день';
+}
+function habitsView(){
+  const today=toDayKey();
+  const last7=Array.from({length:7},(_,i)=>{
+    const dt=new Date(Date.now()-(6-i)*86400000);
+    return {k:toDayKey(dt.getTime()),lbl:WEEKDAYS_RU[(dt.getDay()+6)%7]};
+  });
+  const list=S.habits||[];
+  return `<section class="card cut">
+    <div class="hud">
+      <h2>Мои привычки</h2>
+      <button class="btn cy" data-a="habitForm">+ Добавить привычку</button>
+    </div>
+    ${list.length?'':'<p class="mut">Создай ежедневную или кастомную привычку (например, «Пить креатин») и отмечай выполнение галочкой.</p>'}
+  </section>
+  ${list.map(h=>{
+    const doneToday=Boolean(h.logs&&h.logs[today]);
+    const totalDone=Object.values(h.logs||{}).filter(Boolean).length;
+    const dueToday=isHabitScheduled(h,today);
+    const id=esc(h.id);
+    return `<article class="card cut habit-card" style="--habit-color:${goalColor(h.color)}">
+      <div class="hud">
+        <div>
+          <small class="mut">${esc(habitFreqLabel(h))}</small>
+          <h3 style="color:${goalColor(h.color)};margin:0">${esc(h.n)}</h3>
+        </div>
+        <small class="mut">Всего: <b>${totalDone}</b></small>
+      </div>
+      <button class="habit-check-btn ${doneToday?'done':''}" data-a="toggleHabit" data-v="${id}">
+        <span class="habit-box">${doneToday?'✓':''}</span>
+        <span>${doneToday?'Выполнено сегодня':(dueToday?'Отметить за сегодня':'Отметить вне графика')}</span>
+      </button>
+      <div class="habit-week">
+        ${last7.map(d=>{
+          const ok=Boolean(h.logs&&h.logs[d.k]);
+          const miss=!ok&&d.k<today&&isHabitScheduled(h,d.k);
+          return `<div class="habit-dot ${ok?'done':miss?'miss':''}">${d.lbl}</div>`;
+        }).join('')}
+      </div>
+      <div class="row">
+        <button class="btn gh" data-a="habitForm" data-v="${id}">Настроить</button>
+      </div>
+    </article>`;
+  }).join('')}`;
+}
+function habitForm(h){
+  const freq=h?.freq||'daily';
+  const days=Array.isArray(h?.days)?h.days:[0,1,2,3,4];
+  return `<div class="entry-form" style="--form-accent:${goalColor(h?.color)}">
+    <label class="entry-field entry-primary" for="habit-name">Название привычки
+      <input type="text" id="habit-name" maxlength="70" value="${esc(h?.n||'')}" placeholder="Например, Пить креатин">
+    </label>
+    <div class="goal-options">
+      <label class="entry-field" for="habit-freq">Частота
+        <select id="habit-freq">
+          <option value="daily" ${freq==='daily'?'selected':''}>Каждый день</option>
+          <option value="weekdays" ${freq==='weekdays'?'selected':''}>По будням</option>
+          <option value="weekends" ${freq==='weekends'?'selected':''}>По выходным</option>
+          <option value="custom" ${freq==='custom'?'selected':''}>Свои дни недели</option>
+        </select>
+      </label>
+      <label class="entry-field" for="habit-color">Цвет
+        <input id="habit-color" type="color" value="${goalColor(h?.color)}">
+      </label>
+    </div>
+    <div id="habit-days-wrap" ${freq==='custom'?'':'hidden'}>
+      <span class="mut" style="font-size:13px;font-weight:600;display:block;margin-bottom:6px">Выбери дни недели</span>
+      <div class="day-picker">
+        ${WEEKDAYS_RU.map((lbl,i)=>`<button type="button" class="day-pill ${days.includes(i)?'on':''}" data-a="toggleHabitDay" data-v="${i}">${lbl}</button>`).join('')}
+      </div>
+    </div>
+    <div class="entry-actions"><p class="form-msg" role="status"></p>
+      <button class="btn cy" data-a="saveHabit">${h?'Сохранить':'Создать привычку'}</button>
+    </div>
+    ${h?`<details class="remove-goal"><summary>Удалить привычку</summary>
+      <p>Удалить «${esc(h.n)}» и всю историю её отметок?</p>
+      <button class="btn" data-a="deleteHabit" data-v="${esc(h.id)}">Подтвердить удаление</button>
+    </details>`:''}
+  </div>`;
+}
+function dayDetailContent(dayStr){
+  const rec=S.daily[dayStr]||{min:0,wk:0,doors:0};
+  const studyLogs=S.logStudy.filter(l=>toDayKey(l.t)===dayStr);
+  const workLogs=S.logWork.filter(l=>toDayKey(l.t)===dayStr);
+  const doneHabits=(S.habits||[]).filter(h=>h.logs&&h.logs[dayStr]);
+  const missedHabits=(S.habits||[]).filter(h=>isHabitScheduled(h,dayStr)&&!(h.logs&&h.logs[dayStr]));
+  const dtFmt=new Date(dayStr+'T00:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  return `<p class="mut">${esc(dtFmt)}</p>
+    <div class="stats" style="margin:10px 0">
+      <div class="st"><span>Учёба</span><b>${hm(rec.min||0)}</b></div>
+      <div class="st g"><span>Тренировки</span><b>${rec.wk||0}</b></div>
+      <div class="st r"><span>Привычки</span><b>${doneHabits.length}/${doneHabits.length+missedHabits.length}</b></div>
+    </div>
+    ${studyLogs.length?`<h3>Учёба</h3><div class="day-detail-list">${studyLogs.map(l=>`<div class="day-detail-item"><span>${esc(l.txt)}</span><b class="plus">+${fmt(l.amt)}</b></div>`).join('')}</div>`:''}
+    ${workLogs.length?`<h3>Спорт</h3><div class="day-detail-list">${workLogs.map(l=>`<div class="day-detail-item"><span>${esc(l.txt)}</span><b class="plus">+${fmt(l.amt)}</b></div>`).join('')}</div>`:''}
+    ${(doneHabits.length||missedHabits.length)?`<h3>Привычки</h3><div class="day-detail-list">
+      ${doneHabits.map(h=>`<div class="day-detail-item"><span>✓ ${esc(h.n)}</span><b style="color:var(--gr)">Сделано</b></div>`).join('')}
+      ${missedHabits.map(h=>`<div class="day-detail-item"><span>○ ${esc(h.n)}</span><span class="mut">Пропущено</span></div>`).join('')}
+    </div>`:''}
+    ${!rec.min&&!rec.wk&&!studyLogs.length&&!workLogs.length&&!doneHabits.length?'<p class="mut">В этот день активности в приложении не было.</p>':''}
+    <div class="row" style="justify-content:flex-end"><button class="btn cy" data-a="closeModal">Закрыть</button></div>`;
+}
+
 function goalsView(){
   const minutes=goalMinutes(),active=[],archived=[];
   for(const g of S.goals)(g.archived||goalDone(g,minutes)?archived:active).push(g);
@@ -4032,7 +4422,7 @@ function renderExtraModal(){
       <label class="entry-field entry-primary" for="setup-nick">Твой ник
         <input type="text" id="setup-nick" maxlength="24" value="${esc(S.profile.nick)}" autocomplete="nickname">
       </label>
-      <label class="entry-field" for="setup-title">Титул
+      <label class="entry-field" for="setup-title">Подпись под ником
         <input type="text" id="setup-title" maxlength="36" value="${esc(S.profile.title)}">
       </label>
       <div class="entry-actions"><p class="form-msg" role="status"></p><button class="btn cy" data-a="nextSetup">Далее</button></div>
@@ -4059,26 +4449,28 @@ function renderExtraModal(){
       <button class="btn gh" data-a="mute">${S.mute?'Включить звук':'Выключить звук'}</button><button class="btn cy" data-a="testAlarm">Проверить сигнал</button>`);
     return true;
   }
+  if(modalState==='habit'){modalShell(habitEditorId?'Настроить привычку':'Новая привычка',habitForm(S.habits.find(h=>h.id===habitEditorId)));return true;}
+  if(modalState==='dayDetail'&&dayDetailKey){modalShell('Активность за день',dayDetailContent(dayDetailKey));return true;}
   if(modalState==='sync'){
-    const fmtT=ts=>ts?new Date(ts).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'—';
-    const uidTxt=onlineProfile?('Telegram ID: '+tg.initDataUnsafe.user.id):'Открыто вне Telegram (локальный режим)';
-    const srvTxt=guestMode?'Отключено (гость)':!onlineProfile?'Нужен запуск из Telegram':(loading||flushing||pulling)?'Синхронизация…':serverReady?(hasPendingSync()?'Ожидает отправки':'Подключено · '+fmtT(lastServerSync)):(syncError||'Просыпается Render…');
-    const tgTxt=guestMode?'Отключено (гость)':!hasTgCloud?'Недоступно в этом клиенте':lastTgSync?('Активно · '+fmtT(lastTgSync)):'Готово к записи';
-    modalShell('Синхронизация и данные',`<p class="mut">${esc(uidTxt)}</p>
-      <div class="sync-list">
-        <div class="sync-row"><span>Render + MongoDB</span><b style="color:${serverReady&&!hasPendingSync()?'var(--gr)':syncError?'var(--red)':'var(--ye)'}">${esc(srvTxt)}</b></div>
-        <div class="sync-row"><span>Telegram Cloud (телефон ↔ ПК)</span><b style="color:${hasTgCloud&&!guestMode?'var(--gr)':'var(--mut)'}">${esc(tgTxt)}</b></div>
-        <div class="sync-row"><span>Локальная копия</span><b style="color:var(--gr)">Сохраняется мгновенно</b></div>
+    const isOk=!guestMode&&onlineProfile&&!syncError;
+    const statusText=guestMode?'Гостевой режим: данные сохраняются только на этом устройстве.':
+      !onlineProfile?'Открыто вне Telegram: данные сохраняются локально на этом устройстве.':
+      syncError?'Есть временная проблема с подключением. Попробуй нажать «Обновить».':
+      'Профиль Telegram связан — всё работает хорошо. Твой прогресс автоматически сохраняется и синхронизируется между телефоном и ПК.';
+    modalShell('Синхронизация и данные',`<div class="sync-list">
+        <div class="sync-row">
+          <span>Статус профиля</span>
+          <b style="color:${isOk?'var(--gr)':syncError?'var(--red)':'var(--ye)'}">${isOk?'✓ Связан с Telegram':syncError?'Нужна проверка':'Локально'}</b>
+        </div>
       </div>
-      ${syncError?`<p class="form-msg">${esc(syncError)}</p>`:''}
-      <p class="mut" style="font-size:12.5px">Чтобы на телефоне и ПК было одно сохранение, всегда открывай приложение через бота в Telegram. При переключении между устройствами данные подтягиваются автоматически.</p>
+      <p class="mut" style="font-size:13.5px">${esc(statusText)}</p>
       <div class="row">
-        ${!guestMode&&onlineProfile?`<button class="btn cy" data-a="syncNow" ${loading||flushing||pulling?'disabled':''}>🔄 Синхронизировать сейчас</button>`:''}
+        ${!guestMode&&onlineProfile?`<button class="btn cy" data-a="syncNow">🔄 Обновить сейчас</button>`:''}
         ${guestMode&&onlineProfile?`<button class="btn cy" data-a="accountLogin">Войти через Telegram</button>`:''}
       </div>
       <div class="row">
-        <button class="btn gh" data-a="exportData">⬇️ Скачать .json</button>
-        <button class="btn gh" data-a="importDataAsk">⬆️ Загрузить .json</button>
+        <button class="btn gh" data-a="exportData">⬇️ Скачать копию</button>
+        <button class="btn gh" data-a="importDataAsk">⬆️ Загрузить копию</button>
       </div>`);
     return true;
   }
@@ -4093,6 +4485,32 @@ function renderExtraModal(){
 /* ACTIONS */
 const A={
   showModal:d=>{modalState=d.v;renderModal();},
+  setHeatmapMode:d=>{S.heatmapMode=d.v==='habits'?'habits':'activity';save();render();snd('tick');},
+  openDayDetail:d=>{dayDetailKey=d.v;modalState='dayDetail';renderModal();snd('tick');},
+  habitForm:d=>{habitEditorId=d.v||null;modalState='habit';renderModal();},
+  toggleHabitDay:(d,e)=>{e?.target?.classList.toggle('on');},
+  saveHabit:()=>{
+    const n=$('#habit-name').value.trim(),freq=$('#habit-freq').value,color=goalColor($('#habit-color').value);
+    const days=$$('.day-pill.on').map(x=>Number(x.dataset.v));
+    if(!n){$('.form-msg').textContent='Введи название привычки.';return;}
+    if(freq==='custom'&&!days.length){$('.form-msg').textContent='Выбери хотя бы один день недели.';return;}
+    const existing=S.habits.find(h=>h.id===habitEditorId);
+    if(existing){Object.assign(existing,{n,freq,color,days});}
+    else{S.habits.push({id:uid(),n,freq,color,days,logs:{}});}
+    habitEditorId=null;modalState=null;snd('done');save();render();
+  },
+  deleteHabit:d=>{
+    S.habits=S.habits.filter(h=>h.id!==d.v);
+    habitEditorId=null;modalState=null;save();render();
+  },
+  toggleHabit:d=>{
+    const h=S.habits.find(x=>x.id===d.v);if(!h)return;
+    h.logs=h.logs||{};
+    const today=toDayKey();
+    if(h.logs[today])delete h.logs[today];
+    else{h.logs[today]=true;snd('done');}
+    save();render();
+  },
   retryLoad:()=>loadCloudProfile(false),
   continueTgOffline:()=>openTelegramOffline(),
   syncNow:()=>syncNow(false),
@@ -4596,7 +5014,7 @@ document.addEventListener('click',e=>{
 });
 
 document.addEventListener('input',e=>{
-  if(e.target.id==='goal-color'){
+  if(e.target.id==='goal-color'||e.target.id==='habit-color'){
     e.target.closest('.entry-form')?.style.setProperty('--form-accent',goalColor(e.target.value));return;
   }
   if(e.target.dataset.detail){updateDetail(e.target,false);return;}
@@ -4610,6 +5028,7 @@ document.addEventListener('change',e=>{
   const t=e.target;
   if(t.dataset.detail){updateDetail(t);return;}
   if(t.id==='task-kind'){$('#task-hours-label').hidden=t.value!=='time';return;}
+  if(t.id==='habit-freq'){$('#habit-days-wrap').hidden=t.value!=='custom';return;}
   if(t.dataset.door!==undefined){
     const idx=+t.dataset.door,f=t.dataset.df,val=Math.max(0,+t.value||0);
     const d=S.cfg.doors[idx];
