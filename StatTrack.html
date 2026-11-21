@@ -1776,6 +1776,113 @@ details.card>summary{cursor:pointer;font-weight:700}#goal-archive .goal-card{mar
   justify-content: space-between;
   gap: 8px;
 }
+
+/* === V5: LOGO FIT, CALENDAR HEATMAP, ADMIN CROWN === */
+.topbar { gap: 4px; }
+.brand { gap: 5px; min-width: 0; flex: 1 1 auto; }
+.logo-txt { font-size: clamp(13px, 3.8vw, 18px); letter-spacing: 0.03em; }
+@media (max-width: 480px) {
+  .brand-ic { width: 24px; height: 24px; }
+  .brand-ic svg { width: 14px; height: 14px; }
+  .top-actions { gap: 3px; }
+  .top-grp-main, .top-grp-sys { gap: 2px; }
+  .top-actions .icon-btn, .top-actions .res-pill {
+    height: 31px; min-height: 31px; min-width: 31px; padding: 0 5px; font-size: 11px;
+  }
+  .top-actions .res-pill { min-width: 38px; }
+}
+@media (max-width: 375px) {
+  .brand-ic { display: none; }
+  .logo-txt { font-size: 13.5px; }
+}
+
+/* Calendar Heatmap */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 10px 0 8px;
+}
+.cal-title {
+  font: 700 15px 'Inter', sans-serif;
+  color: var(--ink-strong);
+  text-transform: capitalize;
+}
+.cal-wd-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 4px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mut);
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.cal-cell {
+  aspect-ratio: 1;
+  min-height: 34px;
+  border-radius: 5px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font: 600 12.5px 'Inter', sans-serif;
+  color: var(--ink-strong);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.12s ease, border-color 0.15s ease;
+}
+.cal-cell:hover:not(.cal-empty):not(.hm-future):not(.hm-pre) {
+  transform: scale(1.06);
+  border-color: var(--cy);
+  z-index: 2;
+}
+.cal-cell.cal-empty {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+.cal-cell.hm-pre,
+.cal-cell.hm-future {
+  background: color-mix(in srgb, var(--surface) 45%, transparent);
+  border-color: color-mix(in srgb, var(--line) 40%, transparent);
+  color: color-mix(in srgb, var(--mut) 50%, transparent);
+  cursor: default;
+}
+.cal-cell.hm-red { background: #6b1d20; border-color: #9e2a2f; color: #ffdede; }
+.cal-cell.hm-yel { background: #a8761c; border-color: #e3aa3b; color: #fff6dc; }
+.cal-cell.hm-grn { background: #267a45; border-color: #52c27a; color: #e8ffef; }
+.cal-cell.is-today { box-shadow: inset 0 0 0 1.5px var(--ink-strong); }
+
+/* Disguised Admin Crown at bottom of settings */
+.admin-secret-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0 4px;
+}
+.admin-crown-btn {
+  background: transparent;
+  border: 0;
+  color: var(--mut);
+  opacity: 0.22;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.25s ease, color 0.25s ease;
+}
+.admin-crown-btn:hover { opacity: 0.55; }
+.admin-crown-btn.active { opacity: 0.9; color: var(--cy); }
 </style>
 </head>
 <body>
@@ -1807,16 +1914,16 @@ const K='stattrack_v2';
 
 /* 10 PERMANENT DOORS ORDERED BY RISK & CHANCE (Easy -> Hard) */
 const DEF_DOORS=[
-  {id:0,n:'Солнечная терраса',s:70.0,r:29.2,g:0.6,k:0.2,c:15,col:'#c9a252',risk:'Риск I • Очень лёгкая'},
-  {id:1,n:'Сад безмятежности',s:74.1,r:24.7,g:0.8,k:0.4,c:20,col:'#52a888',risk:'Риск II • Лёгкая'},
-  {id:2,n:'Библиотечный зал',s:78.6,r:19.8,g:1.1,k:0.5,c:25,col:'#d49b4b',risk:'Риск III • Спокойная'},
-  {id:3,n:'Механический шлюз',s:81.8,r:16.2,g:1.4,k:0.6,c:30,col:'#d97b38',risk:'Риск IV • Умеренная'},
-  {id:4,n:'Зеркальная галерея',s:84.3,r:13.0,g:1.8,k:0.9,c:35,col:'#64a6d1',risk:'Риск V • Средняя'},
-  {id:5,n:'Алхимическая лаборатория',s:86.4,r:10.4,g:2.1,k:1.1,c:38,col:'#9a6fe0',risk:'Риск VI • Опасная'},
-  {id:6,n:'Крипта древних рун',s:88.4,r:7.8,g:2.4,k:1.4,c:42,col:'#cc5894',risk:'Риск VII • Тяжёлая'},
-  {id:7,n:'Кузница титанов',s:89.8,r:5.9,g:2.7,k:1.6,c:46,col:'#e85d24',risk:'Риск VIII • Суровая'},
-  {id:8,n:'Обсидиановый бастион',s:91.2,r:3.9,g:3.0,k:1.9,c:50,col:'#cc293d',risk:'Риск IX • Кошмарная'},
-  {id:9,n:'Врата Бездны',s:91.9,r:2.6,g:3.4,k:2.1,c:55,col:'#e62200',risk:'Риск X • Адская'}
+  {id:0,n:'Солнечная терраса',s:62.0,r:34.2,g:0.6,k:0.2,ch:3.0,c:15,col:'#c9a252',risk:'Риск I • Очень лёгкая'},
+  {id:1,n:'Сад безмятежности',s:65.9,r:29.7,g:0.8,k:0.4,ch:3.2,c:20,col:'#52a888',risk:'Риск II • Лёгкая'},
+  {id:2,n:'Библиотечный зал',s:70.2,r:24.8,g:1.1,k:0.5,ch:3.4,c:25,col:'#d49b4b',risk:'Риск III • Спокойная'},
+  {id:3,n:'Механический шлюз',s:73.2,r:21.2,g:1.4,k:0.6,ch:3.6,c:30,col:'#d97b38',risk:'Риск IV • Умеренная'},
+  {id:4,n:'Зеркальная галерея',s:75.5,r:18.0,g:1.8,k:0.9,ch:3.8,c:35,col:'#64a6d1',risk:'Риск V • Средняя'},
+  {id:5,n:'Алхимическая лаборатория',s:77.4,r:15.4,g:2.1,k:1.1,ch:4.0,c:38,col:'#9a6fe0',risk:'Риск VI • Опасная'},
+  {id:6,n:'Крипта древних рун',s:79.2,r:12.8,g:2.4,k:1.4,ch:4.2,c:42,col:'#cc5894',risk:'Риск VII • Тяжёлая'},
+  {id:7,n:'Кузница титанов',s:80.3,r:10.9,g:2.7,k:1.6,ch:4.5,c:46,col:'#e85d24',risk:'Риск VIII • Суровая'},
+  {id:8,n:'Обсидиановый бастион',s:81.4,r:8.9,g:3.0,k:1.9,ch:4.8,c:50,col:'#cc293d',risk:'Риск IX • Кошмарная'},
+  {id:9,n:'Врата Бездны',s:81.9,r:7.6,g:3.4,k:2.1,ch:5.0,c:55,col:'#e62200',risk:'Риск X • Адская'}
 ];
 
 /* 7 ITEMS FOR SHOP & CS2 CASE ROULETTE */
@@ -1825,7 +1932,7 @@ const SHOP_ITEMS=[
   {id:'scout',n:'Разведка',d:'Показывает, что лежит за одной выбранной дверью (учёба, отдых, катка или выход). Ничего не пропускает.',baseCost:1,grow:false,col:'#52a86f',ic:'eye',w:20},
   {id:'shield',n:'Щит от «адского»',d:'Если выпал блок на 50+ минут, он автоматически сокращается до 40 мин. Один раз за забег.',baseCost:1,grow:false,col:'#d49b4b',ic:'shield',w:18},
   {id:'breather',n:'Передышка',d:'Следующий выпавший отдых в лабиринте гарантированно будет долгим — на 15 минут.',baseCost:1,grow:false,col:'#52a888',ic:'rest',w:16},
-  {id:'double_xp',n:'Двойные очки',d:'Следующий блок учёбы даёт ×2 очков к рангу и жетонам. На деньги не влияет.',baseCost:2,grow:false,col:'#9b62c7',ic:'bolt',w:10},
+  {id:'double_xp',n:'Двойные очки',d:'Следующий блок учёбы даёт ×2 очков к рангу. На деньги не влияет.',baseCost:2,grow:false,col:'#9b62c7',ic:'bolt',w:10},
   {id:'freeze',n:'Заморозка серии',d:'Прощает один пропущенный день и сохраняет твою серию непрерывности.',baseCost:2,grow:false,col:'#4a8db7',ic:'snow',w:7},
   {id:'bank_game',n:'Запас катки',d:'Позволяет сохранить выпавшую в дверях катку в запас и сыграть её позже в любое время.',baseCost:1,grow:false,col:'#eba43d',ic:'game',w:7}
 ];
@@ -1971,7 +2078,7 @@ function migrateTracker(s,old){
 }
 
 const DEF=()=>({
-  doorRevision:1,trainingVersion:2,setupDone:false,profileStepDone:false,activities:SPORTS.map(x=>({...x})),goals:[],habits:[],heatmapMode:'activity',
+  doorRevision:2,trainingVersion:2,createdAt:toDayKey(),isAdmin:false,setupDone:false,profileStepDone:false,activities:SPORTS.map(x=>({...x})),goals:[],habits:[],heatmapMode:'activity',
   rules:{requirements:{},counts:{},changed:0},
   audio:{effects:75,timer:100},
   profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',medals:['st_hrs','wk_tot','keys']},
@@ -2022,7 +2129,22 @@ function normalizeState(rawObj){
       return d;
     });
   }
-  s.doorRevision=1;
+  if((rawObj?.doorRevision||0)<2){
+    s.cfg.doors=s.cfg.doors.map((door,i)=>{
+      const defD=DEF_DOORS[i]||door;
+      const d={...door};
+      if(typeof d.ch!=='number')d.ch=defD.ch;
+      if((rawObj?.doorRevision||0)===1&&Math.abs((d.r||0)-(defD.r-5))<0.2){d.r=defD.r;}
+      d.s=Math.max(1,+(100-(d.r||0)-(d.g||0)-(d.k||0)-(d.ch||0)).toFixed(1));
+      return d;
+    });
+  }
+  s.doorRevision=2;
+  if(!s.createdAt){
+    const dates=[...Object.keys(s.daily||{}),...(s.logStudy||[]).map(l=>toDayKey(l.t)),...(s.logWork||[]).map(l=>toDayKey(l.t))].filter(Boolean).sort();
+    s.createdAt=dates[0]||toDayKey();
+  }
+  s.isAdmin=Boolean(s.isAdmin);
   s.bank=Object.assign(b.bank,s.bank||{});
   s.stats=Object.assign(b.stats,s.stats||{});
   s.stats.muscles=Object.assign({},s.stats.muscles||{});
@@ -2663,6 +2785,7 @@ function pickDur(c,rem){
 const TC={g:'#2e7d4c',l:'#5c8a32',y:'#b87d28',o:'#c9561e',r:'#a82026',au:'#b8860b'};
 function tier(t,d){
   if(t==='key')return[TC.au,'Выход','au'];
+  if(t==='chest')return[TC.au,'Кейс','au'];
   if(t==='game')return[TC.au,'Катка','au'];
   if(t==='rest')return d>=15?[TC.g,'Долгий отдых','g']:d>=10?[TC.l,'Отдых','l']:[TC.y,'Передышка','y'];
   return d>=50?[TC.r,'Адская','r']:d>=40?[TC.o,'Тяжёлая','o']:d>=25?[TC.y,'Обычная','y']:[TC.l,'Лёгкая','l'];
@@ -2676,9 +2799,10 @@ function getDoorOdds(door,step=0){
   let k=canKey?+(door.k*(S.cfg.kMult??1)*streakPen).toFixed(2):0;
   let g=+(door.g*(S.cfg.gMult??1)).toFixed(2);
   let r=+(door.r*(S.cfg.rMult??1)).toFixed(1);
-  if(k+g+r>95){const sc=95/(k+g+r);k=+(k*sc).toFixed(2);g=+(g*sc).toFixed(2);r=+(r*sc).toFixed(1);}
-  const s=+(100-k-g-r).toFixed(1);
-  return {s,r,g,k,canKey,streakPen};
+  let ch=+(door.ch??3.5).toFixed(1);
+  if(k+g+r+ch>95){const sc=95/(k+g+r+ch);k=+(k*sc).toFixed(2);g=+(g*sc).toFixed(2);r=+(r*sc).toFixed(1);ch=+(ch*sc).toFixed(1);}
+  const s=+(100-k-g-r-ch).toFixed(1);
+  return {s,r,g,k,ch,canKey,streakPen};
 }
 
 function pickDoors(){
@@ -2694,7 +2818,7 @@ function pickDoors(){
 function rollDoorOutcome(d,step,rem){
   const od=getDoorOdds(d,step);
   const x=Math.random()*100;
-  const type=x<od.k?'key':x<od.k+od.g?'game':x<od.k+od.g+od.r?'rest':'focus';
+  const type=x<od.k?'key':x<od.k+od.ch?'chest':x<od.k+od.ch+od.g?'game':x<od.k+od.ch+od.g+od.r?'rest':'focus';
   let dur=0;
   if(type==='rest'){
     dur=5*rnd(1,3);
@@ -2791,7 +2915,7 @@ function renderHeader(){
         <div class="drawer-meta-row">
           <div>
             <span class="prof-title">${esc(S.profile.title)}</span>
-            <span class="mut" style="margin-left:6px">🔑 <b>${S.stats.keyBalance||0}</b> • 🪙 <b>${S.stats.tokens||0}</b> • 🎮 <b>${S.stats.savedGames||0}</b></span>
+            <span class="mut" style="margin-left:6px">🔑 <b>${S.stats.keyBalance||0}</b>${(S.stats.chests||0)>0?` • 📦 <b>${S.stats.chests}</b>`:""}</span>
           </div>
           <div class="medals-row">${medals||'<span class="mut" style="font-size:12px">Нет медалей</span>'}</div>
         </div>
@@ -3327,7 +3451,7 @@ function studyView(){
         const sc=r.scouted&&r.scouted[i];
         let scTxt='';
         if(sc){
-          scTxt=sc.type==='key'?'🚪 ВЫХОД!':sc.type==='game'?'🎮 КАТКА!':sc.type==='rest'?`🔥 Отдых ${S.buffs.breather?15:sc.dur} мин`:`📖 Учёба ${sc.dur} мин (${sc.t[1]})`;
+          scTxt=sc.type==='key'?'🚪 ВЫХОД!':sc.type==='chest'?'📦 КЕЙС!':sc.type==='game'?'🎮 КАТКА!':sc.type==='rest'?`🔥 Отдых ${S.buffs.breather?15:sc.dur} мин`:`📖 Учёба ${sc.dur} мин (${sc.t[1]})`;
         }
         return `<button class="door cut ${r.op===i?'open':''} ${r.op>=0&&r.op!==i?'dim':''} ${r.scouting&&!sc?'scout-target':''}" style="--c:${d.col}" data-a="openDoor" data-v="${i}">
           <span class="risk-pill">${d.risk}</span>
@@ -3336,6 +3460,7 @@ function studyView(){
           <div class="frame"><div class="glow"></div><div class="panel p${d.id}"></div></div>
           <div class="od"><span>Учёба</span><u style="--w:${od.s}%"></u><b>${od.s}%</b></div>
           <div class="od"><span>Отдых</span><u style="--w:${od.r}%"></u><b>${od.r}%</b></div>
+          <div class="od" style="--c:#d49b4b"><span>Кейс</span><u style="--w:${Math.min(100,od.ch*10)}%"></u><b>${od.ch}%</b></div>
           <div class="od" style="--c:#c98218"><span>Катка</span><u style="--w:${Math.min(100,od.g*5)}%"></u><b>${od.g}%</b></div>
           <div class="od" style="--c:#b8860b"><span>Побег</span><u style="--w:${Math.min(100,od.k*6)}%"></u><b>${od.canKey?od.k+'%':'0% (1-3)'}</b></div>
           <div class="hist">${DUR.map(x=>`<i style="height:${Math.round(dw(d.c,x)*100)}%;background:${tier('focus',x)[0]}"></i>`).join('')}</div>
@@ -3347,8 +3472,20 @@ function studyView(){
   }
 
   if(r.phase==='reveal'){
-    const c=r.cur,rest=c.type==='rest',game=c.type==='game';
+    const c=r.cur,rest=c.type==='rest',game=c.type==='game',chest=c.type==='chest';
     const tt=tier(c.type,c.dur),col=tt[0],tn=tt[1];
+    if(chest){
+      return `<section class="card cut pop" style="--t:${col};border-color:${col}">
+        <div class="rays"></div>${hudHtml}
+        <div style="color:${col};margin:8px 0">${icon('shop',72)}</div>
+        <span class="tag gold">КЕЙС</span>
+        <h2 style="color:${col}">Найден Кейс Дисциплины!</h2>
+        <p class="mut" style="max-width:460px;margin:8px auto 14px">За дверью оказался бесплатный кейс! Он уже добавлен в твой инвентарь — можешь открыть его в Магазине после забега.</p>
+        <div class="row" style="justify-content:center">
+          <button class="btn ye" data-a="finishRoom">Забрать кейс и идти дальше</button>
+        </div>
+      </section>`;
+    }
     if(game){
       return `<section class="card cut pop" style="--t:${col};border-color:${col}">
         <div class="rays"></div>${hudHtml}
@@ -3385,8 +3522,7 @@ function studyView(){
         </div>
         <div class="row" style="justify-content:center">
           <button class="btn ${rest?'gr':'cy'}" data-a="pauseTimer">${c.paused?'Продолжить':'Пауза'}</button>
-          <button class="btn vi" data-a="finishRoom">${rest?'Закончить отдых':'Завершено'}</button>
-
+          ${(rest||S.isAdmin)?`<button class="btn vi" data-a="finishRoom">${rest?'Закончить отдых':'Завершено (Админ)'}</button>`:''}
         </div>
       </div>
       ${runActions}
@@ -3622,41 +3758,49 @@ function habitDayStats(dayStr){
   }
   return {due,done,total:list.length};
 }
+let calOffset=0;
 function progressView(){
   const mode=S.heatmapMode==='habits'?'habits':'activity';
   const today=new Date();
   const todayKey=toDayKey(today.getTime());
-  const dayOfWk=(today.getDay()+6)%7;
-  const endMon=new Date(today.getFullYear(),today.getMonth(),today.getDate()-dayOfWk);
-  const cells=[];
-  for(let w=19;w>=0;w--){
-    for(let d=0;d<7;d++){
-      const dt=new Date(endMon.getTime()-(w*7-d)*86400000);
-      const k=toDayKey(dt.getTime());
-      const isFuture=k>todayKey;
-      let cls='hm-future', title=k;
-      if(!isFuture){
-        if(mode==='habits'){
-          const hs=habitDayStats(k);
-          if(hs.done<=0){cls='hm-red';}
-          else if(hs.due>0&&hs.done>=hs.due){cls='hm-grn';}
-          else if(hs.due===0&&hs.done>0){cls='hm-grn';}
-          else{cls='hm-yel';}
-          title=`${k}: Привычки ${hs.done}/${hs.due||hs.total}`;
-        }else{
-          const rec=S.daily[k]||{min:0,wk:0};
-          const m=rec.min||0, wk=rec.wk||0;
-          if(m===0&&wk===0)cls='hm-red';
-          else if(m>=60||wk>=1)cls='hm-grn';
-          else cls='hm-yel';
-          title=`${k}: Учёба ${m} мин, Тренировок: ${wk}`;
-        }
-      }
-      cells.push({k,cls,title,isFuture});
+  const startKey=S.createdAt||todayKey;
+  const viewDate=new Date(today.getFullYear(),today.getMonth()+calOffset,1);
+  const year=viewDate.getFullYear(), month=viewDate.getMonth();
+  const monthLabel=viewDate.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+  const firstWd=(viewDate.getDay()+6)%7; // 0=Пн
+  const daysInMonth=new Date(year,month+1,0).getDate();
+
+  const calCells=[];
+  for(let i=0;i<firstWd;i++)calCells.push('<div class="cal-cell cal-empty"></div>');
+  for(let day=1;day<=daysInMonth;day++){
+    const k=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isFuture=k>todayKey;
+    const isPre=k<startKey;
+    let cls='', title=k;
+    if(isFuture)cls='hm-future';
+    else if(isPre)cls='hm-pre';
+    else if(mode==='habits'){
+      const hs=habitDayStats(k);
+      if(hs.done<=0)cls='hm-red';
+      else if(hs.due>0&&hs.done>=hs.due)cls='hm-grn';
+      else if(hs.due===0&&hs.done>0)cls='hm-grn';
+      else cls='hm-yel';
+      title=`${k}: Привычки ${hs.done}/${hs.due||hs.total}`;
+    }else{
+      const rec=S.daily[k]||{min:0,wk:0};
+      const m=rec.min||0, wk=rec.wk||0;
+      if(m===0&&wk===0)cls='hm-red';
+      else if(m>=60||wk>=1)cls='hm-grn';
+      else cls='hm-yel';
+      title=`${k}: Учёба ${m} мин, Тренировок: ${wk}`;
     }
+    const clickable=!isFuture&&!isPre;
+    calCells.push(`<div class="cal-cell ${cls} ${k===todayKey?'is-today':''}" ${clickable?`data-a="openDayDetail" data-v="${k}"`:''} title="${esc(title)}">${day}</div>`);
   }
 
   /* Last 8 weeks bar chart */
+  const dayOfWk=(today.getDay()+6)%7;
+  const endMon=new Date(today.getFullYear(),today.getMonth(),today.getDate()-dayOfWk);
   const weeks=[];
   for(let w=7;w>=0;w--){
     const mon=new Date(endMon.getTime()-w*7*86400000);
@@ -3679,19 +3823,21 @@ function progressView(){
 
   return `<section class="card cut" style="border-color:var(--cy)">
     <div class="hud">
-      <h2 style="display:flex;align-items:center;gap:8px;margin-bottom:2px">${icon(mode==='habits'?'check':'chart',20)} ${mode==='habits'?'Карта привычек':'Цифровая карта активности'}</h2>
+      <h2 style="display:flex;align-items:center;gap:8px;margin-bottom:2px">${icon(mode==='habits'?'check':'chart',20)} ${mode==='habits'?'Календарь привычек':'Календарь активности'}</h2>
       <div class="chips" style="margin:0">
         <button class="chip cut-sm ${mode==='activity'?'on':''}" data-a="setHeatmapMode" data-v="activity">Активность</button>
         <button class="chip cut-sm ${mode==='habits'?'on':''}" data-a="setHeatmapMode" data-v="habits">Привычки</button>
       </div>
     </div>
-    <p class="mut" style="font-size:13px;margin-top:4px">${mode==='habits'?'Выполнение привычек за последние 20 недель. Нажми на любой день, чтобы увидеть подробности.':'Панорама за 140 дней. Нажми на любой квадратик, чтобы посмотреть, что ты делал в этот день.'}</p>
-    <div class="heatmap-wrap">
-      <div class="heatmap">
-        ${cells.map(c=>`<div class="hm-cell ${c.cls}" ${c.isFuture?'':`data-a="openDayDetail" data-v="${c.k}"`} title="${esc(c.title)}"></div>`).join('')}
-      </div>
+    <p class="mut" style="font-size:12.5px;margin-top:4px">Нажми на любой день, чтобы увидеть подробности. Дни до старта аккаунта не отмечаются.</p>
+    <div class="cal-nav">
+      <button class="btn gh" data-a="calMonth" data-v="-1">‹ Пред.</button>
+      <span class="cal-title">${esc(monthLabel)}</span>
+      <button class="btn gh" data-a="calMonth" data-v="1" ${calOffset>=0?'disabled':''}>След. ›</button>
     </div>
-    <div class="row" style="justify-content:space-between;margin-top:8px;font-size:12px">
+    <div class="cal-wd-row">${WEEKDAYS_RU.map(d=>`<div>${d}</div>`).join('')}</div>
+    <div class="cal-grid">${calCells.join('')}</div>
+    <div class="row" style="justify-content:space-between;margin-top:10px;font-size:12px">
       <span>🔥 Серия: <b>${S.streak.cur||0} дн.</b> (Рекорд: <b>${S.streak.best||0} дн.</b>)</span>
       <span class="mut" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap">
         <span class="hm-legend-cell hm-red"></span> 0
@@ -3717,15 +3863,6 @@ function progressView(){
     <p class="mut">Пиковый период: <b style="color:var(--cy)">${bestPeriod.v>0?bestPeriod.n:'Пока мало данных'}</b> • Пиковый час: <b style="color:var(--cy)">${String(peakHr).padStart(2,'0')}:00</b></p>
     <div class="stats" style="margin-top:10px">
       ${periods.map(p=>`<div class="st"><span>${p.n}</span><b>${hm(p.v)}</b></div>`).join('')}
-    </div>
-  </section>
-
-  <section class="card cut" style="border-color:var(--gr)">
-    <h2>💾 Сохранность данных (Резервная копия)</h2>
-    <p class="mut">Сохрани файл прогресса на устройство, чтобы никогда не потерять свои часы, ранги, банк и рекорды.</p>
-    <div class="row">
-      <button class="btn cy" data-a="exportData">⬇️ Скачать резервную копию (.json)</button>
-      <button class="btn gh" data-a="importDataAsk">⬆️ Загрузить копию из файла</button>
     </div>
   </section>`;
 }
@@ -3801,7 +3938,7 @@ function profileView(){
       <div class="st g"><span>Тренировок</span><b>${S.stats.wk} шт. (${hm(S.stats.wkMin||0)})</b></div>
       <div class="st r"><span>Ключей (в зап.)</span><b>${S.stats.keys} (${S.stats.keyBalance||0})</b></div>
       <div class="st v"><span>Полных забегов</span><b>${S.stats.fullRuns||0}</b></div>
-      <div class="st d"><span>Каток (в зап.)</span><b>${S.stats.games||0} (${S.stats.savedGames||0})</b></div>
+      <div class="st d"><span>Сыграно каток</span><b>${S.stats.games||0}</b></div>
       <div class="st r"><span>Заработано</span><b>${fmt(S.stats.totalEarned||0)}</b></div>
     </div>
   </section>
@@ -3864,7 +4001,7 @@ function bankView(){
 
   <section class="card cut" style="border-color:var(--gr)">
     <h2>📅 Недельный финансовый план дисциплины</h2>
-    <p class="mut">Составь план на текущую неделю: за составление сразу <b>+${fmt(planReward(false))} и 1 жетон</b>, а за полное выполнение — ещё <b>+${fmt(planReward(true))} и 1 Ключ</b>!</p>
+    <p class="mut">Составь план на текущую неделю: за составление сразу <b>+${fmt(planReward(false))} </b>, а за полное выполнение — ещё <b>+${fmt(planReward(true))} и 1 Ключ</b>!</p>
     <div class="row">
       <label class="mut">Учёба на неделю (ч): <input type="number" min="1" max="100" id="wp-hrs-inp" value="${wp.studyHrs}" ${wp.created?'disabled':''}></label>
       <label class="mut">Тренировок на неделю: <input type="number" min="1" max="20" id="wp-wk-inp" value="${wp.workouts}" ${wp.created?'disabled':''}></label>
@@ -3935,9 +4072,22 @@ function settingsView(){
     </div>
   </section>
 
-  <section class="card cut" style="border-color:var(--ye)">
-    <h2>🎲 Шансы выпадения и настройка 10 дверей</h2>
-    <p class="mut">Здесь можно изменить глобальные множители шансов или настроить проценты для каждой из 10 дверей вручную.</p>
+  <section class="card cut" style="border-color:var(--gr)">
+    <h2>💾 Сохранность данных</h2>
+    <p class="mut">Сохрани файл прогресса на устройство или восстанови его из резервной копии.</p>
+    <div class="row">
+      <button class="btn cy" data-a="exportData">⬇️ Скачать резервную копию (.json)</button>
+      <button class="btn gh" data-a="importDataAsk">⬆️ Загрузить копию из файла</button>
+      <button class="btn gh" style="color:var(--red)" data-a="wipeAsk">Сбросить все данные</button>
+    </div>
+  </section>
+
+  ${S.isAdmin?`<section class="card cut" style="border-color:var(--ye)">
+    <div class="hud">
+      <h2>👑 Панель администратора: Шансы 10 дверей</h2>
+      <button class="btn gh" data-a="adminLogout">Выйти из админа</button>
+    </div>
+    <p class="mut">Режим администратора активен: открыта настройка шансов дверей и досрочное завершение таймера.</p>
     <div class="cfg" style="margin-top:10px">
       <label>Глобальный множитель побегов (×)
         <input type="number" step="0.1" min="0" max="5" data-k="kMult" value="${S.cfg.kMult??1}">
@@ -3962,15 +4112,18 @@ function settingsView(){
           <label class="mut" style="font-size:12px">Катка %<input type="number" step="0.5" min="0" max="50" data-door="${idx}" data-df="g" value="${d.g}"></label>
           <label class="mut" style="font-size:12px">Побег %<input type="number" step="0.5" min="0" max="50" data-door="${idx}" data-df="k" value="${d.k}"></label>
           <label class="mut" style="font-size:12px">Ср. мин<input type="number" step="5" min="10" max="60" data-door="${idx}" data-df="c" value="${d.c}"></label>
-          <span>Учёба: <b>${+(100-d.r-d.g-d.k).toFixed(1)}%</b></span>
+          <span>Учёба: <b>${+(100-d.r-d.g-d.k-(d.ch||0)).toFixed(1)}%</b></span>
         </div>
       `).join('')}
     </div>
     <div class="row">
       <button class="btn gh" data-a="resetDoorsCfg">Вернуть стандартные шансы</button>
-      <button class="btn gh" style="color:var(--red)" data-a="wipeAsk">Сбросить все данные</button>
     </div>
-  </section>`;
+  </section>`:''}
+
+  <div class="admin-secret-wrap">
+    <button class="admin-crown-btn ${S.isAdmin?'active':''}" data-a="showModal" data-v="admin" aria-label="Администратор">${icon('crown',18)}</button>
+  </div>`;
 }
 
 /* MODAL RENDER (INCLUDING 30-DAY STREAK PROGRESSION WINDOW) */
@@ -4140,6 +4293,9 @@ function finishStudyRoom(){
     S.stats.tokens=(S.stats.tokens||0)+tok;
     r.earned+=Math.round(money('study',c.planMin||u));
     recordDailyActivity(u,0,1);
+  }else if(c.type==='chest'){
+    S.stats.chests=(S.stats.chests||0)+1;
+    recordDailyActivity(0,0,1);
   }else if(c.type==='game'){
     S.stats.games=(S.stats.games||0)+1;
     recordDailyActivity(0,0,1);
@@ -4450,6 +4606,20 @@ function renderExtraModal(){
     return true;
   }
   if(modalState==='habit'){modalShell(habitEditorId?'Настроить привычку':'Новая привычка',habitForm(S.habits.find(h=>h.id===habitEditorId)));return true;}
+  if(modalState==='admin'){
+    modalShell('Режим администратора',S.isAdmin?`<div class="entry-form">
+      <p class="mut">Режим администратора уже включён.</p>
+      <button class="btn gh" data-a="adminLogout">Выключить режим администратора</button>
+    </div>`:`<div class="entry-form">
+      <label class="entry-field entry-primary" for="admin-code">Код доступа
+        <input type="password" id="admin-code" inputmode="numeric" maxlength="12" placeholder="••••">
+      </label>
+      <div class="entry-actions"><p class="form-msg" role="status"></p>
+        <button class="btn cy" data-a="adminUnlock">Активировать</button>
+      </div>
+    </div>`);
+    return true;
+  }
   if(modalState==='dayDetail'&&dayDetailKey){modalShell('Активность за день',dayDetailContent(dayDetailKey));return true;}
   if(modalState==='sync'){
     const isOk=!guestMode&&onlineProfile&&!syncError;
@@ -4486,6 +4656,13 @@ function renderExtraModal(){
 const A={
   showModal:d=>{modalState=d.v;renderModal();},
   setHeatmapMode:d=>{S.heatmapMode=d.v==='habits'?'habits':'activity';save();render();snd('tick');},
+  calMonth:d=>{calOffset=Math.min(0,calOffset+Number(d.v));render();snd('tick');},
+  adminUnlock:()=>{
+    const code=($('#admin-code')?.value||'').trim();
+    if(code!=='1984'){$('.form-msg').textContent='Неверный код.';return;}
+    S.isAdmin=true;modalState=null;snd('key');save();render();
+  },
+  adminLogout:()=>{S.isAdmin=false;modalState=null;snd('tick');save();render();},
   openDayDetail:d=>{dayDetailKey=d.v;modalState='dayDetail';renderModal();snd('tick');},
   habitForm:d=>{habitEditorId=d.v||null;modalState='habit';renderModal();},
   toggleHabitDay:(d,e)=>{e?.target?.classList.toggle('on');},
@@ -5129,7 +5306,7 @@ document.addEventListener('keydown',e=>{
     if(!r){if(k==='Enter')A.startStudy();return;}
     if(r.phase==='doors'&&'123'.includes(k))A.openDoor({v:+k-1});
     else if(r.phase==='reveal'&&(k===' '||k==='Enter')){e.preventDefault();r.cur?.type==='game'?A.finishRoom():A.startTimer();}
-    else if(r.phase==='timer'){if(k===' '){e.preventDefault();A.pauseTimer();}else if(k==='Enter')A.finishRoom();}
+    else if(r.phase==='timer'){if(k===' '){e.preventDefault();A.pauseTimer();}else if(k==='Enter'&&(r.cur?.type==='rest'||S.isAdmin))A.finishRoom();}
     else if(r.phase==='done'&&k==='Enter')A.endStudyRun();
   }
 });
