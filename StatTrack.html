@@ -2266,6 +2266,78 @@ html {
   color: #e0ad5c;
   font-weight: 600;
 }
+
+/* === V14: IN-APP INTERACTIVE TOUR MODAL === */
+.tour-step-ind {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cy);
+  background: color-mix(in srgb, var(--cy) 14%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--cy) 45%, transparent);
+  padding: 2px 9px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.tour-dots {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0 4px;
+}
+.tour-dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  transition: background-color 0.2s ease;
+}
+.tour-dot.on { background: var(--cy); }
+.tour-dot.done { background: var(--gr); }
+.tour-lead {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--ink-strong);
+  margin: 10px 0 12px;
+}
+.tour-points {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+  display: grid;
+  gap: 8px;
+}
+.tour-points li {
+  padding: 9px 11px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--cy);
+  border-radius: 5px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.tour-points li b {
+  color: var(--ink-strong);
+  display: block;
+  margin-bottom: 2px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+}
+.tour-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.tour-nav {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
 </style>
 </head>
 <body>
@@ -2477,7 +2549,7 @@ function migrateTracker(s,old){
 }
 
 const DEF=()=>({
-  doorRevision:2,trainingVersion:2,createdAt:toDayKey(),isAdmin:false,setupDone:false,profileStepDone:false,activities:SPORTS.map(x=>({...x})),goals:[],habits:[],heatmapMode:'activity',
+  doorRevision:2,trainingVersion:2,createdAt:toDayKey(),isAdmin:false,setupDone:false,profileStepDone:false,tourDone:false,activities:SPORTS.map(x=>({...x})),goals:[],habits:[],heatmapMode:'activity',
   rules:{requirements:{},counts:{},changed:0},
   audio:{effects:75,timer:100},
   profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',medals:['st_hrs','wk_tot','keys']},
@@ -2544,6 +2616,8 @@ function normalizeState(rawObj){
     s.createdAt=dates[0]||toDayKey();
   }
   s.isAdmin=Boolean(s.isAdmin);
+  if(rawObj&&rawObj.setupDone===true&&rawObj.tourDone===undefined)s.tourDone=true;
+  else s.tourDone=Boolean(s.tourDone);
   s.bank=Object.assign(b.bank,s.bank||{});
   s.stats=Object.assign(b.stats,s.stats||{});
   s.stats.muscles=Object.assign({},s.stats.muscles||{});
@@ -4593,9 +4667,10 @@ function settingsView(){
     ${onlineProfile?'<button class="btn cy" data-a="accountLogin">Войти через Telegram</button>':''}</section>`:
     !serverReady?`<section class="card cut"><h2>Профиль Telegram</h2><button class="btn cy" data-a="retryLoad">Повторить подключение</button>
     <button class="btn gh" data-a="enterGuest">Зайти как гость</button></section>`:'';
-  return `${accountPanel}<section class="card cut"><h2>Экран и звук</h2><div class="row">
+  return `${accountPanel}<section class="card cut"><h2>Экран, звук и обучение</h2><div class="row">
     <button class="btn gh" data-a="fullscreen">Полный экран</button>
-    <button class="btn gh" data-a="showModal" data-v="audio">Громкость</button></div></section>
+    <button class="btn gh" data-a="showModal" data-v="audio">Громкость</button>
+    <button class="btn gh" data-a="openTour">Пройти обучение заново</button></div></section>
   <section class="card cut" style="border-color:var(--cy)">
     <h2>⚙️ Настройки наград и правил</h2>
     <div class="cfg">
@@ -4667,7 +4742,7 @@ function settingsView(){
 
 /* MODAL RENDER (INCLUDING 30-DAY STREAK PROGRESSION WINDOW) */
 function renderModal(){
-  $('.wrap').inert=!cloudLoaded||!S.setupDone||Boolean(modalState);
+  $('.wrap').inert=!cloudLoaded||!S.setupDone||!S.tourDone||Boolean(modalState);
   if(renderExtraModal())return;
   if(!modalState){$('#modal-root').innerHTML='';return;}
   if(modalState==='streak'){
@@ -5313,6 +5388,58 @@ function allocationForm(entry){
 }
 
 function allocationRow(g,n){return `<label class="goal-row">${esc(g.n)}<input type="number" min="0" step="1" inputmode="numeric" data-minutes="${esc(g.id)}" data-name="${esc(g.n)}" value="${n}"></label>`;}
+const TOUR_STEPS=[
+  {
+    t:'Учёба и Лабиринт',
+    lead:'Учебное время разбивается на короткие блоки в формате лабиринта из 10 врат разной сложности.',
+    pts:[
+      ['Ключи и награды','Каждые 90 минут учёбы приносят ключ, а за дверями могут попасться перерыв, кейс или тайный выход.'],
+      ['Разминка и катки','Перед дверью может выпасть 1-минутная разминка. И катки, и разминки легко отключаются галочками перед стартом.']
+    ]
+  },
+  {
+    t:'Спорт и Журнал',
+    lead:'Быстрый учёт тренировок без лишней рутины — всё подстраивается под твой формат.',
+    pts:[
+      ['Быстрый выбор мышц','Отмечай тренировку и добавляй группы мышц одним нажатием на «+». Подходы и рабочие веса — по желанию.'],
+      ['Задним числом','Если забыл записать тренировку, её можно добавить за последние 2 дня текущей недели.']
+    ]
+  },
+  {
+    t:'Привычки и Цели',
+    lead:'Ежедневные дела и большие учебные или личные цели всегда под рукой.',
+    pts:[
+      ['Гибкие привычки','Создавай привычки на каждый день, по будням или в выбранные дни недели. Пропущенную отметку тоже можно закрыть за последние 2 дня.'],
+      ['Цели с подцелями','Разбивай крупные задачи на чекбоксы или часы — после учёбы время можно распределять прямо по подцелям.']
+    ]
+  },
+  {
+    t:'Календарь прогресса',
+    lead:'Вся твоя дисциплина собирается в наглядный календарь в разделе «Прогресс».',
+    pts:[
+      ['Цветовая индикация','Красный день — без активности, жёлтый — минимум выполнен, зелёный — отличный результат.'],
+      ['Два режима и детали','Переключай календарь между общей активностью и привычками. Нажатие на любой день открывает его подробную сводку.']
+    ]
+  },
+  {
+    t:'Рейтинг и Чемпионы',
+    lead:'Соревнуйся с другими участниками по учёбе и тренировкам.',
+    pts:[
+      ['Два зачёта','Смотри пьедестал и таблицу лидеров за всё время или за текущую неделю (с понедельника по воскресенье).'],
+      ['Итоги недели','Каждый понедельник чемпионы прошлой недели фиксируются в отдельном блоке — их результаты уже не меняются.']
+    ]
+  },
+  {
+    t:'Магазин, Банк и Синхронизация',
+    lead:'Система наград для самомотивации и единый профиль на всех устройствах.',
+    pts:[
+      ['Магазин и Кейсы','Трать заработанные ключи на кейсы или полезные предметы для лабиринта (разведка, переброс, щит).'],
+      ['Банк (по желанию)','В Банке можно задать правило выплат за тренировки или вообще не использовать его — ограничений нет.'],
+      ['Синхронизация','Заходи через Telegram-бота: прогресс автоматически сохраняется и синхронизируется между телефоном и ПК.']
+    ]
+  }
+];
+let tourStep=0;
 function renderExtraModal(){
   if(!cloudLoaded){
     modalShell('Профиль Telegram',`<div class="entry-form">
@@ -5346,6 +5473,23 @@ function renderExtraModal(){
   if(modalState==='task'){const g=S.goals.find(g=>g.id===goalEditorId);if(g){modalShell(taskEditorId?'Изменить подцель':'Добавить подцель',taskForm(g));return true;}}
   if(!S.setupDone||modalState==='rules'){
     modalShell('Условия выплаты',requirementsForm(!S.setupDone),S.setupDone);
+    return true;
+  }
+  if((S.setupDone&&!S.tourDone&&!modalState)||modalState==='tour'){
+    const idx=Math.max(0,Math.min(TOUR_STEPS.length-1,tourStep));
+    const step=TOUR_STEPS[idx];
+    const isLast=idx===TOUR_STEPS.length-1;
+    modalShell(step.t,`<div class="tour-step-ind">Шаг ${idx+1} из ${TOUR_STEPS.length}</div>
+      <div class="tour-dots">${TOUR_STEPS.map((_,i)=>`<div class="tour-dot ${i===idx?'on':i<idx?'done':''}"></div>`).join('')}</div>
+      <p class="tour-lead">${esc(step.lead)}</p>
+      <ul class="tour-points">${step.pts.map(([k,v])=>`<li><b>${esc(k)}</b>${esc(v)}</li>`).join('')}</ul>
+      <div class="tour-actions">
+        <button class="btn gh" data-a="tourSkip">Пропустить</button>
+        <div class="tour-nav">
+          ${idx>0?'<button class="btn gh" data-a="tourPrev">Назад</button>':''}
+          <button class="btn cy" data-a="${isLast?'tourFinish':'tourNext'}">${isLast?'Начать':'Далее'}</button>
+        </div>
+      </div>`,false);
     return true;
   }
   if(modalState==='keys'){
@@ -5483,10 +5627,16 @@ const A={
     S.profileStepDone=true;save();renderModal();
   },
   previousSetup:()=>{S.profileStepDone=false;save();renderModal();},
+  openTour:()=>{tourStep=0;modalState='tour';snd('tick');renderModal();},
+  tourNext:()=>{tourStep=Math.min(TOUR_STEPS.length-1,tourStep+1);snd('tick');renderModal();},
+  tourPrev:()=>{tourStep=Math.max(0,tourStep-1);snd('tick');renderModal();},
+  tourSkip:()=>{S.tourDone=true;modalState=null;tourStep=0;snd('tick');save();render();},
+  tourFinish:()=>{S.tourDone=true;modalState=null;tourStep=0;snd('done');save();render();},
   skipRules:()=>{
     if(!S.setupDone&&!S.profileStepDone)return;
     S.rules={requirements:{},counts:{},weekKey:toWeekKey(),changed:0};
-    S.setupDone=true;modalState=null;snd('done');save();render();
+    S.setupDone=true;if(!S.tourDone){tourStep=0;modalState='tour';}else modalState=null;
+    snd('done');save();render();
   },
   saveRules:()=>{
     if(!S.setupDone&&!S.profileStepDone)return;
@@ -5502,7 +5652,7 @@ const A={
       $('.form-msg').textContent='Выбери хотя бы одну тренировку для условия.';return;
     }
     S.rules={requirements,counts:{},weekKey:toWeekKey(),changed:hasAny?Date.now():0};
-    S.setupDone=true;modalState=null;snd('done');save();render();
+    S.setupDone=true;if(!S.tourDone){tourStep=0;modalState='tour';}else modalState=null;snd('done');save();render();
   },
   setWorkDate:d=>{
     const allowed=getAllowedBackdateKeys();
@@ -6019,7 +6169,7 @@ const A={
     snd('done');save();render();
   },
   wipeAsk:()=>{modalState='wipe';snd('tick');renderModal()},
-  wipeConfirm:()=>{allowEmptyPush=true;S=normalizeState(null);modalState=null;save();render();drawGrid()}
+  wipeConfirm:()=>{allowEmptyPush=true;S=normalizeState(null);tourStep=0;modalState=null;save();render();drawGrid()}
 };
 
 $('#import-file-inp')?.addEventListener('change',e=>{
@@ -6040,7 +6190,7 @@ $('#import-file-inp')?.addEventListener('change',e=>{
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');
-  if((!cloudLoaded||!S.setupDone||modalState)&&!e.target.closest('#modal-root'))return;
+  if((!cloudLoaded||!S.setupDone||!S.tourDone||modalState)&&!e.target.closest('#modal-root'))return;
   if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset,e);
 });
 
