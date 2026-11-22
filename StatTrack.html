@@ -2037,6 +2037,142 @@ html {
 .lb-main b { color: var(--ink-strong); }
 .lb-main small { display: block; color: var(--mut); font-size: 11.5px; }
 .lb-val { font-weight: 700; color: var(--cy); white-space: nowrap; }
+
+/* === V12: STUDY TOGGLES, WARMUP CARD, PODIUM LEADERBOARD === */
+.study-toggles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+.toggle-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.toggle-card.on {
+  border-color: var(--cy);
+  background: color-mix(in srgb, var(--cy) 12%, var(--surface));
+}
+.toggle-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 2px solid var(--line-gold);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: transparent;
+  background: var(--card);
+}
+.toggle-card.on .toggle-box {
+  background: var(--cy);
+  border-color: var(--cy);
+  color: #140f08;
+}
+.toggle-info { min-width: 0; }
+.toggle-info strong { display: block; font-size: 13.5px; color: var(--ink-strong); line-height: 1.25; }
+.toggle-info small { display: block; font-size: 11.5px; color: var(--mut); margin-top: 2px; }
+
+/* Podium for Top 3 Leaderboard */
+.podium {
+  display: grid;
+  grid-template-columns: 1fr 1.12fr 1fr;
+  gap: 8px;
+  align-items: end;
+  margin: 16px 0 14px;
+  padding: 6px 2px 0;
+}
+.pod-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+}
+.pod-medal {
+  font-size: 22px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.pod-nick {
+  font: 700 13.5px 'Inter', sans-serif;
+  color: var(--ink-strong);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pod-user {
+  font-size: 11px;
+  color: var(--mut);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 6px;
+}
+.pod-block {
+  width: 100%;
+  border-radius: 6px 6px 2px 2px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid var(--line-gold);
+  background: linear-gradient(180deg, var(--card2), var(--surface));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.pod-1 .pod-block {
+  min-height: 108px;
+  border-color: #e6b830;
+  border-top: 3px solid #f5d061;
+  background: linear-gradient(180deg, rgba(230, 184, 48, 0.22), var(--surface));
+}
+.pod-2 .pod-block {
+  min-height: 84px;
+  border-color: #9ba5b5;
+  border-top: 3px solid #cfd6e0;
+  background: linear-gradient(180deg, rgba(192, 199, 209, 0.16), var(--surface));
+}
+.pod-3 .pod-block {
+  min-height: 68px;
+  border-color: #b86b23;
+  border-top: 3px solid #d9873b;
+  background: linear-gradient(180deg, rgba(184, 107, 35, 0.18), var(--surface));
+}
+.pod-rank-num {
+  font: 700 18px 'Cormorant Garamond', Georgia, serif;
+  color: var(--mut);
+}
+.pod-1 .pod-rank-num { color: #f5d061; font-size: 22px; }
+.pod-2 .pod-rank-num { color: #cfd6e0; }
+.pod-3 .pod-rank-num { color: #d9873b; }
+.pod-val {
+  font: 700 13.5px 'Inter', sans-serif;
+  color: var(--ink-strong);
+  white-space: nowrap;
+}
+.pod-sub {
+  font-size: 10.5px;
+  color: var(--mut);
+}
+@media (max-width: 400px) {
+  .podium { gap: 5px; }
+  .pod-val { font-size: 12px; }
+  .pod-nick { font-size: 12px; }
+}
 </style>
 </head>
 <body>
@@ -2236,7 +2372,7 @@ const DEF=()=>({
   rules:{requirements:{},counts:{},changed:0},
   audio:{effects:75,timer:100},
   profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',medals:['st_hrs','wk_tot','keys']},
-  cfg:{rs:500,rw:500,full:true,kMult:1,gMult:1,rMult:1,doors:JSON.parse(JSON.stringify(DEF_DOORS))},
+  cfg:{rs:500,rw:500,full:true,allowGames:true,allowWarmup:true,kMult:1,gMult:1,rMult:1,doors:JSON.parse(JSON.stringify(DEF_DOORS))},
   bank:{card:0,pend:0,paid:0},
   stats:{
     min:0,bonusRankMin:0,wk:0,wkMin:0,keys:0,keyBalance:1,chests:0,tokens:0,
@@ -2995,13 +3131,32 @@ function tier(t,d){
   return d>=50?[TC.r,'Адская','r']:d>=40?[TC.o,'Тяжёлая','o']:d>=25?[TC.y,'Обычная','y']:[TC.l,'Лёгкая','l'];
 }
 const TIPS=['Выпей глоток Эстуса (воды)','Сделай 15 приседаний у костра','Разомни шею и плечи от лат','Вглядись в горизонт Лотрика на 20 секунд','Пройдись по залу','Глубоко подыши: вдох на 4 счёта, выдох на 4','Потянись и встряхни кисти'];
+const WARMUPS=[
+  {n:'Потянуться к небу',d:'Встань со стула, вытяни руки максимально вверх к потолку на вдохе, поднимись на носочки и потянись 25–30 секунд.'},
+  {n:'5 спокойных приседаний',d:'Встань возле рабочего места и сделай 5–7 плавных приседаний без спешки, чтобы разогнать кровь.'},
+  {n:'10 наклонов вперёд-назад',d:'Встань, поставь руки на пояс и сделай 10 мягких наклонов корпуса вперёд и слегка назад, без резких рывков.'},
+  {n:'Подъёмы на носочки',d:'Встань прямо и сделай 12 плавных подъёмов на носочки — отлично разгоняет кровообращение после сидения.'},
+  {n:'Скручивания корпуса',d:'Встань, ноги на ширине плеч, сделай 10 плавных поворотов корпуса влево и вправо со свободными руками.'},
+  {n:'Раскрытие плеч',d:'Встань, сцепи руки в замок за спиной, сведи лопатки и расправь грудную клетку на 25–30 секунд.'},
+  {n:'Круговые махи руками',d:'Встань и сделай по 8 широких круговых движений прямыми руками вперёд и назад.'},
+  {n:'Освобождение шеи',d:'Медленно наклони голову к левому плечу на 15 секунд, затем к правому на 15 секунд — без резких движений.'},
+  {n:'Взгляд в горизонт (20-20-20)',d:'Встань к окну, посмотри в самую дальнюю точку на горизонте 30 секунд и спокойно поморгай.'},
+  {n:'Дыхание у костра и вода',d:'Сделай 4 глубоких цикла дыхания (вдох 4с — пауза 4с — выдох 4с) и выпей пару глотков воды.'}
+];
+function getWarmupChance(mins){
+  if(S.cfg.allowWarmup===false)return 0;
+  const m=Math.max(0,mins||0);
+  if(m<=60)return +(6+(m/60)*16).toFixed(1);
+  if(m<=120)return +(22+((m-60)/60)*28).toFixed(1);
+  return +Math.min(85,50+((m-120)/60)*30).toFixed(1);
+}
 
 /* EFFECTIVE DOOR CHANCES */
 function getDoorOdds(door,step=0){
   const canKey=step>=3;
   const streakPen=Math.pow(0.5,S.stats.earlyStreak||0);
   let k=canKey?+(door.k*(S.cfg.kMult??1)*streakPen).toFixed(2):0;
-  let g=+(door.g*(S.cfg.gMult??1)).toFixed(2);
+  let g=S.cfg.allowGames===false?0:+(door.g*(S.cfg.gMult??1)).toFixed(2);
   let r=+(door.r*(S.cfg.rMult??1)).toFixed(1);
   let ch=+(door.ch??3.5).toFixed(1);
   if(k+g+r+ch>95){const sc=95/(k+g+r+ch);k=+(k*sc).toFixed(2);g=+(g*sc).toFixed(2);r=+(r*sc).toFixed(1);ch=+(ch*sc).toFixed(1);}
@@ -3152,7 +3307,7 @@ function renderHeader(){
     ['progress','Прогресс','chart'],
     ['ach','Достижения','trophy'],
     ['history','История','chart'],
-    ...(S.isAdmin?[['rating','Рейтинг','crown']]:[])
+    ['rating','Рейтинг','trophy']
   ];
   $('#tabs').innerHTML=T.map(([k,v,ic])=>`<button class="tab cut-sm ${S.tab===k?'on':''}" data-a="tab" data-v="${k}">${icon(ic,15)} ${v}</button>`).join('');
 
@@ -3610,6 +3765,22 @@ function studyView(){
       <div class="chips">${opts.map(v=>`<button class="chip cut-sm ${t===v?'on':''}" data-a="sel" data-v="${v}">${v/60} ч</button>`).join('')}</div>
       <label class="mut">Свой план (мин): <input type="number" min="10" value="${t}" data-k="selStudy"></label>
       <div class="kv">Награда за полный план (с учётом бонуса серии +${sBonus}%)<b>${fmt(money('study',t)*getStreakMult())}</b></div>
+      <div class="study-toggles">
+        <button type="button" class="toggle-card ${S.cfg.allowGames!==false?'on':''}" data-a="toggleStudyOpt" data-v="allowGames" aria-pressed="${S.cfg.allowGames!==false}">
+          <span class="toggle-box">${S.cfg.allowGames!==false?'✓':''}</span>
+          <span class="toggle-info">
+            <strong>🎮 Выпадение каток</strong>
+            <small>${S.cfg.allowGames!==false?'Может выпасть игровая партия':'Отключено (шанс уходит в учёбу)'}</small>
+          </span>
+        </button>
+        <button type="button" class="toggle-card ${S.cfg.allowWarmup!==false?'on':''}" data-a="toggleStudyOpt" data-v="allowWarmup" aria-pressed="${S.cfg.allowWarmup!==false}">
+          <span class="toggle-box">${S.cfg.allowWarmup!==false?'✓':''}</span>
+          <span class="toggle-info">
+            <strong>🧘 Разминка перед дверью</strong>
+            <small>${S.cfg.allowWarmup!==false?'1-минутная пауза по мере усталости':'Отключено'}</small>
+          </span>
+        </button>
+      </div>
       <div class="row">
         <button class="btn cy" data-a="startStudy">Войти в лабиринт</button>
         ${(S.stats.savedGames||0)>0?`<button class="btn ye" data-a="playSavedGame">🎮 Сыграть отложенную катку (${S.stats.savedGames})</button>`:''}
@@ -3650,9 +3821,32 @@ function studyView(){
     <button class="btn gh" data-a="resetAsk">Сбросить забег</button>
   </div>`;
 
+  if(r.phase==='warmup'&&r.warmup){
+    const w=r.warmup, doorName=r.d?.[r.pendingDoor]?.n||'врата';
+    const pct=Math.max(0,Math.min(100,(1-w.left/60000)*100));
+    return `<section class="card cut pop" style="--t:var(--gr);border-color:var(--gr)">
+      <div class="rays"></div>${hudHtml}
+      <span class="tag" style="--t:var(--gr)">РАЗМИНКА • 1 МИН</span>
+      <h2 style="color:var(--gr)">Перед входом в «${esc(doorName)}» сделай разминку</h2>
+      <p class="mut" style="font-size:13px">Ты уже занимался <b>${hm(r.sinceWarmup||0)}</b> без разминки. Разомнись минуту — и врата сразу откроются!</p>
+      <div style="margin:12px auto;max-width:460px;padding:12px 14px;background:var(--surface);border:1px solid var(--gr);border-radius:6px;text-align:left">
+        <h3 style="color:var(--cy);margin-bottom:4px">🧘 ${esc(w.n)}</h3>
+        <p style="font-size:14px;color:var(--ink-strong)">${esc(w.d)}</p>
+      </div>
+      <div class="ring" id="w-ring" style="--p:${pct};--c:var(--gr);width:155px;height:155px">
+        <div style="width:130px;height:130px"><div class="big" id="w-tm" style="font-size:34px">${mmss(w.left)}</div><div class="mut" style="font-size:11.5px">${w.paused?'пауза':'разминка'}</div></div>
+      </div>
+      <div class="row" style="justify-content:center">
+        <button class="btn gr" data-a="finishWarmup">Готово — открыть врата</button>
+        <button class="btn cy" data-a="toggleWarmupTimer">${w.paused?'Запустить 1:00':'Пауза'}</button>
+        <button class="btn gh" data-a="rerollWarmup">🔄 Другое</button>
+      </div>
+    </section>`;
+  }
+
   if(r.phase==='doors'){
     return `<section class="card cut">${hudHtml}${invBarHtml}
-      <h2>${r.scouting?'🔍 Нажми на любую дверь, чтобы разведать её содержимое':'Выбери врата'}</h2>
+      <h2>${r.scouting?'🔍 Нажми на любую дверь, чтобы разведать её содержимое':'Выбери врата'}</h2>${S.cfg.allowWarmup!==false?`<p class="mut" style="font-size:12px;margin-bottom:8px">🧘 Шанс разминки перед дверью: <b>${getWarmupChance(r.sinceWarmup||0)}%</b> (без разминки: ${hm(r.sinceWarmup||0)})</p>`:''}
       <div class="doors">${r.d.map((d,i)=>{
         const od=getDoorOdds(d,r.step);
         const sc=r.scouted&&r.scouted[i];
@@ -4435,7 +4629,7 @@ function renderModal(){
   }
 }
 
-let lbData={loading:false,error:'',items:[],visitors:[],sort:'study'};
+let lbData={loading:false,error:'',items:[],visitors:[],sort:'study',period:'all'};
 async function loadLeaderboard(){
   if(lbData.loading)return;
   lbData.loading=true;lbData.error='';
@@ -4458,29 +4652,61 @@ async function loadLeaderboard(){
   }
 }
 function ratingView(){
-  if(!S.isAdmin)return homeView();
-  const mode=lbData.sort||'study';
-  const sorted=lbData.items.slice().sort((a,b)=>{
-    if(mode==='work')return (b.workouts||0)-(a.workouts||0);
-    if(mode==='streak')return (b.streak||0)-(a.streak||0);
-    return (b.studyMin||0)-(a.studyMin||0);
-  });
+  let mode=lbData.sort||'study';
+  if(!S.isAdmin&&(mode==='streak'||mode==='visits'))mode='study';
+  const period=lbData.period==='week'?'week':'all';
+  const getVal=u=>{
+    if(mode==='streak')return u.streak||0;
+    if(mode==='work')return period==='week'?(u.weekWorkouts||0):(u.workouts||0);
+    return period==='week'?(u.weekStudyMin||0):(u.studyMin||0);
+  };
+  const fmtVal=u=>{
+    const v=getVal(u);
+    if(mode==='work')return v+' тр.';
+    if(mode==='streak')return '🔥 '+v+' дн.';
+    return hm(v);
+  };
+  const sorted=lbData.items
+    .filter(u=>getVal(u)>0)
+    .sort((a,b)=>getVal(b)-getVal(a));
+
+  const top3=sorted.slice(0,3);
+  const rest=sorted.slice(3);
+  const podSlot=(u,rank)=>{
+    if(!u)return `<div class="pod-col pod-${rank}"><div class="pod-block" style="opacity:.35"><span class="pod-rank-num">#${rank}</span><span class="pod-sub">Свободно</span></div></div>`;
+    const medal=rank===1?'👑':rank===2?'🥈':'🥉';
+    return `<div class="pod-col pod-${rank}">
+      <div class="pod-medal">${medal}</div>
+      <div class="pod-nick">${esc(u.nick||'Игрок')}</div>
+      <div class="pod-user">${u.username?'@'+esc(u.username):'&nbsp;'}</div>
+      <div class="pod-block">
+        <span class="pod-rank-num">#${rank}</span>
+        <span class="pod-val">${fmtVal(u)}</span>
+        <span class="pod-sub">${mode==='work'?(period==='week'?hm(u.weekStudyMin||0):hm(u.studyMin||0)):(period==='week'?(u.weekWorkouts||0):(u.workouts||0))+' тр.'}</span>
+      </div>
+    </div>`;
+  };
+
   return `<section class="card cut" style="border-color:var(--ye)">
     <div class="hud">
       <div>
-        <h2>👑 Рейтинг и визиты (Админ)</h2>
-        <p class="mut" style="font-size:12.5px">Онлайн-список лидеров и журнал последних заходов</p>
+        <h2>🏆 Рейтинг игроков</h2>
+        <p class="mut" style="font-size:12.5px">${period==='week'?'Топ за текущую неделю (Пн 00:00 – Вс 23:59)':'Глобальные лидеры за всё время'}</p>
       </div>
       <button class="btn cy" data-a="refreshLeaderboard" ${lbData.loading?'disabled':''}>${lbData.loading?'Загрузка…':'🔄 Обновить'}</button>
     </div>
     <div class="chips">
       <button class="chip cut-sm ${mode==='study'?'on':''}" data-a="setLbSort" data-v="study">📚 Учёба</button>
       <button class="chip cut-sm ${mode==='work'?'on':''}" data-a="setLbSort" data-v="work">⚔️ Спорт</button>
-      <button class="chip cut-sm ${mode==='streak'?'on':''}" data-a="setLbSort" data-v="streak">🔥 Серия</button>
-      <button class="chip cut-sm ${mode==='visits'?'on':''}" data-a="setLbSort" data-v="visits">👁️ Визиты (${lbData.visitors.length})</button>
+      ${S.isAdmin?`<button class="chip cut-sm ${mode==='streak'?'on':''}" data-a="setLbSort" data-v="streak">🔥 Серия (Админ)</button>`:''}
+      ${S.isAdmin?`<button class="chip cut-sm ${mode==='visits'?'on':''}" data-a="setLbSort" data-v="visits">👁️ Визиты (${lbData.visitors.length})</button>`:''}
     </div>
+    ${(mode==='study'||mode==='work')?`<div class="chips" style="margin-top:0">
+      <button class="chip cut-sm ${period==='all'?'on':''}" data-a="setLbPeriod" data-v="all">🌍 За всё время</button>
+      <button class="chip cut-sm ${period==='week'?'on':''}" data-a="setLbPeriod" data-v="week">📅 За эту неделю</button>
+    </div>`:''}
     ${lbData.error?`<p style="color:var(--or);font-size:13px;margin:8px 0">${esc(lbData.error)}</p>`:''}
-    ${mode==='visits'?`
+    ${mode==='visits'&&S.isAdmin?`
       ${lbData.visitors.length?`<div class="lb-list">${lbData.visitors.map((v,i)=>`<div class="lb-row">
         <div class="lb-pos">${i+1}</div>
         <div class="lb-main">
@@ -4488,16 +4714,23 @@ function ratingView(){
           <small>${v.mode==='telegram'?'Telegram':'Гость'} • ID: ${esc(v.visitorId||v.user_id||'—')}</small>
         </div>
         <div class="lb-val" style="font-size:12px">${v.lastSeen?new Date(v.lastSeen).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—'}</div>
-      </div>`).join('')}</div>`:'<p class="mut">Пока нет данных о визитах. Нажми «Обновить» или добавь роут /api/ping и /api/leaderboard на сервере.</p>'}
+      </div>`).join('')}</div>`:'<p class="mut">Пока нет данных о визитах. Нажми «Обновить».</p>'}
     `:`
-      ${sorted.length?`<div class="lb-list">${sorted.map((u,i)=>`<div class="lb-row ${i===0?'top1':i===1?'top2':i===2?'top3':''}">
-        <div class="lb-pos">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)}</div>
-        <div class="lb-main">
-          <b>${esc(u.nick||'Игрок')}</b> ${u.username?`<span class="mut">@${esc(u.username)}</span>`:''}
-          <small>Учёба: ${hm(u.studyMin||0)} • Спорт: ${u.workouts||0} тр. • 🔥 ${u.streak||0} дн.</small>
+      ${sorted.length?`
+        <div class="podium">
+          ${podSlot(top3[1],2)}
+          ${podSlot(top3[0],1)}
+          ${podSlot(top3[2],3)}
         </div>
-        <div class="lb-val">${mode==='work'?(u.workouts||0)+' тр.':mode==='streak'?'🔥 '+(u.streak||0)+' дн.':hm(u.studyMin||0)}</div>
-      </div>`).join('')}</div>`:'<p class="mut">Список лидеров пуст. Нажми «Обновить», чтобы загрузить с сервера.</p>'}
+        ${rest.length?`<div class="lb-list">${rest.map((u,i)=>`<div class="lb-row">
+          <div class="lb-pos">${i+4}</div>
+          <div class="lb-main">
+            <b>${esc(u.nick||'Игрок')}</b> ${u.username?`<span class="mut">@${esc(u.username)}</span>`:''}
+            <small>${period==='week'?`Неделя: ${hm(u.weekStudyMin||0)} • ${u.weekWorkouts||0} тр.`:`Всего: ${hm(u.studyMin||0)} • ${u.workouts||0} тр.`}</small>
+          </div>
+          <div class="lb-val">${fmtVal(u)}</div>
+        </div>`).join('')}</div>`:''}
+      `:'<p class="mut">Пока нет участников в этом рейтинге. Нажми «Обновить».</p>'}
     `}
   </section>`;
 }
@@ -4568,6 +4801,7 @@ function finishStudyRoom(){
     const u=c.dur;
     (r.blocks??=[]).push({t:Date.now(),min:u,plan:c.planMin||u});
     r.actual=(r.actual??r.prog)+u;
+    r.sinceWarmup=(r.sinceWarmup||0)+u;
     r.prog+=c.planMin||u;
     const minutes=(S.stats.keyMinutes||0)+u;
     const keys=Math.floor(minutes/90);
@@ -4825,10 +5059,25 @@ function goalForm(g){
 }
 function taskForm(g){
   const task=g.tasks.find(t=>t.id===taskEditorId);
-  return `<p class="mut">${esc(g.n)}</p><div class="cfg"><label>Название подцели<input id="task-name" maxlength="90" value="${esc(task?.n||'')}" placeholder="Сделать ДЗ или пожать 90 кг"></label>
-    <label>Как считать прогресс<select id="task-kind" ${task?'disabled':''}><option value="check">Отметка о выполнении</option><option value="time" ${task?.type==='time'?'selected':''}>Время после учёбы</option></select></label>
-    <label id="task-hours-label" ${task?.type==='time'?'':'hidden'}>Сколько часов набрать<input type="number" id="task-hours" value="${task?.target?Number((task.target/60).toFixed(4)):''}" min="0.02" step="any" inputmode="decimal" placeholder="3"></label></div>
-    <p class="form-msg" role="status"></p><div class="row"><button class="btn cy" data-a="saveTask">${task?'Сохранить':'Добавить подцель'}</button><button class="btn gh" data-a="closeModal">Закрыть</button></div>`;
+  return `<div class="entry-form" style="--form-accent:${goalColor(g.color)}">
+    <small class="mut">Цель: <b style="color:${goalColor(g.color)}">${esc(g.n)}</b></small>
+    <label class="entry-field entry-primary" for="task-name">Название подцели
+      <input type="text" id="task-name" maxlength="90" value="${esc(task?.n||'')}" placeholder="Например, сделать ДЗ или пожать 90 кг">
+    </label>
+    <label class="entry-field" for="task-kind">Как считать прогресс
+      <select id="task-kind" ${task?'disabled':''}>
+        <option value="check" ${task?.type!=='time'?'selected':''}>Отметка о выполнении</option>
+        <option value="time" ${task?.type==='time'?'selected':''}>Время после учёбы</option>
+      </select>
+    </label>
+    <label class="entry-field" id="task-hours-label" for="task-hours" ${task?.type==='time'?'':'hidden'}>Сколько часов набрать
+      <input type="number" id="task-hours" value="${task?.target?Number((task.target/60).toFixed(4)):''}" min="0.02" step="any" inputmode="decimal" placeholder="3">
+    </label>
+    <div class="entry-actions">
+      <p class="form-msg" role="status"></p>
+      <button class="btn cy" data-a="saveTask">${task?'Сохранить':'Добавить подцель'}</button>
+    </div>
+  </div>`;
 }
 
 function archiveRun(r,label,amount){
@@ -4992,9 +5241,10 @@ const A={
     if(code!=='1984'){$('.form-msg').textContent='Неверный код.';return;}
     S.isAdmin=true;modalState=null;snd('key');save();render();
   },
-  adminLogout:()=>{S.isAdmin=false;if(S.tab==='rating')S.tab='home';modalState=null;snd('tick');save();render();},
+  adminLogout:()=>{S.isAdmin=false;if(lbData.sort==='streak'||lbData.sort==='visits')lbData.sort='study';modalState=null;snd('tick');save();render();},
   refreshLeaderboard:()=>{snd('tick');loadLeaderboard();},
   setLbSort:d=>{lbData.sort=d.v;snd('tick');render();},
+  setLbPeriod:d=>{lbData.period=d.v==='week'?'week':'all';snd('tick');render();},
   openDayDetail:d=>{dayDetailKey=d.v;modalState='dayDetail';renderModal();snd('tick');},
   habitForm:d=>{habitEditorId=d.v||null;modalState='habit';renderModal();},
   toggleHabitDay:(d,e)=>{e?.target?.classList.toggle('on');},
@@ -5209,7 +5459,7 @@ const A={
   },
 
   tab:d=>{
-    if(d.v==='rating'&&!S.isAdmin)return;
+
     historyLimit=40;S.tab=d.v;
     if(d.v==='rating'&&!lbData.items.length&&!lbData.loading)loadLeaderboard();
     modalState=null;
@@ -5238,7 +5488,7 @@ const A={
   mute:()=>{S.mute=!S.mute;save();render();snd('tick')},
   sel:d=>{S.sel.study=+d.v;save();render();snd('tick')},
   startStudy:()=>{
-    S.run.study={phase:'doors',target:Math.max(10,S.sel.study),prog:0,earned:0,step:0,d:pickDoors(),op:-1,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
+    S.run.study={phase:'doors',target:Math.max(10,S.sel.study),prog:0,sinceWarmup:0,earned:0,step:0,d:pickDoors(),op:-1,pendingDoor:-1,warmup:null,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
     snd('done');save();render();
   },
   openDoor:d=>{
@@ -5256,7 +5506,49 @@ const A={
       }
       return;
     }
+    const wChance=getWarmupChance(r.sinceWarmup||0);
+    if(wChance>0&&Math.random()*100<wChance){
+      const wItem=WARMUPS[rnd(0,WARMUPS.length-1)];
+      r.pendingDoor=idx;
+      r.warmup={n:wItem.n,d:wItem.d,left:60000,end:0,paused:true};
+      r.phase='warmup';
+      snd('t_g');burst('#52a86f',40);
+      save();render();
+      return;
+    }
     r.op=idx;snd('open'+(idx%3));shake();render();
+    setTimeout(()=>{if(S.run.study===r)resolveDoor(idx);},750);
+  },
+  toggleStudyOpt:d=>{
+    const k=d.v;
+    if(k==='allowGames'||k==='allowWarmup'){
+      S.cfg[k]=S.cfg[k]===false?true:false;
+      snd('tick');save();render();
+    }
+  },
+  rerollWarmup:()=>{
+    const r=S.run.study;if(!r||r.phase!=='warmup'||!r.warmup)return;
+    const pool=WARMUPS.filter(x=>x.n!==r.warmup.n);
+    const wItem=pool[rnd(0,pool.length-1)]||WARMUPS[0];
+    r.warmup.n=wItem.n;r.warmup.d=wItem.d;
+    snd('tick');save();render();
+  },
+  toggleWarmupTimer:()=>{
+    const r=S.run.study;if(!r||r.phase!=='warmup'||!r.warmup)return;
+    const w=r.warmup;
+    if(w.paused){w.end=Date.now()+w.left;w.paused=false;}
+    else{w.left=Math.max(0,w.end-Date.now());w.paused=true;}
+    snd('tick');save();render();
+  },
+  finishWarmup:()=>{
+    const r=S.run.study;if(!r||r.phase!=='warmup')return;
+    const idx=r.pendingDoor>=0?r.pendingDoor:0;
+    r.sinceWarmup=0;
+    r.warmup=null;
+    r.pendingDoor=-1;
+    r.phase='doors';
+    r.op=idx;
+    snd('open'+(idx%3));shake();save();render();
     setTimeout(()=>{if(S.run.study===r)resolveDoor(idx);},750);
   },
   useItem:d=>{
@@ -5601,6 +5893,16 @@ document.addEventListener('change',e=>{
 setInterval(()=>{
   if(cloudLoaded&&S.setupDone&&!caseSpinning&&((S.tab==='shop'&&S.shop.day!==toDayKey())||(S.tab==='bank'&&S.rules.weekKey!==toWeekKey()))){syncCalendarState();render();}
   const r=S.run.study;
+  if(cloudLoaded&&S.setupDone&&r&&r.phase==='warmup'&&r.warmup&&!r.warmup.paused){
+    r.warmup.left=r.warmup.end-Date.now();
+    if(r.warmup.left<=0){snd('done');A.finishWarmup();return;}
+    if(S.tab==='study'){
+      const t=$('#w-tm'),g=$('#w-ring');
+      if(t)t.textContent=mmss(r.warmup.left);
+      if(g)g.style.setProperty('--p',(1-r.warmup.left/60000)*100);
+    }
+    return;
+  }
   if(!cloudLoaded||!S.setupDone||!r||r.phase!=='timer'||!r.cur||r.cur.paused)return;
   r.cur.left=r.cur.end-Date.now();
   if(r.cur.left<=0){snd('alarm');finishStudyRoom();return}
