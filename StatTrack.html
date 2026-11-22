@@ -2173,6 +2173,99 @@ html {
   .pod-val { font-size: 12px; }
   .pod-nick { font-size: 12px; }
 }
+
+/* === V13: BACKDATE BAR & PREVIOUS WEEK WINNERS BANNER === */
+.backdate-bar {
+  margin: 10px 0 4px;
+  padding: 9px 11px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.backdate-bar small {
+  display: block;
+  color: var(--mut);
+  font-size: 11.5px;
+  margin-bottom: 6px;
+}
+.winner-banner {
+  margin: 12px 0 6px;
+  padding: 13px 14px;
+  background:
+    radial-gradient(280px 120px at 50% 0%, rgba(245, 208, 97, 0.22), transparent 72%),
+    linear-gradient(180deg, #211a12, #120f0d);
+  border: 1px solid #c9971c;
+  border-top: 2px solid #f5d061;
+  border-radius: 7px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 232, 160, 0.22);
+}
+.winner-banner-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 9px;
+}
+.winner-banner-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #f5d061;
+  text-shadow: 0 0 10px rgba(245, 208, 97, 0.35);
+}
+.winner-lock-pill {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #e6c87a;
+  background: rgba(201, 151, 28, 0.16);
+  border: 1px solid rgba(201, 151, 28, 0.45);
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+.winner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: 8px;
+}
+.winner-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  background: rgba(11, 9, 8, 0.72);
+  border: 1px solid rgba(201, 151, 28, 0.38);
+  border-radius: 6px;
+}
+.winner-crown {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.winner-info { min-width: 0; flex: 1; }
+.winner-cat {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mut);
+}
+.winner-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff2cc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.15;
+}
+.winner-meta {
+  font-size: 11.5px;
+  color: #e0ad5c;
+  font-weight: 600;
+}
 </style>
 </head>
 <body>
@@ -2308,6 +2401,22 @@ const toWeekKey=ts=>{
   const mon=new Date(d.getFullYear(),d.getMonth(),d.getDate()-day);
   return toDayKey(mon.getTime());
 };
+function getAllowedBackdateKeys(){
+  const now=new Date();
+  const curWeek=toWeekKey(now.getTime());
+  const res=[];
+  for(let i=0;i<=2;i++){
+    const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i,12,0,0);
+    const k=toDayKey(dt.getTime());
+    if(toWeekKey(dt.getTime())===curWeek){
+      const lbl=i===0?'Сегодня':i===1?'Вчера':'Позавчера';
+      const shortDate=dt.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',weekday:'short'});
+      res.push({k,lbl,shortDate,ts:i===0?Date.now():dt.getTime()});
+    }
+  }
+  return res;
+}
+let selectedWorkDate='', selectedHabitDate='';
 
 const DEFAULT_EXERCISES=['Жим лёжа','Приседания со штангой','Становая тяга','Жим гантелей сидя','Подтягивания','Тяга штанги в наклоне','Подъём на бицепс','Французский жим','Жим ногами'];
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2931,15 +3040,16 @@ function syncCalendarState(){
 }
 syncCalendarState();
 
-function recordDailyActivity(studyMin=0,workouts=0,doorsOpened=0){
+function recordDailyActivity(studyMin=0,workouts=0,doorsOpened=0,targetDayKey=null){
   syncCalendarState();
   const today=toDayKey();
-  if(!S.daily[today])S.daily[today]={min:0,wk:0,doors:0};
-  S.daily[today].min+=studyMin;
-  S.daily[today].wk+=workouts;
-  S.daily[today].doors+=doorsOpened;
+  const dk=targetDayKey||today;
+  if(!S.daily[dk])S.daily[dk]={min:0,wk:0,doors:0};
+  S.daily[dk].min+=studyMin;
+  S.daily[dk].wk+=workouts;
+  S.daily[dk].doors+=doorsOpened;
 
-  if(studyMin>0||workouts>0){
+  if(dk===today&&(studyMin>0||workouts>0)){
     const hr=new Date().getHours();
     S.hours[hr]=(S.hours[hr]||0)+(studyMin>0?studyMin:30);
     if(S.streak.lastDate!==today){
@@ -3948,8 +4058,18 @@ function workView(){
   const metrics=S.bodyMetrics||[];
   const lastW=metrics.length?metrics[metrics.length-1].w:null;
 
+  const allowedDays=getAllowedBackdateKeys();
+  if(!allowedDays.some(d=>d.k===selectedWorkDate))selectedWorkDate=allowedDays[0].k;
+  const activeDayObj=allowedDays.find(d=>d.k===selectedWorkDate)||allowedDays[0];
+
   return `<section class="card cut" style="border-color:var(--gr)">
-    <h2>Записать тренировку</h2><p class="mut">Выбери вид завершённой тренировки. Награда начислится сразу, а детали можно заполнить в журнале.</p>
+    <h2>Записать тренировку</h2><p class="mut">Выбери дату и вид завершённой тренировки. Награда начислится сразу, а детали можно заполнить в журнале.</p>
+    <div class="backdate-bar">
+      <small>📅 Дата тренировки (можно отметить за последние 2 дня текущей недели${allowedDays.length===1?' • в понедельник прошлые дни закрыты':''}):</small>
+      <div class="chips" style="margin:0">
+        ${allowedDays.map(d=>`<button type="button" class="chip cut-sm ${selectedWorkDate===d.k?'on':''}" data-a="setWorkDate" data-v="${d.k}">${d.lbl} (${esc(d.shortDate)})</button>`).join('')}
+      </div>
+    </div>
     <div class="pick-list">${S.activities.map(a=>`<button class="pick" data-a="recordWorkout" data-v="${esc(a.id)}"><strong>${esc(a.n)}</strong><span>${fmt(a.id==='yoga'?200:S.cfg.rw*getStreakMult())} ›</span></button>`).join('')}</div>
     ${editList('sport',S.activities.map(a=>a.n))}
     <button class="btn gh" data-a="tab" data-v="gym">Открыть журнал тренировок</button></section>
@@ -4629,7 +4749,7 @@ function renderModal(){
   }
 }
 
-let lbData={loading:false,error:'',items:[],visitors:[],sort:'study',period:'all'};
+let lbData={loading:false,error:'',items:[],visitors:[],prevWeek:null,sort:'study',period:'all'};
 async function loadLeaderboard(){
   if(lbData.loading)return;
   lbData.loading=true;lbData.error='';
@@ -4644,6 +4764,7 @@ async function loadLeaderboard(){
     const data=await res.json();
     lbData.items=Array.isArray(data?.leaderboard)?data.leaderboard:(Array.isArray(data)?data:[]);
     lbData.visitors=Array.isArray(data?.visitors)?data.visitors:[];
+    lbData.prevWeek=data?.prevWeek||null;
   }catch(err){
     lbData.error='Не удалось загрузить рейтинг с сервера ('+(err.message||'нет ответа /api/leaderboard')+').';
   }finally{
@@ -4654,9 +4775,19 @@ async function loadLeaderboard(){
 function ratingView(){
   let mode=lbData.sort||'study';
   if(!S.isAdmin&&(mode==='streak'||mode==='visits'))mode='study';
-  const period=lbData.period==='week'?'week':'all';
+  const period=['all','week','prev'].includes(lbData.period)?lbData.period:'all';
+  const pw=lbData.prevWeek;
+  const pwStudyWin=pw?.studyTop?.[0]||null;
+  const pwWorkWin=pw?.workTop?.[0]||null;
+
+  let sourceList=lbData.items;
+  if(period==='prev'&&(mode==='study'||mode==='work')){
+    sourceList=mode==='work'?(pw?.workTop||[]):(pw?.studyTop||[]);
+  }
+
   const getVal=u=>{
     if(mode==='streak')return u.streak||0;
+    if(period==='prev')return mode==='work'?(u.workouts||0):(u.studyMin||0);
     if(mode==='work')return period==='week'?(u.weekWorkouts||0):(u.workouts||0);
     return period==='week'?(u.weekStudyMin||0):(u.studyMin||0);
   };
@@ -4666,7 +4797,7 @@ function ratingView(){
     if(mode==='streak')return '🔥 '+v+' дн.';
     return hm(v);
   };
-  const sorted=lbData.items
+  const sorted=sourceList
     .filter(u=>getVal(u)>0)
     .sort((a,b)=>getVal(b)-getVal(a));
 
@@ -4675,6 +4806,9 @@ function ratingView(){
   const podSlot=(u,rank)=>{
     if(!u)return `<div class="pod-col pod-${rank}"><div class="pod-block" style="opacity:.35"><span class="pod-rank-num">#${rank}</span><span class="pod-sub">Свободно</span></div></div>`;
     const medal=rank===1?'👑':rank===2?'🥈':'🥉';
+    const subTxt=mode==='work'
+      ?(period==='week'?hm(u.weekStudyMin||0):hm(u.studyMin||0))
+      :(period==='week'?(u.weekWorkouts||0):(u.workouts||0))+' тр.';
     return `<div class="pod-col pod-${rank}">
       <div class="pod-medal">${medal}</div>
       <div class="pod-nick">${esc(u.nick||'Игрок')}</div>
@@ -4682,19 +4816,51 @@ function ratingView(){
       <div class="pod-block">
         <span class="pod-rank-num">#${rank}</span>
         <span class="pod-val">${fmtVal(u)}</span>
-        <span class="pod-sub">${mode==='work'?(period==='week'?hm(u.weekStudyMin||0):hm(u.studyMin||0)):(period==='week'?(u.weekWorkouts||0):(u.workouts||0))+' тр.'}</span>
+        <span class="pod-sub">${subTxt}</span>
       </div>
     </div>`;
   };
+
+  const winnerBannerHtml=(pw&&(pwStudyWin||pwWorkWin))?`<div class="winner-banner">
+    <div class="winner-banner-head">
+      <span class="winner-banner-title">👑 Чемпионы прошлой недели (${esc(pw.weekRange||pw.weekKey)})</span>
+      <span class="winner-lock-pill">🔒 Итоги зафиксированы</span>
+    </div>
+    <div class="winner-grid">
+      ${pwStudyWin?`<div class="winner-card">
+        <span class="winner-crown">📚</span>
+        <div class="winner-info">
+          <div class="winner-cat">Лидер учёбы</div>
+          <div class="winner-name">${esc(pwStudyWin.nick||'Игрок')}</div>
+          <div class="winner-meta">${hm(pwStudyWin.studyMin||0)}${pwStudyWin.username?' • @'+esc(pwStudyWin.username):''}</div>
+        </div>
+      </div>`:''}
+      ${pwWorkWin?`<div class="winner-card">
+        <span class="winner-crown">⚔️</span>
+        <div class="winner-info">
+          <div class="winner-cat">Лидер спорта</div>
+          <div class="winner-name">${esc(pwWorkWin.nick||'Игрок')}</div>
+          <div class="winner-meta">${pwWorkWin.workouts||0} трен.${pwWorkWin.username?' • @'+esc(pwWorkWin.username):''}</div>
+        </div>
+      </div>`:''}
+    </div>
+  </div>`:'';
+
+  const periodSubtitle=period==='prev'
+    ?`Зафиксированные итоги прошлой недели ${pw?.weekRange?'('+esc(pw.weekRange)+')':''} — не изменяются`
+    :period==='week'
+      ?'Топ за текущую неделю (Пн 00:00 – Вс 23:59)'
+      :'Глобальные лидеры за всё время';
 
   return `<section class="card cut" style="border-color:var(--ye)">
     <div class="hud">
       <div>
         <h2>🏆 Рейтинг игроков</h2>
-        <p class="mut" style="font-size:12.5px">${period==='week'?'Топ за текущую неделю (Пн 00:00 – Вс 23:59)':'Глобальные лидеры за всё время'}</p>
+        <p class="mut" style="font-size:12.5px">${periodSubtitle}</p>
       </div>
       <button class="btn cy" data-a="refreshLeaderboard" ${lbData.loading?'disabled':''}>${lbData.loading?'Загрузка…':'🔄 Обновить'}</button>
     </div>
+    ${winnerBannerHtml}
     <div class="chips">
       <button class="chip cut-sm ${mode==='study'?'on':''}" data-a="setLbSort" data-v="study">📚 Учёба</button>
       <button class="chip cut-sm ${mode==='work'?'on':''}" data-a="setLbSort" data-v="work">⚔️ Спорт</button>
@@ -4702,8 +4868,9 @@ function ratingView(){
       ${S.isAdmin?`<button class="chip cut-sm ${mode==='visits'?'on':''}" data-a="setLbSort" data-v="visits">👁️ Визиты (${lbData.visitors.length})</button>`:''}
     </div>
     ${(mode==='study'||mode==='work')?`<div class="chips" style="margin-top:0">
-      <button class="chip cut-sm ${period==='all'?'on':''}" data-a="setLbPeriod" data-v="all">🌍 За всё время</button>
-      <button class="chip cut-sm ${period==='week'?'on':''}" data-a="setLbPeriod" data-v="week">📅 За эту неделю</button>
+      <button class="chip cut-sm ${period==='all'?'on':''}" data-a="setLbPeriod" data-v="all">🌍 Всё время</button>
+      <button class="chip cut-sm ${period==='week'?'on':''}" data-a="setLbPeriod" data-v="week">📅 Эта неделя</button>
+      <button class="chip cut-sm ${period==='prev'?'on':''}" data-a="setLbPeriod" data-v="prev">🏅 Прошлая неделя</button>
     </div>`:''}
     ${lbData.error?`<p style="color:var(--or);font-size:13px;margin:8px 0">${esc(lbData.error)}</p>`:''}
     ${mode==='visits'&&S.isAdmin?`
@@ -4726,7 +4893,7 @@ function ratingView(){
           <div class="lb-pos">${i+4}</div>
           <div class="lb-main">
             <b>${esc(u.nick||'Игрок')}</b> ${u.username?`<span class="mut">@${esc(u.username)}</span>`:''}
-            <small>${period==='week'?`Неделя: ${hm(u.weekStudyMin||0)} • ${u.weekWorkouts||0} тр.`:`Всего: ${hm(u.studyMin||0)} • ${u.workouts||0} тр.`}</small>
+            <small>${period==='week'?`Неделя: ${hm(u.weekStudyMin||0)} • ${u.weekWorkouts||0} тр.`:period==='prev'?`Прошлая неделя: ${hm(u.studyMin||0)} • ${u.workouts||0} тр.`:`Всего: ${hm(u.studyMin||0)} • ${u.workouts||0} тр.`}</small>
           </div>
           <div class="lb-val">${fmtVal(u)}</div>
         </div>`).join('')}</div>`:''}
@@ -4925,6 +5092,10 @@ function habitFreqLabel(h){
 }
 function habitsView(){
   const today=toDayKey();
+  const allowedDays=getAllowedBackdateKeys();
+  if(!allowedDays.some(d=>d.k===selectedHabitDate))selectedHabitDate=allowedDays[0].k;
+  const activeDay=allowedDays.find(d=>d.k===selectedHabitDate)||allowedDays[0];
+  const dayWord=activeDay.k===today?'сегодня':activeDay.lbl.toLowerCase()+' ('+activeDay.shortDate+')';
   const last7=Array.from({length:7},(_,i)=>{
     const dt=new Date(Date.now()-(6-i)*86400000);
     return {k:toDayKey(dt.getTime()),lbl:WEEKDAYS_RU[(dt.getDay()+6)%7]};
@@ -4935,12 +5106,17 @@ function habitsView(){
       <h2>Мои привычки</h2>
       <button class="btn cy" data-a="habitForm">+ Добавить привычку</button>
     </div>
-    ${list.length?'':'<p class="mut">Создай ежедневную или кастомную привычку (например, «Пить креатин») и отмечай выполнение галочкой.</p>'}
+    ${list.length?`<div class="backdate-bar">
+      <small>📅 Отметить привычки за день (последние 2 дня текущей недели${allowedDays.length===1?' • в понедельник прошлые дни закрыты':''}):</small>
+      <div class="chips" style="margin:0">
+        ${allowedDays.map(d=>`<button type="button" class="chip cut-sm ${selectedHabitDate===d.k?'on':''}" data-a="setHabitDate" data-v="${d.k}">${d.lbl} (${esc(d.shortDate)})</button>`).join('')}
+      </div>
+    </div>`:'<p class="mut">Создай ежедневную или кастомную привычку (например, «Пить креатин») и отмечай выполнение галочкой.</p>'}
   </section>
   ${list.map(h=>{
-    const doneToday=Boolean(h.logs&&h.logs[today]);
+    const doneDay=Boolean(h.logs&&h.logs[activeDay.k]);
     const totalDone=Object.values(h.logs||{}).filter(Boolean).length;
-    const dueToday=isHabitScheduled(h,today);
+    const dueDay=isHabitScheduled(h,activeDay.k);
     const id=esc(h.id);
     return `<article class="card cut habit-card" style="--habit-color:${goalColor(h.color)}">
       <div class="hud">
@@ -4950,9 +5126,9 @@ function habitsView(){
         </div>
         <small class="mut">Всего: <b>${totalDone}</b></small>
       </div>
-      <button class="habit-check-btn ${doneToday?'done':''}" data-a="toggleHabit" data-v="${id}">
-        <span class="habit-box">${doneToday?'✓':''}</span>
-        <span>${doneToday?'Выполнено сегодня':(dueToday?'Отметить за сегодня':'Отметить вне графика')}</span>
+      <button class="habit-check-btn ${doneDay?'done':''}" data-a="toggleHabit" data-v="${id}">
+        <span class="habit-box">${doneDay?'✓':''}</span>
+        <span>${doneDay?'Выполнено: '+esc(dayWord):(dueDay?'Отметить за '+esc(dayWord):'Отметить вне графика ('+esc(dayWord)+')')}</span>
       </button>
       <div class="habit-week">
         ${last7.map(d=>{
@@ -5244,7 +5420,7 @@ const A={
   adminLogout:()=>{S.isAdmin=false;if(lbData.sort==='streak'||lbData.sort==='visits')lbData.sort='study';modalState=null;snd('tick');save();render();},
   refreshLeaderboard:()=>{snd('tick');loadLeaderboard();},
   setLbSort:d=>{lbData.sort=d.v;snd('tick');render();},
-  setLbPeriod:d=>{lbData.period=d.v==='week'?'week':'all';snd('tick');render();},
+  setLbPeriod:d=>{lbData.period=['all','week','prev'].includes(d.v)?d.v:'all';snd('tick');render();},
   openDayDetail:d=>{dayDetailKey=d.v;modalState='dayDetail';renderModal();snd('tick');},
   habitForm:d=>{habitEditorId=d.v||null;modalState='habit';renderModal();},
   toggleHabitDay:(d,e)=>{e?.target?.classList.toggle('on');},
@@ -5265,9 +5441,10 @@ const A={
   toggleHabit:d=>{
     const h=S.habits.find(x=>x.id===d.v);if(!h)return;
     h.logs=h.logs||{};
-    const today=toDayKey();
-    if(h.logs[today])delete h.logs[today];
-    else{h.logs[today]=true;snd('done');}
+    const allowed=getAllowedBackdateKeys();
+    const dayObj=allowed.find(x=>x.k===selectedHabitDate)||allowed[0];
+    if(h.logs[dayObj.k])delete h.logs[dayObj.k];
+    else{h.logs[dayObj.k]=true;snd('done');}
     save();render();
   },
   retryLoad:()=>loadCloudProfile(false),
@@ -5327,16 +5504,28 @@ const A={
     S.rules={requirements,counts:{},weekKey:toWeekKey(),changed:hasAny?Date.now():0};
     S.setupDone=true;modalState=null;snd('done');save();render();
   },
+  setWorkDate:d=>{
+    const allowed=getAllowedBackdateKeys();
+    if(allowed.some(x=>x.k===d.v)){selectedWorkDate=d.v;snd('tick');render();}
+  },
+  setHabitDate:d=>{
+    const allowed=getAllowedBackdateKeys();
+    if(allowed.some(x=>x.k===d.v)){selectedHabitDate=d.v;snd('tick');render();}
+  },
   recordWorkout:d=>{
     if(S.tab!=='work')return;
     const sport=S.activities.find(a=>a.id===d.v);if(!sport)return;
+    const allowed=getAllowedBackdateKeys();
+    const dayObj=allowed.find(x=>x.k===selectedWorkDate)||allowed[0];
     const yoga=sport.id==='yoga',earned=creditMoney(yoga?200:S.cfg.rw,!yoga);
     S.stats.wk++;
     S.stats.muscles[sport.id]=(S.stats.muscles[sport.id]||0)+1;
     if((S.rules.counts[sport.id]||0)<(S.rules.requirements[sport.id]||0))S.rules.counts[sport.id]=(S.rules.counts[sport.id]||0)+1;
-    recordDailyActivity(0,1,0);
-    const w={id:uid(),t:Date.now(),kind:sport.id,txt:sport.n,amt:earned};
-    prepareWorkout(w);S.logWork.unshift(w);A.openGymForWorkout({v:w.id});
+    recordDailyActivity(0,1,0,dayObj.k);
+    const w={id:uid(),t:dayObj.ts,kind:sport.id,txt:sport.n,amt:earned};
+    prepareWorkout(w);S.logWork.unshift(w);
+    S.logWork.sort((a,b)=>(b.t||0)-(a.t||0));
+    A.openGymForWorkout({v:w.id});
   },
   openGymForWorkout:d=>{
     const w=S.logWork.find(x=>x.id===d.v);if(!w)return;
