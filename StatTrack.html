@@ -2338,6 +2338,122 @@ html {
   gap: 8px;
   margin-left: auto;
 }
+
+/* === V15: RAINBOW SKULL NICK, 1-ROW RATING PERIODS, BANK LABEL, LOADING SCREEN === */
+.tabs {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+.bank-top-btn .bank-lbl {
+  display: inline !important;
+  font: 600 12px 'Inter', sans-serif;
+  color: inherit;
+}
+@media (max-width: 480px) {
+  .bank-top-btn .bank-lbl { font-size: 11px; }
+}
+.nick-rainbow {
+  background: linear-gradient(90deg, #ff5e5e, #f5b942, #52d17c, #4fb8ff, #c06bff, #ff5e9c, #ff5e5e);
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  animation: rainbowShift 4s linear infinite;
+  font-weight: 700;
+}
+@keyframes rainbowShift {
+  to { background-position: 240% 0; }
+}
+.nick-skull-ic {
+  display: inline-flex;
+  vertical-align: -2px;
+  margin-right: 3px;
+  color: #f5d061;
+  filter: drop-shadow(0 0 4px rgba(245, 208, 97, 0.45));
+}
+.lb-period-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 6px 0 10px;
+}
+.lb-period-row .chip {
+  justify-content: center;
+  text-align: center;
+  padding: 6px 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 420px) {
+  .lb-period-row .chip { font-size: 11px; padding: 6px 2px; gap: 3px; }
+}
+.habit-dot {
+  border: 1px solid var(--line);
+  font-family: 'Inter', sans-serif;
+}
+button.habit-dot {
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.15s ease;
+}
+button.habit-dot:hover:not(:disabled) {
+  border-color: var(--cy);
+}
+button.habit-dot:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.habit-dot.today-dot {
+  box-shadow: inset 0 0 0 1px var(--cy);
+}
+.study-est {
+  margin: 6px 0 10px;
+  padding: 8px 11px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--cy);
+  border-radius: 5px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.study-est b { color: var(--cy); }
+.loader-wrap {
+  text-align: center;
+  padding: 10px 4px 4px;
+}
+.loader-logo {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--card2), var(--surface));
+  border: 2px solid var(--cy);
+  display: grid;
+  place-items: center;
+  color: var(--cy);
+  box-shadow: 0 0 24px rgba(212, 155, 75, 0.35);
+}
+.loader-bar {
+  width: 100%;
+  height: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line-gold);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 14px 0 8px;
+}
+.loader-bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--red), var(--cy), #f5d061);
+  transition: width 0.25s ease;
+}
+.loader-pct {
+  font: 700 18px 'Cormorant Garamond', Georgia, serif;
+  color: var(--cy);
+  letter-spacing: 0.05em;
+}
 </style>
 </head>
 <body>
@@ -2462,25 +2578,33 @@ function getStreakMult(){
   return 1+(pct/100);
 }
 
-/* DATE & WEEK KEYS */
-const toDayKey=ts=>{
-  const d=new Date(ts||Date.now());
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-};
+/* DATE & WEEK KEYS (Игровой день обновляется в 03:00 ночи) */
+const DAY_SHIFT_MS=3*3600*1000;
+const fmtYMD=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const gameNow=ts=>new Date((ts||Date.now())-DAY_SHIFT_MS);
+const toDayKey=ts=>fmtYMD(gameNow(ts));
 const toWeekKey=ts=>{
-  const d=new Date(ts||Date.now());
+  const d=gameNow(ts);
   const day=(d.getDay()+6)%7;
-  const mon=new Date(d.getFullYear(),d.getMonth(),d.getDate()-day);
-  return toDayKey(mon.getTime());
+  return fmtYMD(new Date(d.getFullYear(),d.getMonth(),d.getDate()-day));
 };
+function getCurrentWeekDates(){
+  const mon=new Date(toWeekKey()+'T12:00:00');
+  return Array.from({length:7},(_,i)=>{
+    const dt=new Date(mon.getTime()+i*86400000);
+    return {k:fmtYMD(dt),lbl:WEEKDAYS_RU[i],dt};
+  });
+}
 function getAllowedBackdateKeys(){
-  const now=new Date();
-  const curWeek=toWeekKey(now.getTime());
+  const gn=gameNow();
+  const curWeek=toWeekKey();
   const res=[];
   for(let i=0;i<=2;i++){
-    const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i,12,0,0);
-    const k=toDayKey(dt.getTime());
-    if(toWeekKey(dt.getTime())===curWeek){
+    const dt=new Date(gn.getFullYear(),gn.getMonth(),gn.getDate()-i,12,0,0);
+    const k=fmtYMD(dt);
+    const wd=(dt.getDay()+6)%7;
+    const wk=fmtYMD(new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()-wd));
+    if(wk===curWeek){
       const lbl=i===0?'Сегодня':i===1?'Вчера':'Позавчера';
       const shortDate=dt.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',weekday:'short'});
       res.push({k,lbl,shortDate,ts:i===0?Date.now():dt.getTime()});
@@ -2492,6 +2616,7 @@ let selectedWorkDate='', selectedHabitDate='';
 
 const DEFAULT_EXERCISES=['Жим лёжа','Приседания со штангой','Становая тяга','Жим гантелей сидя','Подтягивания','Тяга штанги в наклоне','Подъём на бицепс','Французский жим','Жим ногами'];
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const renderNick=(nick,style)=>style==='rainbow_skull'?`<span class="nick-skull-ic">${icon('skull',15)}</span><span class="nick-rainbow">${esc(nick)}</span>`:esc(nick);
 const uid=()=>globalThis.crypto?.randomUUID?.()||('id_'+Date.now().toString(36)+Math.random().toString(36).slice(2));
 const FORTNIGHT=14*86400000;
 const SPORTS=[
@@ -2552,7 +2677,7 @@ const DEF=()=>({
   doorRevision:2,trainingVersion:2,createdAt:toDayKey(),isAdmin:false,setupDone:false,profileStepDone:false,tourDone:false,activities:SPORTS.map(x=>({...x})),goals:[],habits:[],heatmapMode:'activity',
   rules:{requirements:{},counts:{},changed:0},
   audio:{effects:75,timer:100},
-  profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',medals:['st_hrs','wk_tot','keys']},
+  profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',nickStyle:'',medals:['st_hrs','wk_tot','keys']},
   cfg:{rs:500,rw:500,full:true,allowGames:true,allowWarmup:true,kMult:1,gMult:1,rMult:1,doors:JSON.parse(JSON.stringify(DEF_DOORS))},
   bank:{card:0,pend:0,paid:0},
   stats:{
@@ -2665,6 +2790,45 @@ function getVisitorId(){
     if(!v){v='g_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem(vk,v);}
     return v;
   }catch{return 'g_anon';}
+}
+function scheduleServerTimer(endAt,label,kind='study'){
+  if(guestMode||!onlineProfile||!endAt||endAt<=Date.now())return;
+  try{
+    fetch(BACKEND_URL+'/api/timer/schedule',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({initData:tg.initData,user_id:tg.initDataUnsafe.user.id,endAt,label,kind}),
+      keepalive:true
+    }).catch(()=>{});
+  }catch{}
+}
+function cancelServerTimer(){
+  if(guestMode||!onlineProfile)return;
+  try{
+    fetch(BACKEND_URL+'/api/timer/cancel',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({initData:tg.initData,user_id:tg.initDataUnsafe.user.id}),
+      keepalive:true
+    }).catch(()=>{});
+  }catch{}
+}
+let loadPct=12, loadSlow=false, loadTicker=null;
+function startLoadProgress(){
+  clearInterval(loadTicker);
+  loadPct=14; loadSlow=false;
+  const started=Date.now();
+  loadTicker=setInterval(()=>{
+    if(cloudLoaded){clearInterval(loadTicker);loadPct=100;return;}
+    const elapsed=Date.now()-started;
+    if(elapsed>5500)loadSlow=true;
+    loadPct=Math.min(94, loadPct + (loadPct<55?7:loadPct<80?3:1));
+    const fill=$('#loader-fill'), txt=$('#loader-pct'), st=$('#loader-status'), fb=$('#loader-fallback');
+    if(fill)fill.style.width=loadPct+'%';
+    if(txt)txt.textContent=loadPct+'%';
+    if(st)st.textContent=syncError?syncError:(loadPct<40?'Подключаем профиль…':loadPct<75?'Загружаем прогресс и статистику…':'Синхронизируем данные…');
+    if(fb&&(loadSlow||syncError))fb.hidden=false;
+  },350);
 }
 let pingSent=false;
 function sendVisitPing(){
@@ -2954,6 +3118,7 @@ function openTelegramOffline(){
 async function loadCloudProfile(isAutoRetry=false){
   if(guestMode||loading||serverReady)return;
   loading=true;
+  if(!cloudLoaded&&!isAutoRetry)startLoadProgress();
   if(!isAutoRetry)syncError='';
   clearTimeout(retryTimer);
   const generation=loadGeneration,wasOpen=cloudLoaded;
@@ -3146,10 +3311,10 @@ function recordDailyActivity(studyMin=0,workouts=0,doorsOpened=0,targetDayKey=nu
 }
 
 function getWeekProgress(weekMondayStr){
-  const mon=new Date((weekMondayStr||toWeekKey())+'T00:00:00');
+  const mon=new Date((weekMondayStr||toWeekKey())+'T12:00:00');
   let min=0,wk=0,days=0;
   for(let i=0;i<7;i++){
-    const k=toDayKey(mon.getTime()+i*86400000);
+    const k=fmtYMD(new Date(mon.getTime()+i*86400000));
     const d=S.daily[k];
     if(d){
       min+=d.min||0;
@@ -3336,8 +3501,17 @@ function getWarmupChance(mins){
 }
 
 /* EFFECTIVE DOOR CHANCES */
-function getDoorOdds(door,step=0){
-  const canKey=step>=3;
+function estimateStudyEnd(studyMin){
+  const m=Math.max(10,Math.round(Number(studyMin)||60));
+  const expectedRests=m<=60?0:Math.max(1,Math.round((m/35)*0.25));
+  const estRestMin=expectedRests*10;
+  const totalMin=m+estRestMin;
+  const endDt=new Date(Date.now()+totalMin*60000);
+  const hhmm=endDt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  return {m,expectedRests,estRestMin,totalMin,hhmm};
+}
+function getDoorOdds(door,step=0,infinite=false){
+  const canKey=!infinite&&step>=3;
   const streakPen=Math.pow(0.5,S.stats.earlyStreak||0);
   let k=canKey?+(door.k*(S.cfg.kMult??1)*streakPen).toFixed(2):0;
   let g=S.cfg.allowGames===false?0:+(door.g*(S.cfg.gMult??1)).toFixed(2);
@@ -3358,8 +3532,8 @@ function pickDoors(){
 }
 
 /* ROLL A SINGLE DOOR OUTCOME (USED BY BOTH SCOUT & OPEN DOOR) */
-function rollDoorOutcome(d,step,rem){
-  const od=getDoorOdds(d,step);
+function rollDoorOutcome(d,step,rem,infinite=false){
+  const od=getDoorOdds(d,step,infinite);
   const x=Math.random()*100;
   const type=x<od.k?'key':x<od.k+od.ch?'chest':x<od.k+od.ch+od.g?'game':x<od.k+od.ch+od.g+od.r?'rest':'focus';
   let dur=0;
@@ -3404,7 +3578,7 @@ function renderHeader(){
   $('#brand-ic').innerHTML=icon('logo',20);
   $('#top-actions').innerHTML=`
     <div class="top-grp-main">
-      <button class="icon-btn cut-sm" data-a="tab" data-v="bank" aria-label="Банк" title="Банк">${icon('coin',17)}</button>
+      <button class="icon-btn cut-sm bank-top-btn ${S.tab==='bank'?'on':''}" data-a="tab" data-v="bank" aria-label="Банк" title="Банк">${icon('coin',15)} <b class="bank-lbl">Банк</b></button>
       <button class="res-pill cut-sm" data-a="showModal" data-v="keys" aria-label="Прогресс ключей" title="До следующего ключа">
         ${icon('key',13)} <b>${S.stats.keyBalance||0}</b>
         ${(S.stats.chests||0)>0?` • 📦<b>${S.stats.chests}</b>`:''}
@@ -3435,7 +3609,7 @@ function renderHeader(){
           <div class="ava" data-a="tab" data-v="profile" title="Открыть профиль">${icon(S.profile.ava||'crown',20)}</div>
           <div class="prof-info">
             <div class="prof-top">
-              <span class="prof-nick" data-a="tab" data-v="profile" title="Открыть профиль">${esc(S.profile.nick)}</span>
+              <span class="prof-nick" data-a="tab" data-v="profile" title="Открыть профиль">${renderNick(S.profile.nick,S.profile.nickStyle)}</span>
               <button class="streak-btn" data-a="openStreakModal" title="Посмотреть серию дней и цепочку бонусов">
                 🔥 ${S.streak.cur||0} дн. • +${sBonus}% ℹ️
               </button>
@@ -3946,9 +4120,10 @@ function studyView(){
       <h2>Лабиринт учёбы</h2>
       <p class="mut">Укажи план на сегодня. Один ключ начисляется за каждые 90 минут учёбы. Начиная с четвёртой двери можно случайно найти выход раньше срока.</p>
       ${S.stats.earlyStreak>0?`<p style="color:var(--ye);font-size:13.5px;margin-top:6px">⚡ В прошлом забеге нашёлся тайный выход (серия: ${S.stats.earlyStreak}). Шанс побега в этом забеге снижен до <b>${Math.round(pen*100)}%</b> от базового. Пройди полное время без побега, чтобы сбросить штраф!</p>`:''}
-      <div class="chips">${opts.map(v=>`<button class="chip cut-sm ${t===v?'on':''}" data-a="sel" data-v="${v}">${v/60} ч</button>`).join('')}</div>
-      <label class="mut">Свой план (мин): <input type="number" min="10" value="${t}" data-k="selStudy"></label>
-      <div class="kv">Награда за полный план (с учётом бонуса серии +${sBonus}%)<b>${fmt(money('study',t)*getStreakMult())}</b></div>
+      <div class="chips" id="study-preset-chips">${opts.map(v=>`<button class="chip cut-sm ${t===v?'on':''}" data-a="sel" data-v="${v}">${v/60} ч</button>`).join('')}</div>
+      <label class="mut">Свой план (мин): <input type="number" min="10" step="5" value="${t}" data-k="selStudy"></label>
+      <div class="kv">Награда за полный план (с учётом бонуса серии +${sBonus}%)<b id="study-plan-rew">${fmt(money('study',t)*getStreakMult())}</b></div>
+      ${(()=>{const e=estimateStudyEnd(t);return `<div class="study-est" id="study-est-end">⏱️ Примерное окончание: <b>~${e.hhmm}</b>${e.estRestMin>0?` <span class="mut">(учёба ${hm(e.m)} + ~${e.estRestMin} мин на ${e.expectedRests} отд.)</span>`:' <span class="mut">(шанс отдыха невелик)</span>'}</div>`;})()}
       <div class="study-toggles">
         <button type="button" class="toggle-card ${S.cfg.allowGames!==false?'on':''}" data-a="toggleStudyOpt" data-v="allowGames" aria-pressed="${S.cfg.allowGames!==false}">
           <span class="toggle-box">${S.cfg.allowGames!==false?'✓':''}</span>
@@ -3967,18 +4142,20 @@ function studyView(){
       </div>
       <div class="row">
         <button class="btn cy" data-a="startStudy">Войти в лабиринт</button>
+        <button class="btn vi" data-a="startStudyInfinite">∞ Бесконечный режим</button>
         ${(S.stats.savedGames||0)>0?`<button class="btn ye" data-a="playSavedGame">🎮 Сыграть отложенную катку (${S.stats.savedGames})</button>`:''}
       </div>
     </section>`;
   }
 
-  const p=Math.min(100,r.prog/r.target*100);
-  const stepInfo=r.step<3?`Ход ${r.step+1} (защита 1-3: ${r.step}/3)`:`Ход ${r.step+1} (можно найти выход)`;
+  const isInf=Boolean(r.infinite);
+  const p=isInf?100:Math.min(100,r.prog/r.target*100);
+  const stepInfo=isInf?`∞ Бесконечный • Ход ${r.step+1}`:(r.step<3?`Ход ${r.step+1} (защита 1-3: ${r.step}/3)`:`Ход ${r.step+1} (можно найти выход)`);
   const hudHtml=`<div class="hud">
-    <div><span class="mut" style="font-size:12.5px">Прогресс • ${stepInfo}</span><b>${r.prog} / ${r.target} мин</b></div>
+    <div><span class="mut" style="font-size:12.5px">Прогресс • ${stepInfo}</span><b>${isInf?hm(r.prog)+' (∞)':`${r.prog} / ${r.target} мин`}</b></div>
     <div><span class="mut" style="font-size:12.5px">Накоплено</span><b style="color:var(--ye)">${fmt(r.earned)}</b></div>
   </div>
-  <div class="bar"><i style="width:${p}%"></i><em>${icon('exit',22)}</em></div>`;
+  <div class="bar"><i style="width:${p}%"></i><em>${icon(isInf?'flame':'exit',22)}</em></div>`;
 
   /* Tactical Inventory Bar inside the Labyrinth */
   const invBarHtml=`<div class="inv-bar cut-sm">
@@ -3997,6 +4174,9 @@ function studyView(){
     </button>
     <button class="btn gh" style="padding:6px 9px;font-size:12px;${S.buffs.double_xp?'border-color:var(--vi);color:var(--vi)':''}" data-a="useItem" data-v="double_xp" ${(S.inv.double_xp||0)<=0||S.buffs.double_xp?'disabled':''}>
       ⚡ Очки ×2 (${S.inv.double_xp||0}) ${S.buffs.double_xp?'[АКТИВНЫ]':''}
+    </button>
+    <button class="btn gh" style="padding:6px 9px;font-size:12px;${(S.stats.savedGames||0)>0?'border-color:var(--ye);color:var(--ye)':''}" data-a="useSavedGameInRun" ${(S.stats.savedGames||0)<=0||r.phase!=='doors'?'disabled':''}>
+      🎮 Катка (${S.stats.savedGames||0})
     </button>
   </div>`;
 
@@ -4032,7 +4212,7 @@ function studyView(){
     return `<section class="card cut">${hudHtml}${invBarHtml}
       <h2>${r.scouting?'🔍 Нажми на любую дверь, чтобы разведать её содержимое':'Выбери врата'}</h2>${S.cfg.allowWarmup!==false?`<p class="mut" style="font-size:12px;margin-bottom:8px">🧘 Шанс разминки перед дверью: <b>${getWarmupChance(r.sinceWarmup||0)}%</b> (без разминки: ${hm(r.sinceWarmup||0)})</p>`:''}
       <div class="doors">${r.d.map((d,i)=>{
-        const od=getDoorOdds(d,r.step);
+        const od=getDoorOdds(d,r.step,isInf);
         const sc=r.scouted&&r.scouted[i];
         let scTxt='';
         if(sc){
@@ -4047,7 +4227,7 @@ function studyView(){
           <div class="od"><span>Отдых</span><u style="--w:${od.r}%"></u><b>${od.r}%</b></div>
           <div class="od" style="--c:#d49b4b"><span>Кейс</span><u style="--w:${Math.min(100,od.ch*10)}%"></u><b>${od.ch}%</b></div>
           <div class="od" style="--c:#c98218"><span>Катка</span><u style="--w:${Math.min(100,od.g*5)}%"></u><b>${od.g}%</b></div>
-          <div class="od" style="--c:#b8860b"><span>Побег</span><u style="--w:${Math.min(100,od.k*6)}%"></u><b>${od.canKey?od.k+'%':'0% (1-3)'}</b></div>
+          <div class="od" style="--c:#b8860b"><span>Побег</span><u style="--w:${Math.min(100,od.k*6)}%"></u><b>${isInf?'∞ (вывод)':od.canKey?od.k+'%':'0% (1-3)'}</b></div>
           <div class="hist">${DUR.map(x=>`<i style="height:${Math.round(dw(d.c,x)*100)}%;background:${tier('focus',x)[0]}"></i>`).join('')}</div>
           <div class="hs">Учёба: чаще около ${d.c} мин</div>
         </button>`;
@@ -4107,7 +4287,7 @@ function studyView(){
         </div>
         <div class="row" style="justify-content:center">
           <button class="btn ${rest?'gr':'cy'}" data-a="pauseTimer">${c.paused?'Продолжить':'Пауза'}</button>
-          ${(rest||S.isAdmin)?`<button class="btn vi" data-a="finishRoom">${rest?'Закончить отдых':'Завершено (Админ)'}</button>`:''}
+          ${(rest||S.isAdmin)?`<button class="btn vi" data-a="${rest?'finishRoom':'adminFinishAsk'}">${rest?'Закончить отдых':'Завершено (Админ)'}</button>`:''}
         </div>
       </div>
       ${runActions}
@@ -4328,7 +4508,7 @@ function shopView(){
     <p class="mut">Кейс стоит 1 ключ. Выбранный предмет стоит от 2 ключей. Каждая покупка повышает его цену на 1 до местной полуночи.</p>
     <button class="btn ye" data-a="buyGame" ${S.stats.keyBalance<5?'disabled':''}>🎮 Катка в запас · 5 🔑</button>
     <div class="shop-grid">
-      ${SHOP_ITEMS.map(it=>{
+      ${SHOP_ITEMS.filter(it=>it.id!=='bank_game').map(it=>{
         const cost=shopPrice(it);
         const owned=S.inv[it.id]||0;
         return `<div class="shop-item cut-sm" style="--rc:${it.col}">
@@ -4374,8 +4554,8 @@ function habitDayStats(dayStr){
 let calOffset=0;
 function progressView(){
   const mode=S.heatmapMode==='habits'?'habits':'activity';
-  const today=new Date();
-  const todayKey=toDayKey(today.getTime());
+  const today=gameNow();
+  const todayKey=fmtYMD(today);
   const startKey=S.createdAt||todayKey;
   const viewDate=new Date(today.getFullYear(),today.getMonth()+calOffset,1);
   const year=viewDate.getFullYear(), month=viewDate.getMonth();
@@ -4417,7 +4597,7 @@ function progressView(){
   const weeks=[];
   for(let w=7;w>=0;w--){
     const mon=new Date(endMon.getTime()-w*7*86400000);
-    const wkKey=toDayKey(mon.getTime());
+    const wkKey=fmtYMD(mon);
     const prog=getWeekProgress(wkKey);
     weeks.push({lbl:wkKey.slice(5),hrs:+(prog.min/60).toFixed(1),wk:prog.wk});
   }
@@ -4519,7 +4699,7 @@ function profileView(){
     <div class="prof-custom-preview" style="--accent:${S.profile.accent}">
       <div class="ava" style="width:48px;height:48px">${icon(S.profile.ava||'crown',24)}</div>
       <div style="min-width:0">
-        <div style="font-size:18px;font-weight:700;color:var(--ink-strong)">${esc(S.profile.nick)}</div>
+        <div style="font-size:18px;font-weight:700;color:var(--ink-strong)">${renderNick(S.profile.nick,S.profile.nickStyle)}</div>
         <div class="mut" style="font-size:12.5px">${esc(S.profile.title||'Без подписи')}</div>
       </div>
     </div>
@@ -4610,6 +4790,9 @@ function bankView(){
       <label class="mut">Выплачено мне <input type="number" id="pm" min="0" value="${withdrawable()}"></label>
       <button class="btn vi" data-a="payout" ${withdrawable()<=0?'disabled':''}>Получить выплату</button>
     </div>
+    ${withdrawable()<=0&&Math.min(b.pend,b.card)>0?`<div class="row" style="margin-top:8px">
+      <button class="btn gh" style="border-color:var(--or);color:var(--or)" data-a="forcePayoutAsk">Принудительный вывод (${fmt(Math.min(b.pend,b.card))})</button>
+    </div>`:''}
   </section>
 
   <section class="card cut" style="border-color:var(--gr)">
@@ -4701,7 +4884,12 @@ function settingsView(){
       <h2>👑 Панель администратора: Шансы 10 дверей</h2>
       <button class="btn gh" data-a="adminLogout">Выйти из админа</button>
     </div>
-    <p class="mut">Режим администратора активен: открыта настройка шансов дверей и досрочное завершение таймера.</p>
+    <p class="mut">Режим администратора активен: открыта настройка шансов дверей, досрочное завершение таймера и кастомный стиль ника.</p>
+    <div class="row" style="margin:10px 0">
+      <button class="btn ${S.profile.nickStyle==='rainbow_skull'?'ye':'gh'}" data-a="toggleFancyNick">
+        💀 Радужный градиент ника + череп: ${S.profile.nickStyle==='rainbow_skull'?'ВКЛ (сохраняется без админа)':'ВЫКЛ'}
+      </button>
+    </div>
     <div class="cfg" style="margin-top:10px">
       <label>Глобальный множитель побегов (×)
         <input type="number" step="0.1" min="0" max="5" data-k="kMult" value="${S.cfg.kMult??1}">
@@ -4810,6 +4998,32 @@ function renderModal(){
         </div>
       </div>
     </div>`;
+  }else if(modalState==='adminFinish'){
+    $('#modal-root').innerHTML=`<div class="modal-bg" data-a="closeModalBg">
+      <div class="modal cut" style="border-color:var(--vi)">
+        <h2 style="color:var(--cy)">Подтверждение (Админ)</h2>
+        <p class="mut" style="margin:10px 0">Точно завершить текущий учебный блок досрочно?</p>
+        <div class="row">
+          <button class="btn vi" data-a="adminFinishConfirm">Да, завершить</button>
+          <button class="btn gh" data-a="closeModal">Отмена</button>
+        </div>
+      </div>
+    </div>`;
+  }else if(modalState==='forcePayout'){
+    const maxForce=Math.min(S.bank.pend,S.bank.card);
+    $('#modal-root').innerHTML=`<div class="modal-bg" data-a="closeModalBg">
+      <div class="modal cut" style="border-color:var(--or)">
+        <h2 style="color:var(--or)">Принудительный вывод</h2>
+        <p class="mut" style="margin:10px 0">Условия по тренировкам на эту неделю ещё не выполнены. Вывести средства без тренировок? Сами тренировки при этом <b>не засчитаются</b>.</p>
+        <div class="row">
+          <label class="mut">Сумма, ₽ <input type="number" id="force-pm" min="1" max="${maxForce}" value="${maxForce}"></label>
+        </div>
+        <div class="row">
+          <button class="btn" data-a="forcePayoutConfirm">Да, вывести принудительно</button>
+          <button class="btn gh" data-a="closeModal">Отмена</button>
+        </div>
+      </div>
+    </div>`;
   }else if(modalState==='wipe'){
     $('#modal-root').innerHTML=`<div class="modal-bg">
       <div class="modal cut" style="border-color:var(--red)">
@@ -4824,7 +5038,7 @@ function renderModal(){
   }
 }
 
-let lbData={loading:false,error:'',items:[],visitors:[],prevWeek:null,sort:'study',period:'all'};
+let lbData={loading:false,error:'',items:[],visitors:[],prevWeek:null,sort:'study',period:'week'};
 async function loadLeaderboard(){
   if(lbData.loading)return;
   lbData.loading=true;lbData.error='';
@@ -4886,7 +5100,7 @@ function ratingView(){
       :(period==='week'?(u.weekWorkouts||0):(u.workouts||0))+' тр.';
     return `<div class="pod-col pod-${rank}">
       <div class="pod-medal">${medal}</div>
-      <div class="pod-nick">${esc(u.nick||'Игрок')}</div>
+      <div class="pod-nick">${renderNick(u.nick||'Игрок',u.nickStyle)}</div>
       <div class="pod-user">${u.username?'@'+esc(u.username):'&nbsp;'}</div>
       <div class="pod-block">
         <span class="pod-rank-num">#${rank}</span>
@@ -4906,7 +5120,7 @@ function ratingView(){
         <span class="winner-crown">📚</span>
         <div class="winner-info">
           <div class="winner-cat">Лидер учёбы</div>
-          <div class="winner-name">${esc(pwStudyWin.nick||'Игрок')}</div>
+          <div class="winner-name">${renderNick(pwStudyWin.nick||'Игрок',pwStudyWin.nickStyle)}</div>
           <div class="winner-meta">${hm(pwStudyWin.studyMin||0)}${pwStudyWin.username?' • @'+esc(pwStudyWin.username):''}</div>
         </div>
       </div>`:''}
@@ -4914,7 +5128,7 @@ function ratingView(){
         <span class="winner-crown">⚔️</span>
         <div class="winner-info">
           <div class="winner-cat">Лидер спорта</div>
-          <div class="winner-name">${esc(pwWorkWin.nick||'Игрок')}</div>
+          <div class="winner-name">${renderNick(pwWorkWin.nick||'Игрок',pwWorkWin.nickStyle)}</div>
           <div class="winner-meta">${pwWorkWin.workouts||0} трен.${pwWorkWin.username?' • @'+esc(pwWorkWin.username):''}</div>
         </div>
       </div>`:''}
@@ -4935,18 +5149,18 @@ function ratingView(){
       </div>
       <button class="btn cy" data-a="refreshLeaderboard" ${lbData.loading?'disabled':''}>${lbData.loading?'Загрузка…':'🔄 Обновить'}</button>
     </div>
-    ${winnerBannerHtml}
     <div class="chips">
       <button class="chip cut-sm ${mode==='study'?'on':''}" data-a="setLbSort" data-v="study">📚 Учёба</button>
       <button class="chip cut-sm ${mode==='work'?'on':''}" data-a="setLbSort" data-v="work">⚔️ Спорт</button>
       ${S.isAdmin?`<button class="chip cut-sm ${mode==='streak'?'on':''}" data-a="setLbSort" data-v="streak">🔥 Серия (Админ)</button>`:''}
       ${S.isAdmin?`<button class="chip cut-sm ${mode==='visits'?'on':''}" data-a="setLbSort" data-v="visits">👁️ Визиты (${lbData.visitors.length})</button>`:''}
     </div>
-    ${(mode==='study'||mode==='work')?`<div class="chips" style="margin-top:0">
+    ${(mode==='study'||mode==='work')?`<div class="lb-period-row">
+      <button class="chip cut-sm ${period==='week'?'on':''}" data-a="setLbPeriod" data-v="week">📅 Неделя</button>
       <button class="chip cut-sm ${period==='all'?'on':''}" data-a="setLbPeriod" data-v="all">🌍 Всё время</button>
-      <button class="chip cut-sm ${period==='week'?'on':''}" data-a="setLbPeriod" data-v="week">📅 Эта неделя</button>
-      <button class="chip cut-sm ${period==='prev'?'on':''}" data-a="setLbPeriod" data-v="prev">🏅 Прошлая неделя</button>
+      <button class="chip cut-sm ${period==='prev'?'on':''}" data-a="setLbPeriod" data-v="prev">🏅 Прошлая</button>
     </div>`:''}
+    ${period==='prev'&&(mode==='study'||mode==='work')?winnerBannerHtml:''}
     ${lbData.error?`<p style="color:var(--or);font-size:13px;margin:8px 0">${esc(lbData.error)}</p>`:''}
     ${mode==='visits'&&S.isAdmin?`
       ${lbData.visitors.length?`<div class="lb-list">${lbData.visitors.map((v,i)=>`<div class="lb-row">
@@ -4967,7 +5181,7 @@ function ratingView(){
         ${rest.length?`<div class="lb-list">${rest.map((u,i)=>`<div class="lb-row">
           <div class="lb-pos">${i+4}</div>
           <div class="lb-main">
-            <b>${esc(u.nick||'Игрок')}</b> ${u.username?`<span class="mut">@${esc(u.username)}</span>`:''}
+            <b>${renderNick(u.nick||'Игрок',u.nickStyle)}</b> ${u.username?`<span class="mut">@${esc(u.username)}</span>`:''}
             <small>${period==='week'?`Неделя: ${hm(u.weekStudyMin||0)} • ${u.weekWorkouts||0} тр.`:period==='prev'?`Прошлая неделя: ${hm(u.studyMin||0)} • ${u.workouts||0} тр.`:`Всего: ${hm(u.studyMin||0)} • ${u.workouts||0} тр.`}</small>
           </div>
           <div class="lb-val">${fmtVal(u)}</div>
@@ -4999,8 +5213,8 @@ function render(){
 /* LABYRINTH RESOLUTION LOGIC (WITH SCOUT & SHIELD OF THE ABYSS SUPPORT) */
 function resolveDoor(i){
   const r=S.run.study;if(!r||r.phase!=='doors'||r.op!==i)return;
-  const d=r.d[i],rem=r.target-r.prog;
-  const pre=(r.scouted&&r.scouted[i])?r.scouted[i]:rollDoorOutcome(d,r.step,rem);
+  const d=r.d[i],rem=r.infinite?60:(r.target-r.prog);
+  const pre=(r.scouted&&r.scouted[i])?r.scouted[i]:rollDoorOutcome(d,r.step,rem,Boolean(r.infinite));
   let {type,dur,t,note}=pre;
   if(type==='rest'&&S.buffs.breather){
     S.buffs.breather=false;dur=15;t=tier(type,dur);
@@ -5072,7 +5286,7 @@ function finishStudyRoom(){
   }
   r.cur=null;
   r.scouted={};
-  if(r.prog>=r.target){
+  if(!r.infinite&&r.prog>=r.target){
     r.phase='done';r.early=false;
 
     S.stats.fullRuns=(S.stats.fullRuns||0)+1;
@@ -5116,17 +5330,17 @@ function bankRulesView(){
   const r=S.rules;
   const {bySport,total}=getWeeklyRuleCounts();
   const hasRules=Object.keys(r.requirements).length>0;
-  const locked=hasRules&&Date.now()<r.changed+FORTNIGHT;
+  const locked=hasRules&&r.changed>0&&toDayKey(r.changed)===toDayKey();
   return `<h3>Тренировки за эту неделю (всего: ${total})</h3>
     ${hasRules?`<div class="chips">${Object.entries(r.requirements).map(([id,n])=>{
       const done=bySport[id]||0;
       return `<span class="chip ${done>=n?'on':''}">${esc(S.activities.find(x=>x.id===id)?.n||id)} · ${done}/${n}</span>`;
     }).join('')}</div>`:'<p class="mut">Условие по тренировкам не задано — вывод средств открыт без ограничений. Ты можешь добавить условие в любой момент.</p>'}
-    <p class="mut">Учитываются тренировки за текущую неделю (Пн–Вс). Счётчик автоматически обновляется каждый понедельник в 00:00. Доступная сумма ограничена остатком депозита и заработанной суммой.</p>
+    <p class="mut">Учитываются тренировки за текущую неделю (Пн–Вс, обновление дня в 03:00). Условия можно менять раз в день.</p>
     <div class="row" style="margin-bottom:10px">
       <button class="btn ${hasRules?'gh':'cy'}" data-a="showModal" data-v="rules" ${locked?'disabled':''}>${hasRules?'Изменить условия':'+ Добавить условие выплаты'}</button>
     </div>
-    ${locked?`<small class="mut">Можно изменить с ${new Date(r.changed+FORTNIGHT).toLocaleString('ru-RU')}</small>`:''}`;
+    ${locked?`<small class="mut">Условия уже менялись сегодня — снова можно изменить завтра (после 03:00).</small>`:''}`;
 }
 function goalMinutes(){
   const totals=new Map();
@@ -5171,10 +5385,7 @@ function habitsView(){
   if(!allowedDays.some(d=>d.k===selectedHabitDate))selectedHabitDate=allowedDays[0].k;
   const activeDay=allowedDays.find(d=>d.k===selectedHabitDate)||allowedDays[0];
   const dayWord=activeDay.k===today?'сегодня':activeDay.lbl.toLowerCase()+' ('+activeDay.shortDate+')';
-  const last7=Array.from({length:7},(_,i)=>{
-    const dt=new Date(Date.now()-(6-i)*86400000);
-    return {k:toDayKey(dt.getTime()),lbl:WEEKDAYS_RU[(dt.getDay()+6)%7]};
-  });
+  const curWeekDays=getCurrentWeekDates();
   const list=S.habits||[];
   return `<section class="card cut">
     <div class="hud">
@@ -5206,10 +5417,11 @@ function habitsView(){
         <span>${doneDay?'Выполнено: '+esc(dayWord):(dueDay?'Отметить за '+esc(dayWord):'Отметить вне графика ('+esc(dayWord)+')')}</span>
       </button>
       <div class="habit-week">
-        ${last7.map(d=>{
+        ${curWeekDays.map(d=>{
           const ok=Boolean(h.logs&&h.logs[d.k]);
+          const isFuture=d.k>today;
           const miss=!ok&&d.k<today&&isHabitScheduled(h,d.k);
-          return `<div class="habit-dot ${ok?'done':miss?'miss':''}">${d.lbl}</div>`;
+          return `<button type="button" class="habit-dot ${ok?'done':miss?'miss':''} ${d.k===today?'today-dot':''}" data-a="toggleHabitDayLog" data-v="${id}" data-day="${d.k}" ${isFuture?'disabled':''} title="${d.lbl} (${d.k})">${d.lbl}</button>`;
         }).join('')}
       </div>
       <div class="row">
@@ -5345,7 +5557,7 @@ function requirementsForm(first){
   const r=S.rules;
   const reqs=r.requirements;
   return `${first?'<p class="mut">Шаг 2 из 2 (необязательно)</p>':''}
-    <h3>Какие тренировки нужны для выплаты?</h3><p class="mut">Укажи количество напротив нужных категорий или пропусти этот шаг — условие всегда можно добавить позже в разделе «Банк». После установки условия его можно менять раз в 14 дней.</p>
+    <h3>Какие тренировки нужны для выплаты?</h3><p class="mut">Укажи количество напротив нужных категорий или пропусти этот шаг — условие всегда можно добавить позже в разделе «Банк». После установки условия его можно менять раз в день.</p>
     <div class="quota-grid" id="quota-list">${S.activities.map(m=>quotaRow(m,reqs[m.id]||0)).join('')}</div>
     <p class="form-msg" role="status"></p>
     <div class="row">
@@ -5442,14 +5654,21 @@ const TOUR_STEPS=[
 let tourStep=0;
 function renderExtraModal(){
   if(!cloudLoaded){
-    modalShell('Профиль Telegram',`<div class="entry-form">
-      <p class="mut" role="status">${esc(syncError||'Загружаем сохранённый прогресс с Render/MongoDB и Telegram Cloud… Если сервер спал, это займёт до 20 сек.')}</p>
-      <div class="login-actions">
-        ${syncError?'<button class="btn cy" data-a="retryLoad">Повторить сейчас</button>':''}
-        <button class="btn gr" data-a="continueTgOffline">Открыть профиль сейчас</button>
-        <button class="btn gh" data-a="enterGuest">Зайти как гость</button>
+    const pct=Math.max(10,Math.min(100,loadPct));
+    const statusTxt=syncError?syncError:(pct<40?'Подключаем профиль…':pct<75?'Загружаем прогресс и статистику…':'Синхронизируем данные…');
+    modalShell('STATTRACK',`<div class="loader-wrap">
+      <div class="loader-logo">${icon('logo',28)}</div>
+      <div class="loader-pct" id="loader-pct">${pct}%</div>
+      <div class="loader-bar"><i id="loader-fill" style="width:${pct}%"></i></div>
+      <p class="mut" id="loader-status" role="status" style="font-size:13px">${esc(statusTxt)}</p>
+      <div id="loader-fallback" ${syncError||loadSlow?'':'hidden'} style="margin-top:14px">
+        <div class="login-actions">
+          ${syncError?'<button class="btn cy" data-a="retryLoad">Повторить</button>':''}
+          <button class="btn gr" data-a="continueTgOffline">Открыть сейчас</button>
+          <button class="btn gh" data-a="enterGuest">Как гость</button>
+        </div>
       </div>
-      <small class="mut">«Открыть профиль сейчас» сохранит данные в Telegram Cloud и отправит на Render, как только сервер проснётся.</small></div>`,false);
+    </div>`,false);
     return true;
   }
   if(!S.setupDone&&!S.profileStepDone){
@@ -5641,7 +5860,7 @@ const A={
   saveRules:()=>{
     if(!S.setupDone&&!S.profileStepDone)return;
     const hadRules=Object.keys(S.rules.requirements||{}).length>0;
-    if(S.setupDone&&hadRules&&Date.now()<S.rules.changed+FORTNIGHT)return;
+    if(S.setupDone&&hadRules&&S.rules.changed>0&&toDayKey(S.rules.changed)===toDayKey())return;
     const rows=$$('[data-quota]'),requirements={};
     if(rows.some(x=>!Number.isInteger(+x.value)||+x.value<0||+x.value>Math.max(99,S.rules.requirements[x.dataset.quota]||0))){
       $('.form-msg').textContent='Укажи целое число от 0 до 99.';return;
@@ -5826,9 +6045,47 @@ const A={
   histTab:d=>{historyLimit=40;S.histTab=d.v;save();render();snd('tick')},
   mute:()=>{S.mute=!S.mute;save();render();snd('tick')},
   sel:d=>{S.sel.study=+d.v;save();render();snd('tick')},
+  toggleFancyNick:()=>{
+    if(!S.isAdmin)return;
+    S.profile.nickStyle=S.profile.nickStyle==='rainbow_skull'?'':'rainbow_skull';
+    snd('key');save();render();
+  },
+  toggleHabitDayLog:d=>{
+    const h=S.habits.find(x=>x.id===d.v);
+    const dk=d.day;
+    if(!h||!dk||dk>toDayKey())return;
+    h.logs=h.logs||{};
+    if(h.logs[dk])delete h.logs[dk];
+    else{h.logs[dk]=true;snd('done');}
+    save();render();
+  },
+  adminFinishAsk:()=>{if(!S.isAdmin)return;modalState='adminFinish';snd('tick');renderModal();},
+  adminFinishConfirm:()=>{modalState=null;cancelServerTimer();finishStudyRoom();},
+  forcePayoutAsk:()=>{if(Math.min(S.bank.pend,S.bank.card)<=0)return;modalState='forcePayout';snd('tick');renderModal();},
+  forcePayoutConfirm:()=>{
+    const maxForce=Math.min(S.bank.pend,S.bank.card);
+    const v=Math.round(+$('#force-pm')?.value||0);
+    if(!Number.isSafeInteger(v)||v<=0||v>maxForce)return alert('Проверь сумму для вывода.');
+    S.bank.pend-=v;S.bank.paid+=v;S.bank.card=Math.max(0,S.bank.card-v);
+    addBankLog('Принудительная выплата (без тренировок)',-v);
+    modalState=null;snd('done');save();render();
+  },
   startStudy:()=>{
-    S.run.study={phase:'doors',target:Math.max(10,S.sel.study),prog:0,sinceWarmup:0,earned:0,step:0,d:pickDoors(),op:-1,pendingDoor:-1,warmup:null,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
+    S.run.study={phase:'doors',infinite:false,target:Math.max(10,S.sel.study),prog:0,sinceWarmup:0,earned:0,step:0,d:pickDoors(),op:-1,pendingDoor:-1,warmup:null,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
     snd('done');save();render();
+  },
+  startStudyInfinite:()=>{
+    S.run.study={phase:'doors',infinite:true,target:0,prog:0,sinceWarmup:0,earned:0,step:0,d:pickDoors(),op:-1,pendingDoor:-1,warmup:null,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
+    snd('done');save();render();
+  },
+  useSavedGameInRun:()=>{
+    const r=S.run.study;
+    if(!r||r.phase!=='doors'||r.op>=0||(S.stats.savedGames||0)<=0)return;
+    S.stats.savedGames--;
+    r.cur={type:'game',planMin:0,dur:0,left:0,end:0,paused:true,note:'🎮 Активирована отложенная катка из запаса!',tip:''};
+    r.phase='reveal';
+    snd('t_au');burst('#eba43d',90);
+    save();render();
   },
   openDoor:d=>{
     const r=S.run.study;if(!r||r.op>=0)return;
@@ -5838,7 +6095,7 @@ const A={
       r.scouted=r.scouted||{};
       if(!r.scouted[idx]){
         S.inv.scout=Math.max(0,(S.inv.scout||0)-1);
-        r.scouted[idx]=rollDoorOutcome(r.d[idx],r.step,r.target-r.prog);
+        r.scouted[idx]=rollDoorOutcome(r.d[idx],r.step,r.infinite?60:(r.target-r.prog),Boolean(r.infinite));
         r.scouting=false;
         snd('t_g');burst('#52a86f',45);
         save();render();
@@ -5875,13 +6132,14 @@ const A={
   toggleWarmupTimer:()=>{
     const r=S.run.study;if(!r||r.phase!=='warmup'||!r.warmup)return;
     const w=r.warmup;
-    if(w.paused){w.end=Date.now()+w.left;w.paused=false;}
-    else{w.left=Math.max(0,w.end-Date.now());w.paused=true;}
+    if(w.paused){w.end=Date.now()+w.left;w.paused=false;scheduleServerTimer(w.end,'Разминка «'+w.n+'» завершена','warmup');}
+    else{w.left=Math.max(0,w.end-Date.now());w.paused=true;cancelServerTimer();}
     snd('tick');save();render();
   },
   finishWarmup:()=>{
     const r=S.run.study;if(!r||r.phase!=='warmup')return;
     const idx=r.pendingDoor>=0?r.pendingDoor:0;
+    cancelServerTimer();
     r.sinceWarmup=0;
     r.warmup=null;
     r.pendingDoor=-1;
@@ -5941,28 +6199,35 @@ const A={
   startTimer:()=>{
     const r=S.run.study;if(!r||!r.cur)return;
     r.cur.end=Date.now()+r.cur.left;r.cur.paused=false;r.phase='timer';
+    scheduleServerTimer(r.cur.end,(r.cur.type==='rest'?'Отдых ':'Блок учёбы ')+r.cur.dur+' мин завершён',r.cur.type==='rest'?'rest':'study');
     snd('tick');save();render();
   },
   pauseTimer:()=>{
     const c=S.run.study?.cur;if(!c)return;
-    if(c.paused){c.end=Date.now()+c.left;c.paused=false}
-    else{c.left=c.end-Date.now();c.paused=true}
+    if(c.paused){
+      c.end=Date.now()+c.left;c.paused=false;
+      scheduleServerTimer(c.end,(c.type==='rest'?'Отдых ':'Блок учёбы ')+c.dur+' мин завершён',c.type==='rest'?'rest':'study');
+    }else{
+      c.left=c.end-Date.now();c.paused=true;
+      cancelServerTimer();
+    }
     snd('tick');save();render();
   },
-  finishRoom:()=>finishStudyRoom(),
+  finishRoom:()=>{cancelServerTimer();finishStudyRoom();},
   cashoutAsk:()=>{modalState='cashout';snd('tick');renderModal()},
   cashoutConfirm:()=>{
     const r=S.run.study;
     modalState=null;
+    cancelServerTimer();
     if(r&&r.phase!=='done'&&r.prog>0){
       const total=creditMoney(r.earned,true);
-      archiveRun(r,'Досрочное завершение',total);
+      archiveRun(r,r.infinite?'Бесконечный забег':'Досрочное завершение',total);
       snd('done');burst('#d49b4b',90);
     }
     S.run.study=null;save();render();
   },
   resetAsk:()=>{modalState='reset';snd('tick');renderModal()},
-  resetConfirm:()=>{modalState=null;if(S.run.study?.prog)archiveRun(S.run.study,'Забег сброшен',0);S.run.study=null;snd('tick');save();render()},
+  resetConfirm:()=>{cancelServerTimer();modalState=null;if(S.run.study?.prog)archiveRun(S.run.study,'Забег сброшен',0);S.run.study=null;snd('tick');save();render()},
   endStudyRun:()=>{S.run.study=null;snd('tick');save();render()},
   closeModal:()=>{modalState=null;snd('tick');renderModal()},
   closeModalBg:(d,e)=>{if(e&&e.target.classList.contains('modal-bg')){modalState=null;snd('tick');renderModal();}},
@@ -6203,6 +6468,19 @@ document.addEventListener('input',e=>{
   if(e.target.hasAttribute('data-minutes'))updateAllocationTotal();
   if(e.target.id==='prof-nick-inp')S.profile.nick=e.target.value;
   if(e.target.id==='prof-title-inp')S.profile.title=e.target.value;
+  if(e.target.dataset.k==='selStudy'){
+    const v=Math.max(10,Math.round(+e.target.value||10));
+    S.sel.study=v;
+    const rew=$('#study-plan-rew');
+    if(rew)rew.textContent=fmt(money('study',v)*getStreakMult());
+    const estEl=$('#study-est-end');
+    if(estEl){
+      const e2=estimateStudyEnd(v);
+      estEl.innerHTML=`⏱️ Примерное окончание: <b>~${e2.hhmm}</b>${e2.estRestMin>0?` <span class="mut">(учёба ${hm(e2.m)} + ~${e2.estRestMin} мин на ${e2.expectedRests} отд.)</span>`:' <span class="mut">(шанс отдыха невелик)</span>'}`;
+    }
+    $$('#study-preset-chips .chip').forEach(ch=>ch.classList.toggle('on',+ch.dataset.v===v));
+    save();
+  }
 });
 
 document.addEventListener('change',e=>{
@@ -6222,7 +6500,7 @@ document.addEventListener('change',e=>{
   }
   if(t.dataset.volume){S.audio[t.dataset.volume]=Math.round(Number(t.value));save();snd(t.dataset.volume==='timer'?'alarm':'tick');return;}
   const k=t.dataset.k;if(!k)return;
-  if(k==='selStudy')S.sel.study=Math.max(10,+t.value||60);
+  if(k==='selStudy'){S.sel.study=Math.max(10,Math.round(+t.value||60));t.value=S.sel.study;save();return;}
   else if(k==='full')S.cfg.full=t.checked;
   else S.cfg[k]=Math.max(0,+t.value||0);
   save();render();
@@ -6244,7 +6522,7 @@ setInterval(()=>{
   }
   if(!cloudLoaded||!S.setupDone||!r||r.phase!=='timer'||!r.cur||r.cur.paused)return;
   r.cur.left=r.cur.end-Date.now();
-  if(r.cur.left<=0){snd('alarm');finishStudyRoom();return}
+  if(r.cur.left<=0){cancelServerTimer();snd('alarm');finishStudyRoom();return}
   if(S.tab==='study'){
     const t=$('#tm'),g=$('#ring');
     if(t)t.textContent=mmss(r.cur.left);
@@ -6324,6 +6602,14 @@ document.addEventListener('keydown',e=>{
     else if(r.phase==='done'&&k==='Enter')A.endStudyRun();
   }
 });
+
+$('#tabs')?.addEventListener('wheel',e=>{
+  const el=e.currentTarget;
+  if(el.scrollWidth>el.clientWidth){
+    e.preventDefault();
+    el.scrollLeft+=(Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX);
+  }
+},{passive:false});
 
 render();
 loadCloudProfile();
