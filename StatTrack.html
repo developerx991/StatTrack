@@ -2454,6 +2454,265 @@ button.habit-dot:disabled {
   color: var(--cy);
   letter-spacing: 0.05em;
 }
+
+/* === V16: COSMETICS, FRAMES, CLASS, CRAFTING, CHAMP CROWN, CURSED DOOR === */
+.nick-ash_grad {
+  background: linear-gradient(90deg, #b8aea2, #f5efe6, #8f8478, #f5efe6);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent !important;
+  animation: rainbowShift 5s linear infinite; font-weight: 700;
+}
+.nick-frost_grad {
+  background: linear-gradient(90deg, #7dd3fc, #e0f2fe, #38bdf8, #bae6fd);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent !important;
+  animation: rainbowShift 5s linear infinite; font-weight: 700;
+}
+.nick-cobalt_glow {
+  color: #60a5fa !important;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.75);
+  font-weight: 700;
+}
+.nick-emerald_pulse {
+  color: #4ade80 !important;
+  text-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
+  font-weight: 700;
+}
+.nick-amethyst_grad {
+  background: linear-gradient(90deg, #c084fc, #f472b6, #a855f7, #e879f9);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent !important;
+  animation: rainbowShift 4s linear infinite; font-weight: 700;
+}
+.nick-crimson_ember {
+  background: linear-gradient(90deg, #ff4d4d, #ff9933, #cc1f36, #ff6b2b);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent !important;
+  animation: rainbowShift 3.5s linear infinite; font-weight: 700;
+}
+.nick-gold_glow {
+  background: linear-gradient(90deg, #d49b4b, #fff2b2, #f5c542, #b8860b);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent !important;
+  filter: drop-shadow(0 0 7px rgba(245, 197, 66, 0.65));
+  animation: rainbowShift 3.2s linear infinite; font-weight: 700;
+}
+.nick-solar_eclipse {
+  background: linear-gradient(90deg, #ff3b14, #ffd25a, #ffffff, #ff6b1a, #b81d2f);
+  background-size: 240% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent !important;
+  filter: drop-shadow(0 0 10px rgba(255, 85, 26, 0.8));
+  animation: rainbowShift 2.6s linear infinite; font-weight: 700;
+}
+
+/* Avatar Frames */
+.ava-frame_steel {
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 0 0 2px #475569, 0 0 12px rgba(203, 213, 225, 0.5) !important;
+}
+.ava-frame_frost {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px #0284c7, 0 0 14px rgba(56, 189, 248, 0.65) !important;
+}
+.ava-frame_void {
+  border-color: #c084fc !important;
+  box-shadow: 0 0 0 2px #581c87, 0 0 16px rgba(168, 85, 247, 0.75) !important;
+}
+.ava-frame_fire {
+  border-color: #ff6b1a !important;
+  box-shadow: 0 0 0 2px #991b1b, 0 0 18px rgba(255, 85, 26, 0.85) !important;
+  animation: framePulseFire 2s ease-in-out infinite;
+}
+.ava-frame_sun {
+  border-color: #f5d061 !important;
+  box-shadow: 0 0 0 2px #b45309, 0 0 20px rgba(245, 208, 97, 0.9) !important;
+  animation: framePulseSun 2s ease-in-out infinite;
+}
+@keyframes framePulseFire { 50% { box-shadow: 0 0 0 3px #ef4444, 0 0 24px rgba(255, 115, 29, 1); } }
+@keyframes framePulseSun { 50% { box-shadow: 0 0 0 3px #fbbf24, 0 0 26px rgba(253, 224, 71, 1); } }
+
+.nick-badge-ic {
+  display: inline-block;
+  margin-right: 3px;
+  font-style: normal;
+  font-size: 0.95em;
+}
+.champ-crown-tag {
+  display: inline-block;
+  margin-left: 4px;
+  font-style: normal;
+  filter: drop-shadow(0 0 6px rgba(245, 208, 97, 0.85));
+}
+.lb-ava-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 2px solid var(--line-gold);
+  display: grid;
+  place-items: center;
+  color: var(--cy);
+  flex-shrink: 0;
+}
+.pod-ava {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--line-gold);
+  display: grid;
+  place-items: center;
+  color: var(--cy);
+  margin: 0 auto 4px;
+}
+
+/* Character Class Card */
+.class-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 13px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--cc, var(--cy));
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+.class-ic {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--cc, var(--cy)) 18%, var(--card));
+  border: 1.5px solid color-mix(in srgb, var(--cc, var(--cy)) 65%, transparent);
+  color: var(--cc, var(--cy));
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.class-pill-mini {
+  font: 600 10.5px 'Inter', sans-serif;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--cc, var(--cy)) 55%, transparent);
+  background: color-mix(in srgb, var(--cc, var(--cy)) 14%, var(--surface));
+  color: var(--cc, var(--cy));
+}
+
+/* Cosmetics & Odds */
+.cos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.cos-tile {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--rc, var(--cy));
+  border-radius: 5px;
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+}
+.cos-tile.equipped {
+  border-color: var(--rc, var(--cy));
+  background: color-mix(in srgb, var(--rc, var(--cy)) 14%, var(--surface));
+}
+.cos-tile.locked { opacity: 0.45; cursor: default; }
+.rar-pill {
+  display: inline-block;
+  font: 700 10px 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #fff;
+  background: var(--rc, #666);
+  width: fit-content;
+}
+.odds-list {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.odds-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--rc, var(--cy));
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* Crafting / Recycling */
+.craft-slots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0;
+}
+.craft-slot {
+  min-height: 54px;
+  background: var(--surface);
+  border: 1.5px dashed var(--line-gold);
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--mut);
+  cursor: pointer;
+}
+.craft-slot.filled {
+  border-style: solid;
+  border-color: var(--cy);
+  color: var(--ink-strong);
+  background: color-mix(in srgb, var(--cy) 12%, var(--surface));
+}
+
+/* Cursed Door */
+.door.cursed {
+  --c: #e11d48;
+  --dc: #f43f5e;
+  border-color: #be123c;
+  background: linear-gradient(180deg, #240a14, #0d0509);
+  box-shadow: 0 0 22px rgba(225, 29, 72, 0.35), inset 0 0 18px rgba(136, 19, 55, 0.35);
+}
+.door.cursed:hover:not(.open) {
+  box-shadow: 0 0 28px rgba(244, 63, 94, 0.55);
+}
+.panel.p-cursed {
+  background:
+    radial-gradient(circle at 50% 44%, #000 0 14px, #e11d48 15px 19px, #7e22ce 25px, #12040a 65%);
+}
+.panel.p-cursed:after {
+  left: 50%; top: 44%; width: 42px; height: 42px; margin: -21px;
+  border-radius: 50%; border: 2px solid #f43f5e;
+  box-shadow: 0 0 24px #e11d48, inset 0 0 14px #a855f7;
+}
+.cursed-banner {
+  margin: 8px 0 12px;
+  padding: 9px 12px;
+  background: rgba(159, 18, 57, 0.22);
+  border: 1px solid #f43f5e;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #ffe4e6;
+}
 </style>
 </head>
 <body>
@@ -2507,6 +2766,44 @@ const SHOP_ITEMS=[
   {id:'freeze',n:'Заморозка серии',d:'Прощает один пропущенный день и сохраняет твою серию непрерывности.',baseCost:2,grow:false,col:'#4a8db7',ic:'snow',w:7},
   {id:'bank_game',n:'Запас катки',d:'Позволяет сохранить выпавшую в дверях катку в запас и сыграть её позже в любое время.',baseCost:1,grow:false,col:'#eba43d',ic:'game',w:7}
 ];
+
+/* CURSED DOOR (RARE HIGH-RISK) */
+const CURSED_DOOR={id:10,cursed:true,n:'Проклятые Врата',s:100,r:0,g:0,k:0,ch:0,c:55,col:'#f43f5e',risk:'☠️ ПРОКЛЯТАЯ • ВЫСОКИЙ РИСК'};
+
+/* COSMETICS RARITIES & COLLECTION (18 ITEMS, TOTAL WEIGHT = 100%) */
+const COS_RARITIES={
+  1:{n:'Редкий',col:'#4caf50'},
+  2:{n:'Сверхредкий',col:'#3b82f6'},
+  3:{n:'Эпический',col:'#a855f7'},
+  4:{n:'Мифический',col:'#ef4444'},
+  5:{n:'Легендарный',col:'#f5c542'}
+};
+const COSMETICS=[
+  {id:'ash_grad',slot:'nick',n:'Пепельный градиент',r:1,w:12},
+  {id:'frost_grad',slot:'nick',n:'Ледяной градиент',r:1,w:12},
+  {id:'frame_steel',slot:'frame',n:'Рамка «Рыцарская сталь»',r:1,w:11},
+  {id:'badge_sword',slot:'badge',n:'Значок «Меч Пепла»',ic:'⚔️',r:1,w:11},
+
+  {id:'cobalt_glow',slot:'nick',n:'Сапфировое свечение',r:2,w:7},
+  {id:'emerald_pulse',slot:'nick',n:'Изумрудное пламя',r:2,w:7},
+  {id:'frame_frost',slot:'frame',n:'Рамка «Морозный венец»',r:2,w:6},
+  {id:'badge_flame',slot:'badge',n:'Значок «Уголь Костра»',ic:'🔥',r:2,w:6},
+
+  {id:'amethyst_grad',slot:'nick',n:'Аметистовый градиент',r:3,w:4.5},
+  {id:'crimson_ember',slot:'nick',n:'Багровые угли',r:3,w:4.5},
+  {id:'frame_void',slot:'frame',n:'Рамка «Аура Бездны»',r:3,w:3.5},
+  {id:'badge_gem',slot:'badge',n:'Значок «Осколок Души»',ic:'💎',r:3,w:3.5},
+
+  {id:'gold_glow',slot:'nick',n:'Золотое свечение',r:4,w:3},
+  {id:'frame_fire',slot:'frame',n:'Огненная рамка',r:4,w:2.8},
+  {id:'badge_dragon',slot:'badge',n:'Значок «Печать Дракона»',ic:'🐉',r:4,w:2.7},
+
+  {id:'solar_eclipse',slot:'nick',n:'Затмение Лотрика',r:5,w:1.2},
+  {id:'frame_sun',slot:'frame',n:'Рамка «Первое Пламя»',r:5,w:1.2},
+  {id:'badge_eclipse',slot:'badge',n:'Значок «Знак Затмения»',ic:'🌑',r:5,w:1.1}
+];
+const getCosmetic=id=>COSMETICS.find(c=>c.id===id)||null;
+
 
 /* 20 STUDY RANKS */
 const STUDY_RANKS=[
@@ -2616,7 +2913,45 @@ let selectedWorkDate='', selectedHabitDate='';
 
 const DEFAULT_EXERCISES=['Жим лёжа','Приседания со штангой','Становая тяга','Жим гантелей сидя','Подтягивания','Тяга штанги в наклоне','Подъём на бицепс','Французский жим','Жим ногами'];
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const renderNick=(nick,style)=>style==='rainbow_skull'?`<span class="nick-skull-ic">${icon('skull',15)}</span><span class="nick-rainbow">${esc(nick)}</span>`:esc(nick);
+function renderNick(nick,style='',badge='',champTitles=null){
+  const safe=esc(nick);
+  let prefix='';
+  if(style==='rainbow_skull')prefix+=`<span class="nick-skull-ic">${icon('skull',15)}</span>`;
+  if(badge){
+    const bObj=getCosmetic(badge);
+    if(bObj&&bObj.ic)prefix+=`<span class="nick-badge-ic" title="${esc(bObj.n)}">${bObj.ic}</span>`;
+  }
+  let nameHtml=safe;
+  if(style==='rainbow_skull')nameHtml=`<span class="nick-rainbow">${safe}</span>`;
+  else if(style&&COSMETICS.some(c=>c.slot==='nick'&&c.id===style))nameHtml=`<span class="nick-${style}">${safe}</span>`;
+  let suffix='';
+  if(Array.isArray(champTitles)&&champTitles.length){
+    const tip=champTitles.length===2?'Чемпион прошлой недели по учёбе и спорту':champTitles[0]==='study'?'Чемпион прошлой недели по учёбе':'Чемпион прошлой недели по спорту';
+    suffix=`<span class="champ-crown-tag" title="${tip}">👑</span>`;
+  }
+  return prefix+nameHtml+suffix;
+}
+function getPlayerClass(){
+  const gn=gameNow();
+  let studyMin14=0, wk14=0;
+  for(let i=0;i<14;i++){
+    const k=fmtYMD(new Date(gn.getFullYear(),gn.getMonth(),gn.getDate()-i,12,0,0));
+    const rec=S.daily[k];
+    if(rec){studyMin14+=rec.min||0;wk14+=rec.wk||0;}
+  }
+  if(studyMin14<120&&wk14<2){
+    return {id:'hermit',n:'Отшельник',ic:'🕯️',col:'#94a3b8',d:'За последние 14 дней мало активности. Самое время разжечь костёр!',studyMin14,wk14};
+  }
+  const studyScore=studyMin14, sportScore=wk14*90;
+  const ratio=studyScore/(studyScore+sportScore||1);
+  if(studyMin14>=120&&wk14>=2&&ratio>=0.30&&ratio<=0.70){
+    return {id:'paladin',n:'Паладин',ic:'🛡️',col:'#f5c542',d:'Идеальный баланс между учёбой и тренировками за последние 14 дней.',studyMin14,wk14};
+  }
+  if(studyScore>=sportScore){
+    return {id:'sage',n:'Мудрец',ic:'📜',col:'#60a5fa',d:'Главный упор за последние 14 дней сделан на учёбу и знания.',studyMin14,wk14};
+  }
+  return {id:'berserk',n:'Берсерк',ic:'⚔️',col:'#ef4444',d:'Главный упор за последние 14 дней сделан на спорт и тренировки.',studyMin14,wk14};
+}
 const uid=()=>globalThis.crypto?.randomUUID?.()||('id_'+Date.now().toString(36)+Math.random().toString(36).slice(2));
 const FORTNIGHT=14*86400000;
 const SPORTS=[
@@ -2677,7 +3012,7 @@ const DEF=()=>({
   doorRevision:2,trainingVersion:2,createdAt:toDayKey(),isAdmin:false,setupDone:false,profileStepDone:false,tourDone:false,activities:SPORTS.map(x=>({...x})),goals:[],habits:[],heatmapMode:'activity',
   rules:{requirements:{},counts:{},changed:0},
   audio:{effects:75,timer:100},
-  profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',nickStyle:'',medals:['st_hrs','wk_tot','keys']},
+  profile:{nick:'Негорящий',title:'Искатель Пепла',ava:'crown',accent:'#d49b4b',nickStyle:'',frame:'',badge:'',medals:['st_hrs','wk_tot','keys']},
   cfg:{rs:500,rw:500,full:true,allowGames:true,allowWarmup:true,kMult:1,gMult:1,rMult:1,doors:JSON.parse(JSON.stringify(DEF_DOORS))},
   bank:{card:0,pend:0,paid:0},
   stats:{
@@ -2687,7 +3022,8 @@ const DEF=()=>({
   },
   inv:{reroll:1,scout:1,shield:0,breather:0,double_xp:0,freeze:0,bank_game:0},
   buffs:{breather:false,double_xp:false},
-  shop:{rerollBuys:0,lastWon:null},
+  shop:{rerollBuys:0,lastWon:null,lastCosWon:null},
+  cosmetics:[],
   streak:{cur:0,best:0,lastDate:'',frozenUsed:0},
   daily:{},
   hours:Array(24).fill(0),
@@ -2762,7 +3098,7 @@ function normalizeState(rawObj){
   if(!Array.isArray(s.gym.draft.sets))s.gym.draft.sets=[];
   if(!Array.isArray(s.bodyMetrics))s.bodyMetrics=[];
   for(const k of ['rules','audio','run','sel'])s[k]={...b[k],...s[k]};
-  for(const k of ['activities','goals','habits','logStudy','logWork','logBank'])if(!Array.isArray(s[k]))s[k]=b[k];
+  for(const k of ['activities','goals','habits','logStudy','logWork','logBank','cosmetics'])if(!Array.isArray(s[k]))s[k]=b[k];
   if(s.heatmapMode!=='habits')s.heatmapMode='activity';
   s.stats.keyMinutes??=Math.floor(s.stats.min||0)%90;
   s.stats.studyKeys??=0;
@@ -2780,7 +3116,7 @@ function readLocalProfile(key){
 let modalState=null;
 let profDrawerOpen=false;
 let showAllQuestsHome=false;
-let caseSpinning=false;
+let caseSpinning=false, cosSpinning=false, craftSel=[];
 
 const BACKEND_URL='https://stattrack-backend.onrender.com';
 function getVisitorId(){
@@ -3522,13 +3858,17 @@ function getDoorOdds(door,step=0,infinite=false){
   return {s,r,g,k,ch,canKey,streakPen};
 }
 
-function pickDoors(){
+function pickDoors(rem=60,infinite=false){
   const pool=S.cfg.doors.slice();
   for(let i=0;i<3;i++){
     const j=rnd(i,pool.length-1);
     [pool[i],pool[j]]=[pool[j],pool[i]];
   }
-  return pool.slice(0,3);
+  const trio=pool.slice(0,3);
+  if((infinite||rem>=50)&&Math.random()<0.18){
+    trio[2]={...CURSED_DOOR};
+  }
+  return trio;
 }
 
 /* ROLL A SINGLE DOOR OUTCOME (USED BY BOTH SCOUT & OPEN DOOR) */
@@ -3606,10 +3946,10 @@ function renderHeader(){
     <div class="prof-compact-wrap">
       <div class="prof-bar cut" style="--accent:${S.profile.accent}">
         <div class="prof-left-group">
-          <div class="ava" data-a="tab" data-v="profile" title="Открыть профиль">${icon(S.profile.ava||'crown',20)}</div>
+          <div class="ava ${S.profile.frame?'ava-'+S.profile.frame:''}" data-a="tab" data-v="profile" title="Открыть профиль">${icon(S.profile.ava||'crown',20)}</div>
           <div class="prof-info">
             <div class="prof-top">
-              <span class="prof-nick" data-a="tab" data-v="profile" title="Открыть профиль">${renderNick(S.profile.nick,S.profile.nickStyle)}</span>
+              <span class="prof-nick" data-a="tab" data-v="profile" title="Открыть профиль">${renderNick(S.profile.nick,S.profile.nickStyle,S.profile.badge,myChampTitles())}</span>
               <button class="streak-btn" data-a="openStreakModal" title="Посмотреть серию дней и цепочку бонусов">
                 🔥 ${S.streak.cur||0} дн. • +${sBonus}% ℹ️
               </button>
@@ -3632,6 +3972,7 @@ function renderHeader(){
         <div class="drawer-meta-row">
           <div>
             <span class="prof-title">${esc(S.profile.title)}</span>
+            ${(()=>{const cl=getPlayerClass();return `<span class="class-pill-mini" style="--cc:${cl.col};margin-left:4px">${cl.ic} ${cl.n}</span>`;})()}
             <span class="mut" style="margin-left:6px">🔑 <b>${S.stats.keyBalance||0}</b>${(S.stats.chests||0)>0?` • 📦 <b>${S.stats.chests}</b>`:""}</span>
           </div>
           <div class="medals-row">${medals||'<span class="mut" style="font-size:12px">Нет медалей</span>'}</div>
@@ -4210,8 +4551,23 @@ function studyView(){
 
   if(r.phase==='doors'){
     return `<section class="card cut">${hudHtml}${invBarHtml}
+      ${r.lastCursedReward?`<div class="cursed-banner">☠️ <b>Награда Проклятой двери:</b> ${esc(r.lastCursedReward)}</div>`:''}
       <h2>${r.scouting?'🔍 Нажми на любую дверь, чтобы разведать её содержимое':'Выбери врата'}</h2>${S.cfg.allowWarmup!==false?`<p class="mut" style="font-size:12px;margin-bottom:8px">🧘 Шанс разминки перед дверью: <b>${getWarmupChance(r.sinceWarmup||0)}%</b> (без разминки: ${hm(r.sinceWarmup||0)})</p>`:''}
       <div class="doors">${r.d.map((d,i)=>{
+        if(d.cursed){
+          return `<button class="door cut cursed ${r.op===i?'open':''} ${r.op>=0&&r.op!==i?'dim':''}" style="--c:${d.col}" data-a="openDoor" data-v="${i}">
+            <span class="risk-pill">${d.risk}</span>
+            <div class="nm">${d.n}</div>
+            <div class="frame"><div class="glow"></div><div class="panel p-cursed"></div></div>
+            <div class="od"><span>Блок</span><u style="--w:100%"></u><b>50–60м</b></div>
+            <div class="od"><span>Пауза</span><u style="--w:0%"></u><b>Нет</b></div>
+            <div class="od"><span>🔑 Ключ</span><u style="--w:40%"></u><b>40%</b></div>
+            <div class="od"><span>📦 Кейс</span><u style="--w:40%"></u><b>40%</b></div>
+            <div class="od"><span>⚡ ×2 мин</span><u style="--w:10%"></u><b>10%</b></div>
+            <div class="od"><span>💎 Оба</span><u style="--w:10%"></u><b>10%</b></div>
+            <div class="hs" style="color:#fda4af;margin-top:6px">Гарантированная награда за прохождение без паузы</div>
+          </button>`;
+        }
         const od=getDoorOdds(d,r.step,isInf);
         const sc=r.scouted&&r.scouted[i];
         let scTxt='';
@@ -4285,8 +4641,9 @@ function studyView(){
         <div class="ring" id="ring" style="--p:${pct};--c:${col}">
           <div><div class="big" id="tm">${mmss(c.left)}</div><div class="mut">${c.paused?'на паузе':'идёт время'}</div></div>
         </div>
+        ${c.noPause?`<div class="cursed-banner" style="max-width:400px;margin:8px auto">☠️ Проклятый блок: пауза отключена. Досиди до конца ради гарантированной награды!</div>`:''}
         <div class="row" style="justify-content:center">
-          <button class="btn ${rest?'gr':'cy'}" data-a="pauseTimer">${c.paused?'Продолжить':'Пауза'}</button>
+          ${c.noPause?'':`<button class="btn ${rest?'gr':'cy'}" data-a="pauseTimer">${c.paused?'Продолжить':'Пауза'}</button>`}
           ${(rest||S.isAdmin)?`<button class="btn vi" data-a="${rest?'finishRoom':'adminFinishAsk'}">${rest?'Закончить отдых':'Завершено (Админ)'}</button>`:''}
         </div>
       </div>
@@ -4503,6 +4860,62 @@ function shopView(){
     </div>
   </section>
 
+  <section class="card cut" style="border-color:var(--vi)">
+    <div class="hud">
+      <div>
+        <h2>✨ Косметический кейс (3 🔑)</h2>
+        <p class="mut">Редкие стили ника, рамки аватарки и значки — видны всем в Рейтинге. Дубликат возвращает 1 🔑.</p>
+      </div>
+      <button class="btn gh" style="padding:6px 10px;font-size:12px" data-a="showModal" data-v="cosOdds">🎲 Шансы</button>
+    </div>
+    <div class="case-box cut-sm" style="border-color:var(--vi)">
+      <div class="roulette-viewport">
+        <div class="roulette-marker"></div>
+        <div class="roulette-track" id="cos-roulette-track">
+          ${Array.from({length:45},(_,idx)=>COSMETICS[idx%COSMETICS.length]).map(it=>{
+            const rar=COS_RARITIES[it.r];
+            return `<div class="r-card cut-sm" style="--rc:${rar.col}">
+              <span class="rar-pill" style="--rc:${rar.col};font-size:9px;margin-bottom:4px">${rar.n}</span>
+              <b style="color:${rar.col}">${it.ic?it.ic+' ':''}${it.n}</b>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div class="row" style="justify-content:center;margin-top:10px">
+        <button class="btn vi" data-a="spinCosmeticCase" ${(S.stats.keyBalance||0)<3?'disabled':''}>✨ Крутить Косметический кейс (3 🔑)</button>
+        <button class="btn gh" data-a="tab" data-v="profile">Коллекция (${(S.cosmetics||[]).length}/${COSMETICS.length})</button>
+      </div>
+      ${S.shop.lastCosWon?`<p class="center" style="margin-top:10px;color:var(--cy);font-weight:700">${esc(S.shop.lastCosWon)}</p>`:''}
+    </div>
+  </section>
+
+  <section class="card cut" style="border-color:var(--gr)">
+    <h2>⚒️ Переработка предметов (Крафт)</h2>
+    <p class="mut">Выбери любые <b>3 расходуемых предмета</b> из инвентаря и обменяй их на <b>1 🔑 Ключ</b> или <b>1 📦 Кейс</b>.</p>
+    <div class="craft-slots">
+      ${[0,1,2].map(i=>{
+        const id=craftSel[i];
+        const it=id?SHOP_ITEMS.find(x=>x.id===id):null;
+        return `<button type="button" class="craft-slot ${it?'filled':''}" data-a="craftRemove" data-v="${i}">
+          ${it?`<b style="color:${it.col}">${esc(it.n)}</b><small class="mut">убрать ×</small>`:`Слот ${i+1}`}
+        </button>`;
+      }).join('')}
+    </div>
+    <div class="chips">
+      ${SHOP_ITEMS.map(it=>{
+        const inSel=craftSel.filter(x=>x===it.id).length;
+        const left=(S.inv[it.id]||0)-inSel;
+        if((S.inv[it.id]||0)<=0)return '';
+        return `<button type="button" class="chip cut-sm" data-a="craftAdd" data-v="${it.id}" ${left<=0||craftSel.length>=3?'disabled':''}>+ ${esc(it.n)} (${left})</button>`;
+      }).join('')||'<span class="mut" style="font-size:13px">В инвентаре пока нет предметов для переработки.</span>'}
+    </div>
+    <div class="row">
+      <button class="btn cy" data-a="craftExec" data-v="key" ${craftSel.length<3?'disabled':''}>Обменять на 1 🔑 Ключ</button>
+      <button class="btn gr" data-a="craftExec" data-v="chest" ${craftSel.length<3?'disabled':''}>Обменять на 1 📦 Кейс</button>
+      ${craftSel.length?`<button class="btn gh" data-a="craftClear">Сбросить</button>`:''}
+    </div>
+  </section>
+
   <section class="card cut">
     <h2>🛒 Лавка Хранителя (Фиксированные цены за Ключи)</h2>
     <p class="mut">Кейс стоит 1 ключ. Выбранный предмет стоит от 2 ключей. Каждая покупка повышает его цену на 1 до местной полуночи.</p>
@@ -4697,12 +5110,20 @@ function profileView(){
   return `<section class="card cut" style="border-color:${S.profile.accent}">
     <h2>Профиль</h2>
     <div class="prof-custom-preview" style="--accent:${S.profile.accent}">
-      <div class="ava" style="width:48px;height:48px">${icon(S.profile.ava||'crown',24)}</div>
+      <div class="ava ${S.profile.frame?'ava-'+S.profile.frame:''}" style="width:48px;height:48px">${icon(S.profile.ava||'crown',24)}</div>
       <div style="min-width:0">
-        <div style="font-size:18px;font-weight:700;color:var(--ink-strong)">${renderNick(S.profile.nick,S.profile.nickStyle)}</div>
+        <div style="font-size:18px;font-weight:700;color:var(--ink-strong)">${renderNick(S.profile.nick,S.profile.nickStyle,S.profile.badge,myChampTitles())}</div>
         <div class="mut" style="font-size:12.5px">${esc(S.profile.title||'Без подписи')}</div>
       </div>
     </div>
+    ${(()=>{const cl=getPlayerClass();return `<div class="class-card" style="--cc:${cl.col}">
+      <div class="class-ic">${cl.ic}</div>
+      <div style="min-width:0;flex:1">
+        <div style="font-size:11px;text-transform:uppercase;color:var(--mut);font-weight:600">Класс за последние 14 дней</div>
+        <div style="font-size:16.5px;font-weight:700;color:${cl.col}">${cl.n}</div>
+        <div class="mut" style="font-size:12px">${cl.d} (${hm(cl.studyMin14)} учёбы • ${cl.wk14} трен.)</div>
+      </div>
+    </div>`;})()}
     <div class="entry-form" style="margin-top:0">
       <div class="cfg">
         <label class="entry-field">Никнейм
@@ -4722,6 +5143,37 @@ function profileView(){
       </div>
       <button class="btn cy" data-a="saveProfile">Сохранить профиль</button>
     </div>
+  </section>
+
+  <section class="card cut" style="border-color:var(--vi)">
+    <div class="hud">
+      <div>
+        <h2>✨ Коллекция косметики (${(S.cosmetics||[]).length}/${COSMETICS.length})</h2>
+        <p class="mut" style="font-size:12.5px">Выпадает из Косметического кейса в Магазине и видна всем в Рейтинге.</p>
+      </div>
+      <button class="btn vi" style="padding:6px 11px;font-size:12px" data-a="tab" data-v="shop">Кейс косметики</button>
+    </div>
+    ${[['nick','Стили ника','nickStyle'],['frame','Рамки аватарки','frame'],['badge','Значки рядом с ником','badge']].map(([slot,label,field])=>{
+      const list=COSMETICS.filter(c=>c.slot===slot);
+      const curVal=S.profile[field]||'';
+      return `<h3 style="margin-top:12px;font-size:14.5px">${label}</h3>
+      <div class="cos-grid">
+        <button type="button" class="cos-tile ${!curVal?'equipped':''}" style="--rc:var(--line-gold)" data-a="equipCosmetic" data-slot="${slot}" data-v="">
+          <span class="rar-pill" style="--rc:#57534e">Стандарт</span>
+          <b style="font-size:13px;color:var(--ink-strong)">Без эффекта</b>
+        </button>
+        ${list.map(c=>{
+          const owned=(S.cosmetics||[]).includes(c.id);
+          const eq=curVal===c.id;
+          const rar=COS_RARITIES[c.r];
+          return `<button type="button" class="cos-tile ${eq?'equipped':''} ${!owned?'locked':''}" style="--rc:${rar.col}" data-a="equipCosmetic" data-slot="${slot}" data-v="${c.id}" ${!owned?'disabled':''}>
+            <span class="rar-pill" style="--rc:${rar.col}">${rar.n}</span>
+            <b style="font-size:13px">${c.slot==='nick'?`<span class="nick-${c.id}">${esc(c.n)}</span>`:c.ic?`${c.ic} ${esc(c.n)}`:esc(c.n)}</b>
+            <small class="mut" style="font-size:11px">${eq?'✓ Надето':owned?'Нажми, чтобы надеть':'Из кейса'}</small>
+          </button>`;
+        }).join('')}
+      </div>`;
+    }).join('')}
   </section>
 
   <section class="card cut">
@@ -5038,7 +5490,15 @@ function renderModal(){
   }
 }
 
-let lbData={loading:false,error:'',items:[],visitors:[],prevWeek:null,sort:'study',period:'week'};
+let lbData={loading:false,error:'',items:[],visitors:[],prevWeek:null,champStudyId:null,champWorkId:null,sort:'study',period:'week'};
+function myChampTitles(){
+  const myId=tg?.initDataUnsafe?.user?.id?Number(tg.initDataUnsafe.user.id):null;
+  if(!myId)return [];
+  const res=[];
+  if(lbData.champStudyId&&myId===Number(lbData.champStudyId))res.push('study');
+  if(lbData.champWorkId&&myId===Number(lbData.champWorkId))res.push('work');
+  return res;
+}
 async function loadLeaderboard(){
   if(lbData.loading)return;
   lbData.loading=true;lbData.error='';
@@ -5054,6 +5514,9 @@ async function loadLeaderboard(){
     lbData.items=Array.isArray(data?.leaderboard)?data.leaderboard:(Array.isArray(data)?data:[]);
     lbData.visitors=Array.isArray(data?.visitors)?data.visitors:[];
     lbData.prevWeek=data?.prevWeek||null;
+    lbData.champStudyId=data?.champStudyId||data?.prevWeek?.studyTop?.[0]?.user_id||null;
+    lbData.champWorkId=data?.champWorkId||data?.prevWeek?.workTop?.[0]?.user_id||null;
+    renderHeader();
   }catch(err){
     lbData.error='Не удалось загрузить рейтинг с сервера ('+(err.message||'нет ответа /api/leaderboard')+').';
   }finally{
@@ -5100,7 +5563,8 @@ function ratingView(){
       :(period==='week'?(u.weekWorkouts||0):(u.workouts||0))+' тр.';
     return `<div class="pod-col pod-${rank}">
       <div class="pod-medal">${medal}</div>
-      <div class="pod-nick">${renderNick(u.nick||'Игрок',u.nickStyle)}</div>
+      ${u.frame?`<div class="pod-ava ava-${u.frame}">${icon(u.ava||'crown',16)}</div>`:''}
+      <div class="pod-nick">${renderNick(u.nick||'Игрок',u.nickStyle,u.badge,u.champTitles)}</div>
       <div class="pod-user">${u.username?'@'+esc(u.username):'&nbsp;'}</div>
       <div class="pod-block">
         <span class="pod-rank-num">#${rank}</span>
@@ -5120,7 +5584,7 @@ function ratingView(){
         <span class="winner-crown">📚</span>
         <div class="winner-info">
           <div class="winner-cat">Лидер учёбы</div>
-          <div class="winner-name">${renderNick(pwStudyWin.nick||'Игрок',pwStudyWin.nickStyle)}</div>
+          <div class="winner-name">${renderNick(pwStudyWin.nick||'Игрок',pwStudyWin.nickStyle,pwStudyWin.badge,['study'])}</div>
           <div class="winner-meta">${hm(pwStudyWin.studyMin||0)}${pwStudyWin.username?' • @'+esc(pwStudyWin.username):''}</div>
         </div>
       </div>`:''}
@@ -5128,7 +5592,7 @@ function ratingView(){
         <span class="winner-crown">⚔️</span>
         <div class="winner-info">
           <div class="winner-cat">Лидер спорта</div>
-          <div class="winner-name">${renderNick(pwWorkWin.nick||'Игрок',pwWorkWin.nickStyle)}</div>
+          <div class="winner-name">${renderNick(pwWorkWin.nick||'Игрок',pwWorkWin.nickStyle,pwWorkWin.badge,['work'])}</div>
           <div class="winner-meta">${pwWorkWin.workouts||0} трен.${pwWorkWin.username?' • @'+esc(pwWorkWin.username):''}</div>
         </div>
       </div>`:''}
@@ -5180,8 +5644,9 @@ function ratingView(){
         </div>
         ${rest.length?`<div class="lb-list">${rest.map((u,i)=>`<div class="lb-row">
           <div class="lb-pos">${i+4}</div>
+          ${u.frame?`<div class="lb-ava-mini ava-${u.frame}">${icon(u.ava||'crown',14)}</div>`:''}
           <div class="lb-main">
-            <b>${renderNick(u.nick||'Игрок',u.nickStyle)}</b> ${u.username?`<span class="mut">@${esc(u.username)}</span>`:''}
+            <b>${renderNick(u.nick||'Игрок',u.nickStyle,u.badge,u.champTitles)}</b> ${u.username?`<span class="mut">@${esc(u.username)}</span>`:''}
             <small>${period==='week'?`Неделя: ${hm(u.weekStudyMin||0)} • ${u.weekWorkouts||0} тр.`:period==='prev'?`Прошлая неделя: ${hm(u.studyMin||0)} • ${u.workouts||0} тр.`:`Всего: ${hm(u.studyMin||0)} • ${u.workouts||0} тр.`}</small>
           </div>
           <div class="lb-val">${fmtVal(u)}</div>
@@ -5214,6 +5679,16 @@ function render(){
 function resolveDoor(i){
   const r=S.run.study;if(!r||r.phase!=='doors'||r.op!==i)return;
   const d=r.d[i],rem=r.infinite?60:(r.target-r.prog);
+  r.lastCursedReward='';
+  if(d.cursed){
+    const durPool=[50,55,60].filter(x=>r.infinite||x<=rem);
+    const dur=durPool.length?durPool[rnd(0,durPool.length-1)]:Math.max(50,rem);
+    r.cur={type:'focus',cursed:true,noPause:true,planMin:dur,dur,left:dur*60000,end:0,paused:true,note:'☠️ Проклятая дверь! Пауза отключена. Награда: Ключ (40%), Кейс (40%), ×2 минуты (10%) или Джекпот Ключ+Кейс (10%).',tip:''};
+    r.phase='reveal';
+    snd('t_r');burst('#f43f5e',110);
+    save();render();
+    return;
+  }
   const pre=(r.scouted&&r.scouted[i])?r.scouted[i]:rollDoorOutcome(d,r.step,rem,Boolean(r.infinite));
   let {type,dur,t,note}=pre;
   if(type==='rest'&&S.buffs.breather){
@@ -5275,6 +5750,34 @@ function finishStudyRoom(){
     S.stats.tokens=(S.stats.tokens||0)+tok;
     r.earned+=Math.round(money('study',c.planMin||u));
     recordDailyActivity(u,0,1);
+    if(c.cursed){
+      const roll=Math.random()*100;
+      if(roll<40){
+        S.stats.keys=(S.stats.keys||0)+1;
+        S.stats.keyBalance=(S.stats.keyBalance||0)+1;
+        r.lastCursedReward='Получен целый 🔑 Ключ!';
+        addBankLog('☠️ Проклятая дверь: получен 🔑 Ключ!',0);
+      }else if(roll<80){
+        S.stats.chests=(S.stats.chests||0)+1;
+        r.lastCursedReward='Получен целый 📦 Кейс!';
+        addBankLog('☠️ Проклятая дверь: получен 📦 Кейс!',0);
+      }else if(roll<90){
+        r.prog+=u;
+        r.actual=(r.actual||0)+u;
+        S.stats.min+=u;
+        (r.blocks??=[]).push({t:Date.now(),min:u,plan:u});
+        recordDailyActivity(u,0,0);
+        r.lastCursedReward=`⚡ Двойной зачёт! +${u} бонусных минут в прогресс и цели!`;
+        addBankLog(`☠️ Проклятая дверь: двойной зачёт (+${u} мин)!`,0);
+      }else{
+        S.stats.keys=(S.stats.keys||0)+1;
+        S.stats.keyBalance=(S.stats.keyBalance||0)+1;
+        S.stats.chests=(S.stats.chests||0)+1;
+        r.lastCursedReward='💎 Проклятый Джекпот: +1 🔑 Ключ и +1 📦 Кейс!';
+        addBankLog('☠️ Проклятая дверь: Джекпот (+1 🔑 и +1 📦)!',0);
+      }
+      burst('#f43f5e',140);
+    }
   }else if(c.type==='chest'){
     S.stats.chests=(S.stats.chests||0)+1;
     recordDailyActivity(0,0,1);
@@ -5295,7 +5798,7 @@ function finishStudyRoom(){
     archiveRun(r,'План выполнен',r.earned);
     snd('key');burst('#d4af37',140);
   }else{
-    r.phase='doors';r.d=pickDoors();r.op=-1;snd('done');
+    r.phase='doors';r.d=pickDoors(r.infinite?60:(r.target-r.prog),Boolean(r.infinite));r.op=-1;snd('done');
   }
   save();render();
 }
@@ -5711,6 +6214,27 @@ function renderExtraModal(){
       </div>`,false);
     return true;
   }
+  if(modalState==='cosOdds'){
+    const sortedCos=COSMETICS.slice().sort((a,b)=>b.r-a.r||a.w-b.w);
+    modalShell('🎲 Шансы Косметического кейса',`<p class="mut" style="font-size:13px">Стоимость открытия: <b>3 🔑 Ключа</b>. Если выпадает дубликат — возвращается <b>+1 🔑</b>.</p>
+      <div class="odds-list">
+        ${sortedCos.map(c=>{
+          const rar=COS_RARITIES[c.r];
+          const owned=(S.cosmetics||[]).includes(c.id);
+          const slotTxt=c.slot==='nick'?'Стиль ника':c.slot==='frame'?'Рамка':'Значок';
+          return `<div class="odds-row" style="--rc:${rar.col}">
+            <div style="min-width:0">
+              <span class="rar-pill" style="--rc:${rar.col};margin-right:6px">${rar.n}</span>
+              <b>${c.ic?c.ic+' ':''}${esc(c.n)}</b>
+              <small class="mut" style="display:block;font-size:11px">${slotTxt}${owned?' • ✓ В коллекции':''}</small>
+            </div>
+            <b style="color:${rar.col};white-space:nowrap">${c.w}%</b>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="row" style="justify-content:flex-end"><button class="btn cy" data-a="closeModal">Закрыть</button></div>`);
+    return true;
+  }
   if(modalState==='keys'){
     const m=S.stats.keyMinutes||0;
     modalShell('Ключи за учёбу',`<div class="kv">В инвентаре<b>${S.stats.keyBalance} 🔑</b></div><p>До следующего ключа — <b>${hm(90-m)}</b>.</p>
@@ -6071,11 +6595,11 @@ const A={
     modalState=null;snd('done');save();render();
   },
   startStudy:()=>{
-    S.run.study={phase:'doors',infinite:false,target:Math.max(10,S.sel.study),prog:0,sinceWarmup:0,earned:0,step:0,d:pickDoors(),op:-1,pendingDoor:-1,warmup:null,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
+    S.run.study={phase:'doors',infinite:false,target:Math.max(10,S.sel.study),prog:0,sinceWarmup:0,earned:0,step:0,d:pickDoors(Math.max(10,S.sel.study),false),op:-1,pendingDoor:-1,warmup:null,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
     snd('done');save();render();
   },
   startStudyInfinite:()=>{
-    S.run.study={phase:'doors',infinite:true,target:0,prog:0,sinceWarmup:0,earned:0,step:0,d:pickDoors(),op:-1,pendingDoor:-1,warmup:null,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
+    S.run.study={phase:'doors',infinite:true,target:0,prog:0,sinceWarmup:0,earned:0,step:0,d:pickDoors(60,true),op:-1,pendingDoor:-1,warmup:null,scouted:{},scouting:false,usedReroll:false,usedShield:false,shieldArmed:false};
     snd('done');save();render();
   },
   useSavedGameInRun:()=>{
@@ -6154,7 +6678,7 @@ const A={
     if(id==='reroll'&&(S.inv.reroll||0)>0&&!r.usedReroll&&r.phase==='doors'){
       S.inv.reroll--;
       r.usedReroll=true;
-      r.d=pickDoors();
+      r.d=pickDoors(r.infinite?60:(r.target-r.prog),Boolean(r.infinite));
       r.scouted={};
       r.scouting=false;
       snd('open2');burst('#64a6d1',60);
@@ -6243,6 +6767,88 @@ const A={
     S.inv[id]=(S.inv[id]||0)+1;
     snd('done');burst(it.col,65);
     save();render();
+  },
+  equipCosmetic:d=>{
+    const slot=d.slot, val=d.v||'';
+    if(val&&!(S.cosmetics||[]).includes(val))return;
+    if(slot==='nick')S.profile.nickStyle=val;
+    else if(slot==='frame')S.profile.frame=val;
+    else if(slot==='badge')S.profile.badge=val;
+    snd('tick');save();render();
+  },
+  craftAdd:d=>{
+    if(craftSel.length>=3)return;
+    const id=d.v;
+    const used=craftSel.filter(x=>x===id).length;
+    if((S.inv[id]||0)-used<=0)return;
+    craftSel.push(id);
+    snd('tick');render();
+  },
+  craftRemove:d=>{
+    const idx=Number(d.v);
+    if(idx>=0&&idx<craftSel.length){craftSel.splice(idx,1);snd('tick');render();}
+  },
+  craftClear:()=>{craftSel=[];snd('tick');render();},
+  craftExec:d=>{
+    if(craftSel.length!==3)return;
+    const counts={};
+    for(const id of craftSel)counts[id]=(counts[id]||0)+1;
+    for(const [id,cnt] of Object.entries(counts)){
+      if((S.inv[id]||0)<cnt){craftSel=[];render();return;}
+    }
+    for(const [id,cnt] of Object.entries(counts))S.inv[id]-=cnt;
+    craftSel=[];
+    if(d.v==='chest'){
+      S.stats.chests=(S.stats.chests||0)+1;
+      addBankLog('⚒️ Переработка 3 предметов → +1 📦 Кейс',0);
+    }else{
+      S.stats.keys=(S.stats.keys||0)+1;
+      S.stats.keyBalance=(S.stats.keyBalance||0)+1;
+      addBankLog('⚒️ Переработка 3 предметов → +1 🔑 Ключ',0);
+    }
+    snd('key');burst('#52a86f',100);
+    save();render();
+  },
+  spinCosmeticCase:()=>{
+    if(cosSpinning||(S.stats.keyBalance||0)<3)return;
+    S.stats.keyBalance-=3;
+    const totW=COSMETICS.reduce((a,b)=>a+b.w,0);
+    let rw=Math.random()*totW, winItem=COSMETICS[0];
+    for(const it of COSMETICS){rw-=it.w;if(rw<=0){winItem=it;break;}}
+    const rar=COS_RARITIES[winItem.r];
+    S.cosmetics=S.cosmetics||[];
+    const isDup=S.cosmetics.includes(winItem.id);
+    if(isDup){
+      S.stats.keyBalance=(S.stats.keyBalance||0)+1;
+      S.shop.lastCosWon=`🔄 Дубликат: «${winItem.n}» (${rar.n}) — возвращено +1 🔑!`;
+    }else{
+      S.cosmetics.push(winItem.id);
+      S.shop.lastCosWon=`🎉 Выбито: «${winItem.n}» (${rar.n})! Надень в Профиле.`;
+    }
+    save();
+    const track=$('#cos-roulette-track');
+    if(!track){render();return;}
+    cosSpinning=true;
+    const winIdx=36;
+    const cards=track.querySelectorAll('.r-card');
+    if(cards[winIdx]){
+      cards[winIdx].style.setProperty('--rc',rar.col);
+      cards[winIdx].innerHTML=`<span class="rar-pill" style="--rc:${rar.col};font-size:9px;margin-bottom:4px">${rar.n}</span><b style="color:${rar.col}">${winItem.ic?winItem.ic+' ':''}${winItem.n}</b>`;
+    }
+    const viewportW=track.parentElement.clientWidth;
+    const cardW=136;
+    const targetOffset=(winIdx*cardW)-(viewportW/2)+(128/2)+rnd(-24,24);
+    track.style.transition='none';
+    track.style.transform='translateX(0px)';
+    void track.offsetWidth;
+    track.style.transition='transform 3.4s cubic-bezier(0.12, 0.8, 0.18, 1)';
+    track.style.transform=`translateX(-${targetOffset}px)`;
+    [120,260,420,600,800,1050,1350,1700,2100,2550,3000].forEach(ms=>setTimeout(()=>snd('tick'),ms));
+    setTimeout(()=>{
+      cosSpinning=false;
+      snd('key');burst(rar.col,140);
+      if(S.tab==='shop')render();
+    },3500);
   },
   spinCase:d=>{
     if(caseSpinning)return;
@@ -6598,7 +7204,7 @@ document.addEventListener('keydown',e=>{
     if(!r){if(k==='Enter')A.startStudy();return;}
     if(r.phase==='doors'&&'123'.includes(k))A.openDoor({v:+k-1});
     else if(r.phase==='reveal'&&(k===' '||k==='Enter')){e.preventDefault();r.cur?.type==='game'?A.finishRoom():A.startTimer();}
-    else if(r.phase==='timer'){if(k===' '){e.preventDefault();A.pauseTimer();}else if(k==='Enter'&&(r.cur?.type==='rest'||S.isAdmin))A.finishRoom();}
+    else if(r.phase==='timer'){if(k===' '&&!r.cur?.noPause){e.preventDefault();A.pauseTimer();}else if(k==='Enter'&&(r.cur?.type==='rest'||S.isAdmin))A.finishRoom();}
     else if(r.phase==='done'&&k==='Enter')A.endStudyRun();
   }
 });
@@ -6614,6 +7220,7 @@ $('#tabs')?.addEventListener('wheel',e=>{
 render();
 loadCloudProfile();
 setTimeout(sendVisitPing,1500);
+setTimeout(()=>{if(!guestMode&&onlineProfile)loadLeaderboard();},2600);
 })();
 </script>
 </body>
