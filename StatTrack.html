@@ -4791,7 +4791,7 @@ function bankView(){
       <button class="btn vi" data-a="payout" ${withdrawable()<=0?'disabled':''}>Получить выплату</button>
     </div>
     ${withdrawable()<=0&&Math.min(b.pend,b.card)>0?`<div class="row" style="margin-top:8px">
-      <button class="btn gh" style="border-color:var(--or);color:var(--or)" data-a="forcePayoutAsk">Принудительный вывод (${fmt(Math.min(b.pend,b.card))})</button>
+      <button class="btn gh" style="border-color:var(--or);color:var(--or)" data-a="forcePayoutAsk">Принудительный вывод</button>
     </div>`:''}
   </section>
 
@@ -5014,9 +5014,9 @@ function renderModal(){
     $('#modal-root').innerHTML=`<div class="modal-bg" data-a="closeModalBg">
       <div class="modal cut" style="border-color:var(--or)">
         <h2 style="color:var(--or)">Принудительный вывод</h2>
-        <p class="mut" style="margin:10px 0">Условия по тренировкам на эту неделю ещё не выполнены. Вывести средства без тренировок? Сами тренировки при этом <b>не засчитаются</b>.</p>
+        <p class="mut" style="margin:10px 0">Условия по тренировкам на эту неделю ещё не выполнены. Укажи сумму, которую хочешь вывести без тренировок (доступно до <b>${fmt(maxForce)}</b>). Сами тренировки при этом <b>не засчитаются</b>.</p>
         <div class="row">
-          <label class="mut">Сумма, ₽ <input type="number" id="force-pm" min="1" max="${maxForce}" value="${maxForce}"></label>
+          <label class="mut">Сумма, ₽ <input type="number" id="force-pm" min="1" max="${maxForce}" placeholder="Введите сумму"></label>
         </div>
         <div class="row">
           <button class="btn" data-a="forcePayoutConfirm">Да, вывести принудительно</button>
@@ -5138,7 +5138,7 @@ function ratingView(){
   const periodSubtitle=period==='prev'
     ?`Зафиксированные итоги прошлой недели ${pw?.weekRange?'('+esc(pw.weekRange)+')':''} — не изменяются`
     :period==='week'
-      ?'Топ за текущую неделю (Пн 00:00 – Вс 23:59)'
+      ?'Топ за текущую неделю (обновляется в Пн в 03:00)'
       :'Глобальные лидеры за всё время';
 
   return `<section class="card cut" style="border-color:var(--ye)">
